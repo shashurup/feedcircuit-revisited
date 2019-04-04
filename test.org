@@ -1,0 +1,27 @@
+#+begin_src clojure :results output
+(ns feedcircuit-revisited.handler)
+(use '[clojure.pprint :only [pprint pp]])
+(add-feed "https://exler.ru/rss.xml")
+(add-feed "https://xkcd.com/atom.xml")
+(pp)
+#+end_src
+
+#+RESULTS:
+: 
+
+#+begin_src clojure :results pp
+(ns feedcircuit-revisited.handler)
+(use '[clojure.pprint :only [pprint pp]])
+(def feed (merge-new-items {} '({:id 1} {:id 2} {:id 3} {:id 4})))
+(pprint feed)
+(merge-new-items feed '({:id 5} {:id 6} {:id 7} {:id 8}))
+#+end_src
+
+#+RESULTS:
+: class clojure.lang.Compiler$CompilerExceptionclass clojure.lang.Compiler$CompilerExceptionCompilerException java.lang.RuntimeException: Unable to resolve symbol: feed2 in this context, compiling:(*cider-repl devel/feedcircuit-revisited:localhost:35909(clj)*:6:1) 
+
+#+begin_src clojure :results pp
+(ns feedcircuit-revisited.handler)
+(map parse-rss-item (extract-rss-items (xml/parse "https://xkcd.com/atom.xml")))
+#+end_src
+
