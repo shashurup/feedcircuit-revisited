@@ -225,6 +225,12 @@
     (fs/mkdirs dir)
     (append-items! dir items)))
 
+(defn get-selected-items [user-id]
+  (let [dir (user-dir user-id)
+        user (get-user-attrs user-id)]
+    (map #(first (get-numbered-items dir %))
+         (:unread user))))
+
 ; === web interface ===
 
 (defn get-next-positions [user-items]
@@ -272,6 +278,23 @@
               (lines inputs-html)
             (h/input {:type "submit" :value "Next"}))))))
 
+(defn render-selected [user-id]
+  (let [items (get-selected-items user-id)
+        items-html (for [{title :title
+                          summary :summary
+                          link :link
+                          ord-num :num} items]
+                     (h/div {:class "news-item"} "\n"
+                            (h/a {:href (first link) :class "news-header"} title) (h/br-) "\n"
+                            summary))]
+    (h/html "\n"
+            (h/head "\n"
+                    (h/title "Welcome to Feedcircuit") "\n"
+                    (h/link {:rel "stylesheet" :type "text/css" :href "/style.css"})) "\n"
+            (h/body "\n"
+                    (h/div {:class "news-list"}
+                           (lines items-html)) "\n"))))
+
 (defn mark-read [user-id to-positions selected]
   (let [user (get-user-attrs user-id)]
     (-> (update-in user [:unread] into (select-items! user-id selected))
@@ -282,6 +305,9 @@
   (GET "/" {{count-param :count} :params}
        (render-feed "georgy@kibardin.name"
                     (if count-param (parse-int count-param) page-size)))
+
+  (GET "/selected" []
+       (render-selected "georgy@kibardin.name"))
 
   (POST "/markread" {params :form-params}
         (let [positions (map parse-item-id (ensure-coll (get params "next-position")))
