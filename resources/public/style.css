@@ -1,0 +1,17 @@
+.news-item {
+    margin-bottom: 2em;
+}
+.news-item::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+.news-list {
+    width: 36em;
+    margin: 4em;
+}
+.news-header {
+    font-weight: bold;
+    text-decoration: none;
+    color: inherit;
+}
