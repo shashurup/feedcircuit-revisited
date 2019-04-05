@@ -21,10 +21,9 @@
 
 (defn store-file [filename data]
   (let [tempfilename (str filename ".temp")]
-    (do
-      (with-open [w (io/writer tempfilename)]
-        (binding [*out* w] (pr data)))
-      (fs/rename tempfilename filename))))
+    (with-open [w (io/writer tempfilename)]
+      (binding [*out* w] (pr data)))
+    (fs/rename tempfilename filename)))
 
 (defn load-file-or-nil [filename]
   (if (fs/exists? filename)
@@ -33,9 +32,8 @@
 (def get-data (memz/memo load-file-or-nil))
 
 (defn set-data [filename data]
-  (do
-    (store-file filename data)
-    (memz/memo-clear! get-data [filename])))
+  (store-file filename data)
+  (memz/memo-clear! get-data [filename]))
 
 (defn get-block [dir block-num]
   (get-data (str dir "/" block-num)))
@@ -67,9 +65,8 @@
 (defn get-dir-cache [dir key]
   (let [entry (or (get @dir-cache dir)
                   (let [entry (load-dir dir)]
-                    (do
-                      (swap! dir-cache assoc dir entry)
-                      entry)))]
+                    (swap! dir-cache assoc dir entry)
+                    entry))]
     (get entry key)))
 
 (defn get-known-ids [dir]
@@ -86,20 +83,25 @@
                                  (range start-block (inc last-block-num))))]
     (nthrest items start-offset)))
 
+(defn get-numbered-items [dir start]
+  (map-indexed #(assoc %2 :num (+ start %1))
+               (get-items dir start)))
+
 (defn append-items! [dir items]
   (let [last-block-num (get-last-block-num dir)
         known-ids (get-known-ids dir)
         last-block (get-block dir last-block-num)
         new-blocks (->> (concat last-block items)
                         (partition-all block-size)
-                        (map vec))]
-    (do
-      (doseq [[num block] (map-indexed vector new-blocks)]
-        (set-block dir (+ last-block-num num) block))
-      (swap! dir-cache assoc dir {:last-block (+ last-block-num
-                                                 (dec (count new-blocks)))
-                                  :known-ids (cset/union known-ids
-                                                         (set (map #(:id %) items)))}))))
+                        (map vec))
+        start (+ (* last-block-num block-size) (count last-block))]
+    (doseq [[num block] (map-indexed vector new-blocks)]
+      (set-block dir (+ last-block-num num) block))
+    (swap! dir-cache assoc dir {:last-block (+ last-block-num
+                                               (dec (count new-blocks)))
+                                :known-ids (cset/union known-ids
+                                                       (set (map #(:id %) items)))})
+    (range start (+ start (count items)))))
 
 ; === feed parsing ===
 
@@ -177,18 +179,15 @@
   (str (fs/normalized (str (:root-dir config) "/feeds/" (dir-name url)))))
 
 (defn sync-feed! [url]
-  (let [dir (get @feed-dir url (dir-path url))
+  (let [dir (or (get @feed-dir url)
+                (let [dir (dir-path url)]
+                  (swap! feed-dir assoc url dir)
+                  dir))
         known-ids (get-known-ids dir)
         [attrs new-items] (fetch-new-items url known-ids)]
-    (do
-      (fs/mkdirs dir)
-      (set-attrs dir (assoc attrs :url url))
-      (append-items! dir new-items)
-      (swap! feed-dir assoc url dir))))
-
-(defn get-feed-items [url start]
-  (map-indexed #(assoc %2 :num (+ start %1))
-               (get-items (get @feed-dir url) start)))
+    (fs/mkdirs dir)
+    (set-attrs dir (assoc attrs :url url))
+    (append-items! dir new-items)))
 
 ; === user handling ===
 
@@ -198,7 +197,8 @@
   (let [{feeds :feeds
          positions :positions} user]
     (->> feeds
-         (map #(vector % (get-feed-items % (get positions % 0))))
+         (map #(vector % (get-numbered-items (get @feed-dir %)
+                                             (get positions % 0))))
          (mapcat (fn [[feed items]]
                    (map #(assoc % :feed feed) items)))
          (take count))))
@@ -206,8 +206,11 @@
 (defn user-dir [id]
   (str (:root-dir config) "/users/" id))
 
+(defn new-user-attrs [] {:unread []})
+
 (defn get-user-attrs [id]
-  (assoc (get-attrs (user-dir id))
+  (assoc (or (get-attrs (user-dir id))
+             (new-user-attrs))
          :id id))
 
 (defn update-user-attrs! [attrs]
@@ -217,7 +220,9 @@
 
 (defn select-items! [user ids]
   (let [dir (user-dir user)
-        items (map #(first (apply get-feed-items %)) ids)]
+        items (map (fn [[url pos]]
+                     (first (get-items (get @feed-dir url) pos))) ids)]
+    (fs/mkdirs dir)
     (append-items! dir items)))
 
 ; === web interface ===
@@ -237,51 +242,68 @@
   (let [[_ ord-num feed] (re-matches #"([0-9]+),(.*)" item-id)]
     [feed (parse-int ord-num)]))
 
+(defn render-feed [user-id item-count]
+  (let [user (get-user-attrs user-id)
+        items (get-user-items user item-count)
+        next-positions (get-next-positions items)
+        items-html (for [{title :title
+                          summary :summary
+                          link :link
+                          feed :feed
+                          ord-num :num} items]
+                    (h/div {:class "news-item"} "\n"
+                            (h/input {:type "checkbox"
+                                      :name "selected-item"
+                                      :value (str ord-num "," feed)})
+                            (h/a {:href (first link) :class "news-header"} title) (h/br-) "\n"
+                            summary))
+        inputs-html (for [[feed pos] next-positions]
+                      (h/input {:type "hidden"
+                                :name "next-position"
+                                :value (str pos "," feed)}))]
+    (h/html "\n"
+    (h/head "\n"
+      (h/title "Welcome to Feedcircuit") "\n"
+      (h/link {:rel "stylesheet" :type "text/css" :href "/style.css"})) "\n"
+    (h/body "\n"
+      (h/form {:action "/markread" :method "POST"} "\n"
+              (h/div {:class "news-list"}
+                    (lines items-html)) "\n"
+              (lines inputs-html)
+            (h/input {:type "submit" :value "Next"}))))))
+
+(defn mark-read [user-id to-positions selected]
+  (let [user (get-user-attrs user-id)]
+    (-> (update-in user [:unread] into (select-items! user-id selected))
+        (update-in [:positions] merge (into {} to-positions))
+        (update-user-attrs!))))
+
 (defroutes app-routes
   (GET "/" {{count-param :count} :params}
-       (let [item-count (if count-param (parse-int count-param) page-size)
-             user (get-user-attrs "georgy@kibardin.name")
-             items (get-user-items user item-count)
-             next-positions (get-next-positions items)
-             items-html (for [{title :title
-                               summary :summary
-                               link :link
-                               feed :feed
-                               ord-num :num} items]
-                          (h/div {:class "news-item"} "\n"
-                                 (h/input {:type "checkbox"
-                                           :name "selected-item"
-                                           :value (str ord-num "," feed)})
-                                 (h/a {:href (first link) :class "news-header"} title) (h/br-) "\n"
-                                 summary))
-             inputs-html (for [[feed pos] next-positions]
-                           (h/input {:type "hidden"
-                                     :name "next-position"
-                                     :value (str pos "," feed)}))]
-         (h/html "\n"
-          (h/head "\n"
-           (h/title "Welcome to Feedcircuit") "\n"
-           (h/link {:rel "stylesheet" :type "text/css" :href "/style.css"})) "\n"
-          (h/body "\n"
-           (h/form {:action "/markread" :method "POST"} "\n"
-                   (h/div {:class "news-list"}
-                          (lines items-html)) "\n"
-                   (lines inputs-html)
-                  (h/input {:type "submit" :value "Next"}))))))
+       (render-feed "georgy@kibardin.name"
+                    (if count-param (parse-int count-param) page-size)))
+
   (POST "/markread" {params :form-params}
-        (let [user (get-user-attrs "georgy@kibardin.name")
-              pos-params (ensure-coll (get params "next-position"))
-              positions (into {} (map parse-item-id pos-params))
-              selected-items (map parse-item-id (ensure-coll (get params "selected-item")))]
-          (do
-            (update-user-attrs! (update-in user [:positions] merge positions))
-            (select-items! (:id user) selected-items)
-            {:status 302 :headers {"Location" "/"}})))
+        (let [positions (map parse-item-id (ensure-coll (get params "next-position")))
+              selected-ids (map parse-item-id (ensure-coll (get params "selected-item")))]
+          (mark-read "georgy@kibardin.name" positions selected-ids)
+          {:status 302 :headers {"Location" "/"}}))
+
   (route/resources "/")
+
   (route/not-found "Not Found"))
 
 (def app
   (wrap-defaults app-routes (assoc-in site-defaults [:security :anti-forgery] false)))
 
-; (use 'ring.adapter.jetty)
-; (def ring-server (run-jetty app {:port 8080 :join? false}))
+; === Debugging convenience functions ===
+
+(defn _drop-cache []
+  (reset! dir-cache {})
+  (memz/memo-clear! get-data))
+
+(use 'ring.adapter.jetty)
+
+(defn _run-srv []
+  (reset! feed-dir (load-feed-dirs))
+  (run-jetty app {:port 8080 :join? false}))
