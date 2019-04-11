@@ -206,17 +206,18 @@
 (defn user-dir [id]
   (str (:root-dir config) "/users/" id))
 
-(defn new-user-attrs [] {:unread []})
-
 (defn get-user-attrs [id]
-  (assoc (or (get-attrs (user-dir id))
-             (new-user-attrs))
-         :id id))
+  (-> (get-attrs (user-dir id))
+      (assoc :id id)
+      (update :unread #(apply sorted-set %))))
 
 (defn update-user-attrs! [attrs]
   (let [dir (user-dir (:id attrs))]
     (fs/mkdirs dir)
-    (set-attrs dir (dissoc attrs :id))))
+    (set-attrs dir
+               (-> attrs
+                   (dissoc :id)
+                   (update :unread vec)))))
 
 (defn select-items! [user ids]
   (let [dir (user-dir user)
@@ -331,10 +332,7 @@
 (defn mark-item [user-id item-id state]
   (let [user (get-user-attrs user-id)]
     (update-user-attrs!
-     (if state
-       (update-in user [:unread] (fn [unread]
-                                   (vec (remove #(= % item-id) unread))))
-       (update-in user [:unread] conj item-id)))))
+     (update user :unread (if state disj conj) item-id))))
 
 (defn get-user-id [] "georgy@kibardin.name")
 
