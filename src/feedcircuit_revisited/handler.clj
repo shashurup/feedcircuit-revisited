@@ -248,6 +248,21 @@
   (let [[_ ord-num feed] (re-matches #"([0-9]+),(.*)" item-id)]
     [feed (parse-int ord-num)]))
 
+(defn render-bookmark-icon []
+  "<svg height=\"auto\" viewBox=\"-3 -3 66 99\"> \n
+     <polygon class=\"bookmark-icon\" \n
+              points=\"0,0 0,90 30,60 60,90 60,0\" \n
+              style=\"stroke-width: 6\" /> \n
+  </svg>")
+
+(defn render-checkbox []
+  "<svg height=\"auto\" viewBox=\"0 0 60 60\"> \n
+       <rect width=\"60\" height=\"60\" style=\"stroke-width:1;fill:none\" /> \n
+       <polyline class=\"checkmark\" \n
+                 points=\"10,20 20,40 50,25\" \n
+                 style=\"fill:none;stroke-width:8\" /> \n
+  </svg>")
+
 (defn render-feed [user-id item-count]
   (let [user (get-user-attrs user-id)
         items (get-user-items user item-count)
@@ -258,10 +273,14 @@
                           feed :feed
                           ord-num :num} items]
                     (h/div {:class "news-item"} "\n"
-                            (h/input {:type "checkbox"
-                                      :name "selected-item"
-                                      :value (str ord-num "," feed)})
-                            (h/a {:href (first link) :class "news-header"} title) (h/br-) "\n"
+                           (h/div {:class "news-header"} "\n"
+                                  (h/a {:href (first link)} title)
+                                  "&nbsp;"
+                                  (h/label {:class "svg-checkbox"}
+                                           (h/input {:type "checkbox"
+                                                     :name "selected-item"
+                                                     :value (str ord-num "," feed)})
+                                           (render-bookmark-icon))) "\n"
                             summary))
         inputs-html (for [[feed pos] next-positions]
                       (h/input {:type "hidden"
@@ -272,7 +291,7 @@
       (h/title "Welcome to Feedcircuit") "\n"
       (h/link {:rel "stylesheet" :type "text/css" :href "/style.css"})) "\n"
     (h/body "\n"
-      (h/form {:action "/markread" :method "POST"} "\n"
+      (h/form {:action "/next" :method "POST"} "\n"
               (h/div {:class "news-list"}
                     (lines items-html)) "\n"
               (lines inputs-html)
@@ -285,12 +304,20 @@
                           link :link
                           ord-num :num} items]
                      (h/div {:class "news-item"} "\n"
-                            (h/a {:href (first link) :class "news-header"} title) (h/br-) "\n"
+                            (h/div {:class "news-header"}
+                                   (h/a {:href (first link)} title)
+                                   "&nbsp;"
+                                   (h/label {:class "svg-checkbox"}
+                                            (h/input {:type "checkbox"
+                                                      :value ord-num
+                                                      :onchange "setItemState(this.value, this.checked);" })
+                                            (render-checkbox))) "\n"
                             summary))]
     (h/html "\n"
             (h/head "\n"
                     (h/title "Welcome to Feedcircuit") "\n"
-                    (h/link {:rel "stylesheet" :type "text/css" :href "/style.css"})) "\n"
+                    (h/link {:rel "stylesheet" :type "text/css" :href "/style.css"})
+                    (h/script {:src "code.js"})) "\n"
             (h/body "\n"
                     (h/div {:class "news-list"}
                            (lines items-html)) "\n"))))
@@ -301,19 +328,34 @@
         (update-in [:positions] merge (into {} to-positions))
         (update-user-attrs!))))
 
+(defn mark-item [user-id item-id state]
+  (let [user (get-user-attrs user-id)]
+    (update-user-attrs!
+     (if state
+       (update-in user [:unread] (fn [unread]
+                                   (vec (remove #(= % item-id) unread))))
+       (update-in user [:unread] conj item-id)))))
+
+(defn get-user-id [] "georgy@kibardin.name")
+
 (defroutes app-routes
-  (GET "/" {{count-param :count} :params}
-       (render-feed "georgy@kibardin.name"
-                    (if count-param (parse-int count-param) page-size)))
+  (GET "/" [count]
+       (render-feed (get-user-id)
+                    (if count (parse-int count) page-size)))
 
   (GET "/selected" []
-       (render-selected "georgy@kibardin.name"))
+       (render-selected (get-user-id)))
 
-  (POST "/markread" {params :form-params}
+  (POST "/next" {params :form-params}
         (let [positions (map parse-item-id (ensure-coll (get params "next-position")))
               selected-ids (map parse-item-id (ensure-coll (get params "selected-item")))]
-          (mark-read "georgy@kibardin.name" positions selected-ids)
+          (mark-read (get-user-id) positions selected-ids)
           {:status 302 :headers {"Location" "/"}}))
+
+  (POST "/mark-item" [item-id :<< parse-int
+                      read :<< #(= % "true")]
+        (mark-item (get-user-id) item-id read)
+        {:status 200})
 
   (route/resources "/")
 

@@ -12,6 +12,35 @@
 }
 .news-header {
     font-weight: bold;
+    margin-bottom: 1em;
+}
+
+.news-header a {
     text-decoration: none;
     color: inherit;
+}
+
+
+label.svg-checkbox {
+    cursor: pointer;
+}
+label.svg-checkbox input {
+    display: none;
+}
+label.svg-checkbox svg {
+    height: 1em;
+    vertical-align: middle;
+    stroke: black;
+}
+label.svg-checkbox input + svg .bookmark-icon {
+    fill: none;
+}
+label.svg-checkbox input:checked + svg .bookmark-icon {
+    fill: black;
+}
+label.svg-checkbox input + svg .checkmark {
+    stroke-opacity: 0;
+}
+label.svg-checkbox input:checked + svg .checkmark {
+    stroke-opacity: 1;
 }
