@@ -12,7 +12,7 @@
             [clj-template.html :as h]
             [clojure.core.memoize :as memz]))
 
-(defn parse-int [s] (Integer. s))
+(defn parse-int [s] (if s (Integer. s)))
 
 (def config {:root-dir "./fc-data"})
 (def block-size 100)
@@ -54,8 +54,12 @@
                         (map fs/base-name)
                         (filter #(re-matches #"[0-9]+" %))
                         (map parse-int)
-                        (sort))]
-    {:last-block (last block-list)
+                        sort
+                        vec)]
+    {:item-count (if (empty? block-list)
+                   0
+                   (+ (* (dec (count block-list)) block-size)
+                      (count (get-block dir (last block-list)))))
      :known-ids (->> block-list
                      (map #(load-file (str dir "/" %))) ; avoid caching all blocks
                      (apply concat)
@@ -72,8 +76,11 @@
 (defn get-known-ids [dir]
   (get-dir-cache dir :known-ids))
 
+(defn get-item-count [dir]
+  (or (get-dir-cache dir :item-count) 0))
+
 (defn get-last-block-num [dir]
-  (or (get-dir-cache dir :last-block) 0))
+  (quot (get-item-count dir) block-size))
 
 (defn get-items [dir start]
   (let [last-block-num (get-last-block-num dir)
@@ -89,16 +96,15 @@
 
 (defn append-items! [dir items]
   (let [last-block-num (get-last-block-num dir)
-        known-ids (get-known-ids dir)
         last-block (get-block dir last-block-num)
         new-blocks (->> (concat last-block items)
                         (partition-all block-size)
                         (map vec))
-        start (+ (* last-block-num block-size) (count last-block))]
+        known-ids (get-known-ids dir)
+        start (get-item-count dir)]
     (doseq [[num block] (map-indexed vector new-blocks)]
       (set-block dir (+ last-block-num num) block))
-    (swap! dir-cache assoc dir {:last-block (+ last-block-num
-                                               (dec (count new-blocks)))
+    (swap! dir-cache assoc dir {:item-count (+ start (count items))
                                 :known-ids (cset/union known-ids
                                                        (set (map #(:id %) items)))})
     (range start (+ start (count items)))))
@@ -339,7 +345,7 @@
 (defroutes app-routes
   (GET "/" [count]
        (render-feed (get-user-id)
-                    (if count (parse-int count) page-size)))
+                    (or (parse-int count) page-size)))
 
   (GET "/selected" []
        (render-selected (get-user-id)))
