@@ -195,6 +195,27 @@
     (set-attrs dir (assoc attrs :url url))
     (append-items! dir new-items)))
 
+(defn next-update-time [url]
+  (let [dir (get @feed-dir url)
+        last-items (get-items dir (max 0 (- (get-item-count dir) 10)))
+        dates (->> last-items
+                   (map :published)
+                   (map jt/instant))
+        average (->> dates
+                     (map jt/to-millis-from-epoch)
+                     (partition 2 1)
+                     (map (fn [[b e]] (- e b)))
+                     (#(quot (apply + %) (count %))))]
+    (jt/plus (apply jt/max dates)
+             (jt/min (jt/hours 24)
+                     (jt/millis average)))))
+
+(defn sync! []
+  (->> (keys @feed-dir)
+       (filter #(jt/before? (next-update-time %)
+                            (jt/instant)))
+       (map sync-feed!)))
+
 ; === user handling ===
 
 (def page-size 16)
