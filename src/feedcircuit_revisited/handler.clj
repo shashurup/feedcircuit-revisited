@@ -200,15 +200,17 @@
         last-items (get-items dir (max 0 (- (get-item-count dir) 10)))
         dates (->> last-items
                    (map :published)
-                   (map jt/instant))
-        average (->> dates
-                     (map jt/to-millis-from-epoch)
-                     (partition 2 1)
-                     (map (fn [[b e]] (- e b)))
-                     (#(quot (apply + %) (count %))))]
-    (jt/plus (apply jt/max dates)
-             (jt/min (jt/hours 24)
-                     (jt/millis average)))))
+                   (map #(jt/instant (jt/formatter :iso-date-time) %)))
+        deltas (->> dates
+                    (map jt/to-millis-from-epoch)
+                    (partition 2 1)
+                    (map (fn [[b e]] (- e b))))]
+    (if (empty? deltas)
+      (jt/instant)
+      (jt/plus (apply jt/max dates)
+               (jt/min (jt/hours 24)
+                       (jt/millis (quot (apply + deltas)
+                                        (count deltas))))))))
 
 (defn sync! []
   (->> (keys @feed-dir)
@@ -302,14 +304,15 @@
                           ord-num :num} items]
                     (h/div {:class "news-item"} "\n"
                            (h/div {:class "news-header"} "\n"
-                                  (h/a {:href (first link)} title)
-                                  "&nbsp;"
-                                  (h/label {:class "svg-checkbox"}
-                                           (h/input {:type "checkbox"
-                                                     :name "selected-item"
-                                                     :value (str ord-num "," feed)})
-                                           (render-bookmark-icon))) "\n"
-                            summary))
+                                  (h/a {:href (first link)
+                                        :target "_blank"} title)) "\n"
+                           summary
+                           "&nbsp;"
+                           (h/label {:class "svg-checkbox"}
+                                    (h/input {:type "checkbox"
+                                              :name "selected-item"
+                                              :value (str ord-num "," feed)})
+                                    (render-bookmark-icon))))
         inputs-html (for [[feed pos] next-positions]
                       (h/input {:type "hidden"
                                 :name "next-position"
@@ -317,13 +320,16 @@
     (h/html "\n"
     (h/head "\n"
       (h/title "Welcome to Feedcircuit") "\n"
+      (h/meta {:name "viewport"
+               :content "width=device-width, initial-scale=1.0"})
       (h/link {:rel "stylesheet" :type "text/css" :href "/style.css"})) "\n"
     (h/body "\n"
       (h/form {:action "/next" :method "POST"} "\n"
               (h/div {:class "news-list"}
-                    (lines items-html)) "\n"
-              (lines inputs-html)
-            (h/input {:type "submit" :value "Next"}))))))
+                     (lines items-html) "\n"
+                     (lines inputs-html)
+                     (h/input {:type "submit"
+                               :value "Next"})))))))
 
 (defn render-selected [user-id]
   (let [items (get-selected-items user-id)
@@ -333,17 +339,20 @@
                           ord-num :num} items]
                      (h/div {:class "news-item"} "\n"
                             (h/div {:class "news-header"}
-                                   (h/a {:href (first link)} title)
-                                   "&nbsp;"
-                                   (h/label {:class "svg-checkbox"}
-                                            (h/input {:type "checkbox"
-                                                      :value ord-num
-                                                      :onchange "setItemState(this.value, this.checked);" })
-                                            (render-checkbox))) "\n"
-                            summary))]
+                                   (h/a {:href (first link)
+                                         :target "_blank"} title)) "\n"
+                            summary
+                            "&nbsp;"
+                            (h/label {:class "svg-checkbox"}
+                                     (h/input {:type "checkbox"
+                                               :value ord-num
+                                               :onchange "setItemState(this.value, this.checked);" })
+                                     (render-checkbox))))]
     (h/html "\n"
             (h/head "\n"
                     (h/title "Welcome to Feedcircuit") "\n"
+                    (h/meta {:name "viewport"
+                             :content "width=device-width, initial-scale=1.0"})
                     (h/link {:rel "stylesheet" :type "text/css" :href "/style.css"})
                     (h/script {:src "code.js"})) "\n"
             (h/body "\n"
