@@ -27,7 +27,8 @@
 
 (defn load-file-or-nil [filename]
   (if (fs/exists? filename)
-    (load-file filename)))
+    (with-open [r (java.io.PushbackReader. (io/reader filename))]
+      (read r))))
 
 (def get-data (memz/memo load-file-or-nil))
 
@@ -61,7 +62,7 @@
                    (+ (* (dec (count block-list)) block-size)
                       (count (get-block dir (last block-list)))))
      :known-ids (->> block-list
-                     (map #(load-file (str dir "/" %))) ; avoid caching all blocks
+                     (map #(load-file-or-nil (str dir "/" %))) ; avoid caching all blocks
                      (apply concat)
                      (map :id)
                      (set))}))
@@ -287,7 +288,7 @@
 
 (defn render-checkbox []
   "<svg height=\"auto\" viewBox=\"0 0 60 60\"> \n
-       <rect width=\"60\" height=\"60\" style=\"stroke-width:1;fill:none\" /> \n
+       <rect width=\"60\" height=\"60\" style=\"stroke-width:3;fill:none\" /> \n
        <polyline class=\"checkmark\" \n
                  points=\"10,20 20,40 50,25\" \n
                  style=\"fill:none;stroke-width:8\" /> \n
@@ -299,6 +300,7 @@
         next-positions (get-next-positions items)
         items-html (for [{title :title
                           summary :summary
+                          content :content
                           link :link
                           feed :feed
                           ord-num :num} items]
@@ -306,7 +308,7 @@
                            (h/div {:class "news-header"} "\n"
                                   (h/a {:href (first link)
                                         :target "_blank"} title)) "\n"
-                           summary
+                           (or summary content)
                            "&nbsp;"
                            (h/label {:class "svg-checkbox"}
                                     (h/input {:type "checkbox"
@@ -335,13 +337,14 @@
   (let [items (get-selected-items user-id)
         items-html (for [{title :title
                           summary :summary
+                          content :content
                           link :link
                           ord-num :num} items]
                      (h/div {:class "news-item"} "\n"
                             (h/div {:class "news-header"}
                                    (h/a {:href (first link)
                                          :target "_blank"} title)) "\n"
-                            summary
+                            (or summary content)
                             "&nbsp;"
                             (h/label {:class "svg-checkbox"}
                                      (h/input {:type "checkbox"

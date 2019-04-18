@@ -10,7 +10,8 @@
                  [clojure.java-time "0.3.2"]
                  [me.raynes/fs "1.4.6"]
                  [clj-template "1.0.1"]
-                 [org.clojure/core.memoize "0.7.1"]]
+                 [org.clojure/core.memoize "0.7.1"]
+                 [crouton "0.1.2"]]
   :plugins [[lein-ring "0.12.4"]]
   :ring {:handler feedcircuit-revisited.handler/app}
   :profiles
