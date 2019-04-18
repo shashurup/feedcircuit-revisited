@@ -19,21 +19,21 @@
 
 ; === item storage ===
 
-(defn store-file [filename data]
+(defn write-file [filename data]
   (let [tempfilename (str filename ".temp")]
     (with-open [w (io/writer tempfilename)]
       (binding [*out* w] (pr data)))
     (fs/rename tempfilename filename)))
 
-(defn load-file-or-nil [filename]
+(defn read-file [filename]
   (if (fs/exists? filename)
     (with-open [r (java.io.PushbackReader. (io/reader filename))]
       (read r))))
 
-(def get-data (memz/memo load-file-or-nil))
+(def get-data (memz/memo read-file))
 
 (defn set-data [filename data]
-  (store-file filename data)
+  (write-file filename data)
   (memz/memo-clear! get-data [filename]))
 
 (defn get-block [dir block-num]
@@ -62,7 +62,7 @@
                    (+ (* (dec (count block-list)) block-size)
                       (count (get-block dir (last block-list)))))
      :known-ids (->> block-list
-                     (map #(load-file-or-nil (str dir "/" %))) ; avoid caching all blocks
+                     (map #(read-file (str dir "/" %))) ; avoid caching all blocks
                      (apply concat)
                      (map :id)
                      (set))}))
