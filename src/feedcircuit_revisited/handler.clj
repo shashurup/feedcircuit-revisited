@@ -9,7 +9,7 @@
             [java-time :as jt]
             [me.raynes.fs :as fs]
             [clojure.java.io :as io]
-            [clj-template.html :as h]
+            [hiccup.core :as html]
             [clojure.core.memoize :as memz]))
 
 (defn parse-int [s] (if s (Integer. s)))
@@ -279,88 +279,87 @@
   (let [[_ ord-num feed] (re-matches #"([0-9]+),(.*)" item-id)]
     [feed (parse-int ord-num)]))
 
-(defn render-bookmark-icon []
-  "<svg height=\"auto\" viewBox=\"-3 -3 66 99\"> \n
-     <polygon class=\"bookmark-icon\" \n
-              points=\"0,0 0,90 30,60 60,90 60,0\" \n
-              style=\"stroke-width: 6\" /> \n
-  </svg>")
+(defn bookmark-icon-svg []
+  [:svg {:height  "auto"
+         :viewBox "-3 -3 66 99"}
+   [:polygon {:class  "bookmark-icon"
+              :points "0,0 0,90 30,60 60,90 60,0"
+              :style  "stroke-width:6"}]])
 
-(defn render-checkbox []
-  "<svg height=\"auto\" viewBox=\"0 0 60 60\"> \n
-       <rect width=\"60\" height=\"60\" style=\"stroke-width:3;fill:none\" /> \n
-       <polyline class=\"checkmark\" \n
-                 points=\"10,20 20,40 50,25\" \n
-                 style=\"fill:none;stroke-width:8\" /> \n
-  </svg>")
+(defn checkbox-svg []
+  [:svg {:height  "auto"
+         :viewBox "0 0 60 60"}
+   [:rect {:width  "60"
+           :height "60"
+           :style  "stroke-width:3;fill:none"}]
+   [:polyline {:class  "checkmark"
+               :points "10,20 20,40 50,25"
+               :style  "fill:none;stroke-width:8"}]])
 
-(defn render-feed [user-id item-count]
+(defn svg-checkbox [input-attrs svg]
+  [:label {:class "svg-checkbox"}
+   [:input (merge {:type "checkbox"}
+                  input-attrs)]
+   svg])
+
+(defn news-item [url title summary mark]
+  [:div {:class "news-item"}
+   [:div {:class "news-header"}
+    [:a {:href url
+         :target "_blank"} title]]
+   summary "&nbsp;" mark])
+
+(defn build-feed [user-id item-count]
   (let [user (get-user-attrs user-id)
         items (get-user-items user item-count)
-        next-positions (get-next-positions items)
-        items-html (for [{title :title
-                          summary :summary
-                          content :content
-                          link :link
-                          feed :feed
-                          ord-num :num} items]
-                    (h/div {:class "news-item"} "\n"
-                           (h/div {:class "news-header"} "\n"
-                                  (h/a {:href (first link)
-                                        :target "_blank"} title)) "\n"
-                           (or summary content)
-                           "&nbsp;"
-                           (h/label {:class "svg-checkbox"}
-                                    (h/input {:type "checkbox"
-                                              :name "selected-item"
-                                              :value (str ord-num "," feed)})
-                                    (render-bookmark-icon))))
-        inputs-html (for [[feed pos] next-positions]
-                      (h/input {:type "hidden"
-                                :name "next-position"
-                                :value (str pos "," feed)}))]
-    (h/html "\n"
-    (h/head "\n"
-      (h/title "Welcome to Feedcircuit") "\n"
-      (h/meta {:name "viewport"
-               :content "width=device-width, initial-scale=1.0"})
-      (h/link {:rel "stylesheet" :type "text/css" :href "/style.css"})) "\n"
-    (h/body "\n"
-      (h/form {:action "/next" :method "POST"} "\n"
-              (h/div {:class "news-list"}
-                     (lines items-html) "\n"
-                     (lines inputs-html)
-                     (h/input {:type "submit"
-                               :value "Next"})))))))
+        next-positions (get-next-positions items)]
+    [:html
+     [:head
+      [:title "Welcome to Feedcircuit"]
+      [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
+      [:link {:rel "stylesheet" :type "text/css" :href "/style.css"}]]
+     [:body
+      [:form {:action "/next" :method "POST"}
+       [:div {:class "news-list"}
+        (for [{title :title
+               summary :summary
+               content :content
+               link :link
+               feed :feed
+               ord-num :num} items]
+          (news-item (first link)
+                     title
+                     (or summary content)
+                     (svg-checkbox {:name "selected-item"
+                                    :value (str ord-num "," feed)}
+                                   (bookmark-icon-svg))))
+        (for [[feed pos] next-positions]
+          [:input {:type "hidden"
+                   :name "next-position"
+                   :value (str pos "," feed)}])
+        [:input {:type "submit" :value "Next"}]]]]]))
 
-(defn render-selected [user-id]
-  (let [items (get-selected-items user-id)
-        items-html (for [{title :title
-                          summary :summary
-                          content :content
-                          link :link
-                          ord-num :num} items]
-                     (h/div {:class "news-item"} "\n"
-                            (h/div {:class "news-header"}
-                                   (h/a {:href (first link)
-                                         :target "_blank"} title)) "\n"
-                            (or summary content)
-                            "&nbsp;"
-                            (h/label {:class "svg-checkbox"}
-                                     (h/input {:type "checkbox"
-                                               :value ord-num
-                                               :onchange "setItemState(this.value, this.checked);" })
-                                     (render-checkbox))))]
-    (h/html "\n"
-            (h/head "\n"
-                    (h/title "Welcome to Feedcircuit") "\n"
-                    (h/meta {:name "viewport"
-                             :content "width=device-width, initial-scale=1.0"})
-                    (h/link {:rel "stylesheet" :type "text/css" :href "/style.css"})
-                    (h/script {:src "code.js"})) "\n"
-            (h/body "\n"
-                    (h/div {:class "news-list"}
-                           (lines items-html)) "\n"))))
+(defn build-selected [user-id]
+  (let [items (get-selected-items user-id)]
+    [:html
+     [:head
+      [:title "Welcome to Feedcircuit"]
+      [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
+      [:link {:rel "stylesheet" :type "text/css" :href "/style.css"}]
+      [:script {:src "/code.js"}]]
+     [:body
+      [:div {:class "news-list"}
+       (for [{title :title
+              summary :summary
+              content :content
+              link :link
+              ord-num :num} items]
+         (news-item (first link)
+                    title
+                    (or summary content)
+                    (svg-checkbox {:value ord-num
+                                   :onchange "setItemState(this.value, this.checked);" }
+                                  (checkbox-svg))))]]]))
 
 (defn mark-read [user-id to-positions selected]
   (let [user (get-user-attrs user-id)]
@@ -377,11 +376,11 @@
 
 (defroutes app-routes
   (GET "/" [count]
-       (render-feed (get-user-id)
-                    (or (parse-int count) page-size)))
+       (html/html (build-feed (get-user-id)
+                              (or (parse-int count) page-size))))
 
   (GET "/selected" []
-       (render-selected (get-user-id)))
+       (html/html (build-selected (get-user-id))))
 
   (POST "/next" {params :form-params}
         (let [positions (map parse-item-id (ensure-coll (get params "next-position")))
