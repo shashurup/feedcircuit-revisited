@@ -1,7 +1,8 @@
 (ns feedcircuit-revisited.content
   (:require [crouton.html :as crouton]
             [hiccup.core :as hiccup]
-            [clojure.zip :as zip]))
+            [clojure.zip :as zip]
+            [clojure.string :as s]))
 
 (def tag :tag)
 
@@ -63,8 +64,9 @@
         Math/round)))
 
 (defn minimal-size [coll]
-  (let [expectation (expectation coll)]
-    (- expectation (variance coll expectation))))
+  (let [expectation (expectation coll)
+        variance (variance coll expectation)]
+    (max (- expectation variance) 128)))
 
 (defn accumulate-content-size [result [size element]]
   (let [current-size (or (second (last result)) 0)]
@@ -73,11 +75,12 @@
 (defn summarize-raw [html]
   (when-let [content-element (find-content-element html)]
     (let [paragraphs (->> (children content-element)
-                          (map #(vector (count (text-only %)) %))
+                          (map #(vector (count (s/trim (text-only %))) %))
                           (reduce accumulate-content-size []))
           sizes (->> paragraphs
                      (filter #(= (tag (nth % 2)) :p))
-                     (map first))
+                     (map first)
+                     (filter #(> % 0)))
           min-size (minimal-size sizes)]
       (->> paragraphs
            (take-while #(< (-(second %) (first %)) min-size))
