@@ -10,6 +10,7 @@
             [me.raynes.fs :as fs]
             [clojure.java.io :as io]
             [hiccup.core :as html]
+            [feedcircuit-revisited.content :as content]
             [clojure.core.memoize :as memz]))
 
 (defn parse-int [s] (if s (Integer. s)))
@@ -165,6 +166,16 @@
                        (sort-by :published))]
      [attrs new-items]))
 
+(defn average [coll]
+  (quot (apply + coll) (count coll)))
+
+(defn long-content? [items]
+  (->> items
+       (map :summary)
+       (map count)
+       average
+       (<= 1024)))
+
 ; === feed handling ===
 
 (defn load-feed-dirs []
@@ -185,16 +196,38 @@
 (defn dir-path [url]
   (str (fs/normalized (str (:root-dir config) "/feeds/" (dir-name url)))))
 
-(defn sync-feed! [url]
-  (let [dir (or (get @feed-dir url)
-                (let [dir (dir-path url)]
-                  (swap! feed-dir assoc url dir)
-                  dir))
-        known-ids (get-known-ids dir)
-        [attrs new-items] (fetch-new-items url known-ids)]
+(defn extract-summary [item]
+  (let [content (:summary item)
+        summary (content/summarize content)]
+    (if summary
+      (assoc item :content content
+             :summary summary)
+      item)))
+
+(defn preproces [items attrs]
+  (if (:long-content attrs)
+    (map extract-summary items)
+    items))
+
+(defn add-feed! [url]
+  (let [dir (dir-path url)
+        [attrs new-items] (fetch-new-items url #{})]
     (fs/mkdirs dir)
-    (set-attrs dir (assoc attrs :url url))
-    (append-items! dir new-items)))
+    (swap! feed-dir assoc url dir)
+    (set-attrs dir (assoc attrs
+                          :url url
+                          :long-content (long-content? new-items)))
+    (append-items! dir (preproces new-items
+                                  (get-attrs dir)))))
+
+(defn sync-feed! [url]
+  (let [dir (get @feed-dir url)
+        known-ids (get-known-ids dir)
+        [new-attrs new-items] (fetch-new-items url known-ids)]
+    (set-attrs dir (merge (get-attrs dir)
+                          new-attrs))
+    (append-items! dir (preproces new-items
+                                  (get-attrs dir)))))
 
 (defn next-update-time [url]
   (let [dir (get @feed-dir url)
@@ -327,7 +360,7 @@
                link :link
                feed :feed
                ord-num :num} items]
-          (news-item (first link)
+          (news-item (str "/item?id=" ord-num "," feed)
                      title
                      (or summary content)
                      (svg-checkbox {:name "selected-item"
@@ -354,12 +387,32 @@
               content :content
               link :link
               ord-num :num} items]
-         (news-item (first link)
+         (news-item (str "/item?id=" ord-num ",")
                     title
                     (or summary content)
                     (svg-checkbox {:value ord-num
                                    :onchange "setItemState(this.value, this.checked);" }
                                   (checkbox-svg))))]]]))
+
+(defn build-content [user-id item-id feed]
+  (let [dir (if (empty? feed) (user-dir user-id) (get @feed-dir feed))
+        item (first (get-items dir item-id))
+        content (:content item)
+        link (first (:link item))
+        title (:title item)]
+    (if content
+      [:html
+       [:head
+        [:title title]
+        [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
+        [:link {:rel "stylesheet" :type "text/css" :href "/style.css"}]]
+       [:body
+        [:div {:class "news-list"}
+         (news-item link
+                    title
+                    content
+                    "")]]]
+      link)))
 
 (defn mark-read [user-id to-positions selected]
   (let [user (get-user-attrs user-id)]
@@ -381,6 +434,13 @@
 
   (GET "/selected" []
        (html/html (build-selected (get-user-id))))
+
+  (GET "/item" [id :<< parse-item-id]
+       (let [[feed item-id] id
+             result (build-content (get-user-id) item-id feed)]
+         (if (string? result)
+           {:status 302 :headers {"Location" result}}
+           (html/html result))))
 
   (POST "/next" {params :form-params}
         (let [positions (map parse-item-id (ensure-coll (get params "next-position")))
