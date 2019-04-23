@@ -23,6 +23,20 @@
     color: inherit;
 }
 
+.nav-btn {
+    background-color: white;
+    border: 0.1em solid;
+    border-radius: 0.4em;
+    padding: 0.5em;
+}
+
+.nav-btn-right {
+    float: right;
+}
+
+p.no-more {
+    text-align: center;
+}
 
 label.svg-checkbox {
     cursor: pointer;

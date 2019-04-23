@@ -348,11 +348,12 @@
         next-positions (get-next-positions items)]
     [:html
      [:head
-      [:title "Welcome to Feedcircuit"]
+      [:title "Feedcircuit"]
       [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
-      [:link {:rel "stylesheet" :type "text/css" :href "/style.css"}]]
+      [:link {:rel "stylesheet" :type "text/css" :href "style.css"}]]
      [:body
-      [:form {:action "/next" :method "POST"}
+      [:form {:id "selected-form" :action "selected"}]
+      [:form {:action "next" :method "POST"}
        [:div {:class "news-list"}
         (for [{title :title
                summary :summary
@@ -360,26 +361,35 @@
                link :link
                feed :feed
                ord-num :num} items]
-          (news-item (str "/item?id=" ord-num "," feed)
+          (news-item (str "item?id=" ord-num "," feed)
                      title
                      (or summary content)
                      (svg-checkbox {:name "selected-item"
                                     :value (str ord-num "," feed)}
                                    (bookmark-icon-svg))))
+        (if (empty? items)
+          [:p.no-more "No more items"])
         (for [[feed pos] next-positions]
           [:input {:type "hidden"
                    :name "next-position"
                    :value (str pos "," feed)}])
-        [:input {:type "submit" :value "Next"}]]]]]))
+        (if-not (empty? items)
+          [:input {:class "nav-btn"
+                   :type "submit"
+                   :value (str "Next " page-size " >>")}])
+        [:input {:class "nav-btn nav-btn-right"
+                 :form "selected-form"
+                 :type "submit"
+                 :value "Go to selected items"}]]]]]))
 
 (defn build-selected [user-id]
   (let [items (get-selected-items user-id)]
     [:html
      [:head
-      [:title "Welcome to Feedcircuit"]
+      [:title "Feedcircuit, selected items"]
       [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
-      [:link {:rel "stylesheet" :type "text/css" :href "/style.css"}]
-      [:script {:src "/code.js"}]]
+      [:link {:rel "stylesheet" :type "text/css" :href "style.css"}]
+      [:script {:src "code.js"}]]
      [:body
       [:div {:class "news-list"}
        (for [{title :title
@@ -387,12 +397,18 @@
               content :content
               link :link
               ord-num :num} items]
-         (news-item (str "/item?id=" ord-num ",")
+         (news-item (str "item?id=" ord-num ",")
                     title
                     (or summary content)
                     (svg-checkbox {:value ord-num
                                    :onchange "setItemState(this.value, this.checked);" }
-                                  (checkbox-svg))))]]]))
+                                  (checkbox-svg))))
+       (if (empty? items)
+         [:p.no-more "No more items"])
+       [:form {:action "./"}
+        [:input {:class "nav-btn nav-btn-right"
+                 :type "submit"
+                 :value "Back to the feed"}]]]]]))
 
 (defn build-content [user-id item-id feed]
   (let [dir (if (empty? feed) (user-dir user-id) (get @feed-dir feed))
