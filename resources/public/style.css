@@ -52,12 +52,13 @@ label.svg-checkbox svg {
     height: 1em;
     vertical-align: middle;
     stroke: black;
+    fill: black:
 }
 label.svg-checkbox input + svg .bookmark-icon {
     fill: none;
 }
 label.svg-checkbox input:checked + svg .bookmark-icon {
-    fill: black;
+    fill: inherit;
 }
 label.svg-checkbox input + svg .checkmark {
     stroke-opacity: 0;
