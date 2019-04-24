@@ -352,7 +352,6 @@
       [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
       [:link {:rel "stylesheet" :type "text/css" :href "style.css"}]]
      [:body
-      [:form {:id "selected-form" :action "selected"}]
       [:form {:action "next" :method "POST"}
        [:div {:class "news-list"}
         (for [{title :title
@@ -377,10 +376,8 @@
           [:input {:class "nav-btn"
                    :type "submit"
                    :value (str "Next " page-size " >>")}])
-        [:input {:class "nav-btn nav-btn-right"
-                 :form "selected-form"
-                 :type "submit"
-                 :value "Go to selected items"}]]]]]))
+        [:a {:class "nav-btn nav-btn-right"
+             :href "selected"} "Go to selected items"]]]]]))
 
 (defn build-selected [user-id]
   (let [items (get-selected-items user-id)]
@@ -405,10 +402,8 @@
                                   (checkbox-svg))))
        (if (empty? items)
          [:p.no-more "No more items"])
-       [:form {:action "./"}
-        [:input {:class "nav-btn nav-btn-right"
-                 :type "submit"
-                 :value "Back to the feed"}]]]]]))
+       [:a {:class "nav-btn nav-btn-right"
+            :href "./"} "Back to the feed"]]]]))
 
 (defn build-content [user-id item-id feed]
   (let [dir (if (empty? feed) (user-dir user-id) (get @feed-dir feed))

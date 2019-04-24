@@ -24,10 +24,14 @@
 }
 
 .nav-btn {
-    background-color: white;
+    color: inherit;
+    background-color: inherit;
     border: 0.1em solid;
     border-radius: 0.4em;
     padding: 0.5em;
+    cursor: pointer;
+    font-size: inherit;
+    text-decoration: none;
 }
 
 .nav-btn-right {
