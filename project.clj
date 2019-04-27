@@ -11,7 +11,8 @@
                  [me.raynes/fs "1.4.6"]
                  [org.clojure/core.memoize "0.7.1"]
                  [crouton "0.1.2"]
-                 [hiccup "1.0.5"]]
+                 [hiccup "1.0.5"]
+                 [clj-http "3.9.1"]]
   :plugins [[lein-ring "0.12.4"]]
   :ring {:handler feedcircuit-revisited.handler/app}
   :profiles

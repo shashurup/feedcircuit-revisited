@@ -250,7 +250,7 @@
   (->> (keys @feed-dir)
        (filter #(jt/before? (next-update-time %)
                             (jt/instant)))
-       (map sync-feed!)))
+       (map #(vector % (count (sync-feed! %))))))
 
 ; === user handling ===
 
@@ -408,8 +408,8 @@
 (defn build-content [user-id item-id feed]
   (let [dir (if (empty? feed) (user-dir user-id) (get @feed-dir feed))
         item (first (get-items dir item-id))
-        content (:content item)
         link (first (:link item))
+        content (or (:content item) (content/detect link))
         title (:title item)]
     (if content
       [:html

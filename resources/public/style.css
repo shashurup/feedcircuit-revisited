@@ -1,3 +1,9 @@
+body {
+    background-color: #daded3;
+    font-family: serif;
+    color: #2a2e23
+}
+
 .news-item {
     margin-bottom: 2em;
 }
@@ -51,8 +57,8 @@ label.svg-checkbox input {
 label.svg-checkbox svg {
     height: 1em;
     vertical-align: middle;
-    stroke: black;
-    fill: black:
+    stroke: #2a2e23;
+    fill: #cd625a;
 }
 label.svg-checkbox input + svg .bookmark-icon {
     fill: none;

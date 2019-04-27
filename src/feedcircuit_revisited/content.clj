@@ -2,7 +2,14 @@
   (:require [crouton.html :as crouton]
             [hiccup.core :as hiccup]
             [clojure.zip :as zip]
-            [clojure.string :as s]))
+            [clojure.string :as s]
+            [clj-http.client :as http]))
+
+(defn http-get [url]
+  (:body (http/get url {:decode-body-headers true :as :auto})))
+
+(def minimal-summary-size 128)
+(def minimal-article-size 512)
 
 (def tag :tag)
 
@@ -66,7 +73,7 @@
 (defn minimal-size [coll]
   (let [expectation (expectation coll)
         variance (variance coll expectation)]
-    (max (- expectation variance) 128)))
+    (max (- expectation variance) minimal-summary-size)))
 
 (defn accumulate-content-size [result [size element]]
   (let [current-size (or (second (last result)) 0)]
@@ -89,3 +96,9 @@
 (defn summarize [html]
   (if-let [summary (summarize-raw (crouton/parse-string html))]
     (hiccup/html (to-hiccup summary))))
+
+(defn detect [url]
+  (let [html (crouton/parse-string (http-get url))]
+    (if-let [content-root (find-content-element html)]
+      (if (> (count (text-only content-root)) minimal-article-size)
+        (hiccup/html (to-hiccup (children content-root)))))))
