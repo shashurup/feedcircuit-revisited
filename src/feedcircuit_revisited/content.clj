@@ -3,7 +3,8 @@
             [hiccup.core :as hiccup]
             [clojure.zip :as zip]
             [clojure.string :as s]
-            [clj-http.client :as http]))
+            [clj-http.client :as http]
+            [hiccup.core :as html]))
 
 (defn http-get [url]
   (:body (http/get url {:decode-body-headers true :as :auto})))
@@ -14,6 +15,8 @@
 (def tag :tag)
 
 (def children :content)
+
+(def attrs :attrs)
 
 (def element? map?)
 
@@ -30,11 +33,46 @@
   (take-while (complement zip/end?)
               (iterate zip/next zipper)))
 
+(defn el-map [f zipper]
+  (->> zipper
+       (iterate #(zip/next (f %)))
+       (take-while (complement zip/end?))
+       last
+       zip/root))
+
 (defn to-hiccup [node]
   (cond
     (map? node) (into [(:tag node) (:attrs node)] (map to-hiccup (:content node)))
     (coll? node) (map to-hiccup node)
     :else node))
+
+(def url-attrs {:a :href
+                :area :href
+                :img :src
+                :script :src
+                :iframe :src
+                :embed :src
+                :video :src
+                :audio :src
+                :track :src
+                :source :src
+                :input :src
+                :form :action})
+
+(defn absolute-url [url base]
+  (str (new java.net.URL (new java.net.URL base) url)))
+
+(defn make-absolute [element base]
+  (let [tag (tag element)
+        url-attr (get url-attrs tag)]
+    (if url-attr
+      (update-in element [:attrs url-attr] absolute-url base)
+      element)))
+
+(defn rebase-fragment [fragment base]
+  (->> fragment
+       html-zipper
+       (el-map #(zip/edit % make-absolute base))))
 
 (defn count-paragraphs [node]
   (->> (children node)
@@ -101,4 +139,4 @@
   (let [html (crouton/parse-string (http-get url))]
     (if-let [content-root (find-content-element html)]
       (if (> (count (text-only content-root)) minimal-article-size)
-        (hiccup/html (to-hiccup (children content-root)))))))
+        (hiccup/html (to-hiccup (children (rebase-fragment content-root url))))))))
