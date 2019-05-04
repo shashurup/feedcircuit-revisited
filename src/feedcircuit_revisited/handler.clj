@@ -309,8 +309,9 @@
     x [x]))
 
 (defn parse-item-id [item-id]
-  (let [[_ ord-num feed] (re-matches #"([0-9]+),(.*)" item-id)]
-    [feed (parse-int ord-num)]))
+  (if item-id
+    (let [[_ ord-num feed] (re-matches #"([0-9]+),(.*)" item-id)]
+      [feed (parse-int ord-num)])))
 
 (defn bookmark-icon-svg []
   [:svg {:height  "auto"
@@ -360,7 +361,7 @@
                link :link
                feed :feed
                ord-num :num} items]
-          (news-item (str "item?id=" ord-num "," feed)
+          (news-item (str "read?id=" ord-num "," feed)
                      title
                      (or summary content)
                      (svg-checkbox {:name "selected-item"
@@ -394,7 +395,7 @@
               content :content
               link :link
               ord-num :num} items]
-         (news-item (str "item?id=" ord-num ",")
+         (news-item (str "read?id=" ord-num ",")
                     title
                     (or summary content)
                     (svg-checkbox {:value ord-num
@@ -405,11 +406,15 @@
        [:a {:class "nav-btn nav-btn-right"
             :href "./"} "Back to the feed"]]]]))
 
-(defn build-content [user-id item-id feed]
-  (let [dir (if (empty? feed) (user-dir user-id) (get @feed-dir feed))
-        item (first (get-items dir item-id))
+(defn build-content [user-id item-id feed url]
+  (let [dir (if (empty? feed)
+              (user-dir user-id)
+              (get @feed-dir feed))
+        item (if item-id
+               (first (get-items dir item-id))
+               {:link [url]})
         link (first (:link item))
-        content (or (:content item) (content/detect link))
+        content (or (:content item) (content/detect link (:summary item)))
         title (:title item)]
     (if content
       [:html
@@ -446,9 +451,9 @@
   (GET "/selected" []
        (html/html (build-selected (get-user-id))))
 
-  (GET "/item" [id :<< parse-item-id]
-       (let [[feed item-id] id
-             result (build-content (get-user-id) item-id feed)]
+  (GET "/read" [id url]
+       (let [[feed item-id] (parse-item-id id)
+             result (build-content (get-user-id) item-id feed url)]
          (if (string? result)
            {:status 302 :headers {"Location" result}}
            (html/html result))))

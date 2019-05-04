@@ -12,7 +12,8 @@
                  [org.clojure/core.memoize "0.7.1"]
                  [crouton "0.1.2"]
                  [hiccup "1.0.5"]
-                 [clj-http "3.9.1"]]
+                 [clj-http "3.9.1"]
+                 [org.clojure/tools.trace "0.7.10"]]
   :plugins [[lein-ring "0.12.4"]]
   :ring {:handler feedcircuit-revisited.handler/app}
   :profiles

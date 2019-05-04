@@ -4,7 +4,8 @@
             [clojure.zip :as zip]
             [clojure.string :as s]
             [clj-http.client :as http]
-            [hiccup.core :as html]))
+            [hiccup.core :as html])
+  (:use [clojure.tools.trace]))
 
 (defn http-get [url]
   (:body (http/get url {:decode-body-headers true :as :auto})))
@@ -28,6 +29,14 @@
                children
                #(assoc %1 :content (vec %2))
                html)))
+
+(def elements-to-ignore #{:a :head :script :style :nav
+                          :aside :footer :header :svg})
+
+(defn content-zipper [html]
+  (html-zipper html
+               #(and (map? %)
+                     (nil? (get elements-to-ignore (tag %))))))
 
 (defn node-seq [zipper]
   (take-while (complement zip/end?)
@@ -65,7 +74,7 @@
 (defn make-absolute [element base]
   (let [tag (tag element)
         url-attr (get url-attrs tag)]
-    (if url-attr
+    (if (and url-attr (get (attrs element) url-attr))
       (update-in element [:attrs url-attr] absolute-url base)
       element)))
 
@@ -74,21 +83,36 @@
        html-zipper
        (el-map #(zip/edit % make-absolute base))))
 
+(defn text-size [html]
+  (->> (content-zipper html)
+       node-seq
+       (map zip/node)
+       (filter string?)
+       (map s/trim)
+       (map count)
+       (reduce +)))
+
+(defn text-size-in-paragraphs [node]
+  (->> (children node)
+       (filter #(= (tag %) :p))
+       (map text-size)
+       (reduce +)))
+
 (defn count-paragraphs [node]
   (->> (children node)
        (filter #(= (tag %) :p))
        count))
 
 (defn find-content-element [html]
-  (let [candidates (->> html
-                        html-zipper
-                        node-seq
-                        (map zip/node)
-                        (filter element?)
-                        (map #(vector (count-paragraphs %) %))
-                        (sort-by first))
-        [para-count content-element] (last candidates)]
-    (if (> para-count 0)
+  (let [winner (->> html
+                    html-zipper
+                    node-seq
+                    (map zip/node)
+                    (filter element?)
+                    (map #(vector (text-size-in-paragraphs %) %))
+                    (reduce #(max-key first %1 %2)))
+        [size content-element] winner]
+    (if (> size 0)
       content-element)))
 
 (defn text-only [node]
@@ -120,7 +144,7 @@
 (defn summarize-raw [html]
   (when-let [content-element (find-content-element html)]
     (let [paragraphs (->> (children content-element)
-                          (map #(vector (count (s/trim (text-only %))) %))
+                          (map #(vector (text-size %) %))
                           (reduce accumulate-content-size []))
           sizes (->> paragraphs
                      (filter #(= (tag (nth % 2)) :p))
@@ -135,8 +159,49 @@
   (if-let [summary (summarize-raw (crouton/parse-string html))]
     (hiccup/html (to-hiccup summary))))
 
-(defn detect [url]
-  (let [html (crouton/parse-string (http-get url))]
+(defn alphabetic-only [s]
+  (s/replace s #"\P{IsAlphabetic}" ""))
+
+(def text-node? (comp string? zip/node))
+
+(defn find-biggest-text [zipper]
+  (->> (node-seq zipper)
+       (filter text-node?)
+       (reduce #(max-key (comp count zip/node) %1 %2))))
+
+(defn find-element-containing [zipper hint]
+  (let [source (alphabetic-only (text-only hint))
+        size (min minimal-summary-size (count source))]
+    (->> (node-seq zipper)
+         (filter text-node?)
+         (filter #(> (count (zip/node %)) size))
+         (filter #(s/includes? source
+                               (alphabetic-only (subs (zip/node %) 0 size))))
+         first)))
+
+(defn find-anchor-element [zipper hint]
+  (or (if hint (find-element-containing zipper hint))
+      (find-biggest-text zipper)))
+
+(defn content-axis [html hint]
+  (let [zipper (content-zipper html)
+        anchor (find-anchor-element zipper hint)]
+    (->> (iterate zip/up anchor)
+         (map zip/node)
+         (take-while #(not= :html (tag %)))
+         (map #(vector (text-size %) %)))))
+
+(defn find-content-element2 [html hint]
+  (->> (content-axis html hint)
+       (partition 2 1)
+       (map (fn [[[l1 n1] [l2 n2]]] (vector (- l2 l1) n2)))
+       (reduce #(max-key first %1 %2))
+       second))
+
+(defn detect [url hint]
+  (let [html (crouton/parse-string (http-get url))
+        hint-html (if (not (empty? hint))
+                    (crouton/parse-string hint))]
     (if-let [content-root (find-content-element html)]
       (if (> (count (text-only content-root)) minimal-article-size)
         (hiccup/html (to-hiccup (children (rebase-fragment content-root url))))))))
