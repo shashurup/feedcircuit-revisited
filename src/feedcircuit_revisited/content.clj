@@ -112,7 +112,7 @@
                     (map #(vector (text-size-in-paragraphs %) %))
                     (reduce #(max-key first %1 %2)))
         [size content-element] winner]
-    (if (> size 0)
+    (if (> size minimal-article-size)
       content-element)))
 
 (defn text-only [node]
@@ -203,5 +203,4 @@
         hint-html (if (not (empty? hint))
                     (crouton/parse-string hint))]
     (if-let [content-root (find-content-element html)]
-      (if (> (count (text-only content-root)) minimal-article-size)
-        (hiccup/html (to-hiccup (children (rebase-fragment content-root url))))))))
+      (hiccup/html (to-hiccup (children (rebase-fragment content-root url)))))))
