@@ -386,25 +386,29 @@
      [:head
       [:title "Feedcircuit, selected items"]
       [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
-      [:link {:rel "stylesheet" :type "text/css" :href "style.css"}]
-      [:script {:src "code.js"}]]
+      [:link {:rel "stylesheet" :type "text/css" :href "style.css"}]]
      [:body
-      [:div {:class "news-list"}
-       (for [{title :title
-              summary :summary
-              content :content
-              link :link
-              ord-num :num} items]
-         (news-item (str "read?id=" ord-num ",")
-                    title
-                    (or summary content)
-                    (svg-checkbox {:value ord-num
-                                   :onchange "setItemState(this.value, this.checked);" }
-                                  (checkbox-svg))))
-       (if (empty? items)
-         [:p.no-more "No more items"])
-       [:a {:class "nav-btn nav-btn-right"
-            :href "./"} "Back to the feed"]]]]))
+      [:form {:action "archive" :method "POST"}
+       [:div {:class "news-list"}
+        (for [{title :title
+               summary :summary
+               content :content
+               link :link
+               ord-num :num} items]
+          (news-item (str "read?id=" ord-num ",")
+                     title
+                     (or summary content)
+                     (svg-checkbox {:name "selected-item"
+                                    :value ord-num}
+                                   (checkbox-svg))))
+        (if (empty? items)
+          [:p.no-more "No more items"])
+        (if-not (empty? items)
+          [:input {:class "nav-btn"
+                   :type "submit"
+                   :value "Archive selected"}])
+        [:a {:class "nav-btn nav-btn-right"
+             :href "./"} "Back to the feed"]]]]]))
 
 (defn build-content [user-id item-id feed url]
   (let [dir (if (empty? feed)
@@ -436,10 +440,10 @@
         (update-in [:positions] merge (into {} to-positions))
         (update-user-attrs!))))
 
-(defn mark-item [user-id item-id state]
+(defn archive-items [user-id item-ids]
   (let [user (get-user-attrs user-id)]
     (update-user-attrs!
-     (update user :unread (if state disj conj) item-id))))
+     (update user :unread #(apply disj % item-ids)))))
 
 (defn get-user-id [] "georgy@kibardin.name")
 
@@ -464,10 +468,10 @@
           (mark-read (get-user-id) positions selected-ids)
           {:status 302 :headers {"Location" "/"}}))
 
-  (POST "/mark-item" [item-id :<< parse-int
-                      read :<< #(= % "true")]
-        (mark-item (get-user-id) item-id read)
-        {:status 200})
+  (POST "/archive" {params :form-params}
+        (archive-items (get-user-id)
+                       (map parse-int (ensure-coll (get params "selected-item"))))
+        {:status 302 :headers {"Location" "selected"}})
 
   (route/resources "/")
 
