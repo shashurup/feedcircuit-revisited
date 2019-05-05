@@ -35,15 +35,16 @@
            {:status 302 :headers {"Location" result}}
            (html/html result))))
 
-  (POST "/next" {params :form-params}
-        (let [positions (map parse-item-id (ensure-coll (get params "next-position")))
-              selected-ids (map parse-item-id (ensure-coll (get params "selected-item")))]
+  (POST "/next" {{np "next-position"
+                  si "selected-item"} :form-params}
+        (let [positions (map parse-item-id (ensure-coll np))
+              selected-ids (map parse-item-id (ensure-coll si))]
           (ui/mark-read (get-user-id) positions selected-ids)
           {:status 302 :headers {"Location" "/"}}))
 
-  (POST "/archive" {params :form-params}
+  (POST "/archive" {{items "selected-item"} :form-params}
         (ui/archive-items (get-user-id)
-                          (map as-int (ensure-coll (get params "selected-item"))))
+                          (map as-int (ensure-coll items)))
         {:status 302 :headers {"Location" "selected"}})
 
   (route/resources "/")
