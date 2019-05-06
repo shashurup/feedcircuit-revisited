@@ -46,15 +46,23 @@
          :target "_blank"} title]]
    summary "&nbsp;" mark])
 
+(defn head [title]
+  [:head
+   [:title title]
+   [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
+   [:link {:rel "stylesheet" :type "text/css" :href "style.css"}]])
+
+(defn submit-button [caption]
+  [:input {:class "nav-btn"
+           :type "submit"
+           :value caption}])
+
 (defn build-feed [user-id item-count]
   (let [user (feed/get-user-attrs user-id)
         items (feed/get-user-items user item-count)
         next-positions (get-next-positions items)]
     [:html
-     [:head
-      [:title "Feedcircuit"]
-      [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
-      [:link {:rel "stylesheet" :type "text/css" :href "style.css"}]]
+     (head "Feedcircuit")
      [:body
       [:form {:action "next" :method "POST"}
        [:div {:class "news-list"}
@@ -77,19 +85,14 @@
                    :name "next-position"
                    :value (str pos "," feed)}])
         (if-not (empty? items)
-          [:input {:class "nav-btn"
-                   :type "submit"
-                   :value (str "Next " page-size " >>")}])
+          (submit-button (str "Next " page-size " >>")))
         [:a {:class "nav-btn nav-btn-right"
              :href "selected"} "Go to selected items"]]]]]))
 
 (defn build-selected [user-id]
   (let [items (feed/get-selected-items user-id)]
     [:html
-     [:head
-      [:title "Feedcircuit, selected items"]
-      [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
-      [:link {:rel "stylesheet" :type "text/css" :href "style.css"}]]
+     (head "Feedcircuit, selected items")
      [:body
       [:form {:action "archive" :method "POST"}
        [:div {:class "news-list"}
@@ -107,9 +110,7 @@
         (if (empty? items)
           [:p.no-more "No more items"])
         (if-not (empty? items)
-          [:input {:class "nav-btn"
-                   :type "submit"
-                   :value "Archive selected"}])
+          (submit-button "Archive selected"))
         [:a {:class "nav-btn nav-btn-right"
              :href "./"} "Back to the feed"]]]]]))
 
@@ -125,10 +126,7 @@
         title (:title item)]
     (if content
       [:html
-       [:head
-        [:title title]
-        [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
-        [:link {:rel "stylesheet" :type "text/css" :href "/style.css"}]]
+       (head title)
        [:body
         [:div {:class "news-list"}
          (news-item link
