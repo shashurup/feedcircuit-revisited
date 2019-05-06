@@ -48,27 +48,34 @@ p.no-more {
     text-align: center;
 }
 
-label.svg-checkbox {
-    cursor: pointer;
-}
-label.svg-checkbox input {
+input.item-check {
     display: none;
 }
-label.svg-checkbox svg {
+label.item-check {
+    cursor: pointer;
+}
+label.item-check svg {
     height: 1em;
     vertical-align: middle;
     stroke: #2a2e23;
     fill: #cd625a;
 }
-label.svg-checkbox input + svg .bookmark-icon {
-    fill: none;
-}
-label.svg-checkbox input:checked + svg .bookmark-icon {
-    fill: inherit;
-}
-label.svg-checkbox input + svg .checkmark {
+input.archive-item-check + div.news-item label.item-check svg .checkmark {
     stroke-opacity: 0;
 }
-label.svg-checkbox input:checked + svg .checkmark {
+input.archive-item-check:checked + div.news-item label.item-check svg .checkmark {
     stroke-opacity: 1;
+}
+input.archive-item-check + div.news-item {
+    opacity: 1;
+}
+input.archive-item-check:checked + div.news-item {
+    opacity: 0.33;
+}
+
+input.select-item-check + div.news-item label.item-check svg .bookmark-icon {
+    fill: none;
+}
+input.select-item-check:checked + div.news-item label.item-check svg .bookmark-icon {
+    fill: inherit;
 }

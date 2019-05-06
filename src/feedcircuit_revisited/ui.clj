@@ -27,8 +27,17 @@
 (defn svg-checkbox [input-attrs svg]
   [:label {:class "svg-checkbox"}
    [:input (merge {:type "checkbox"}
-                  input-attrs)]
+                   input-attrs)]
    svg])
+
+(defn ch-id [idx] (str "ch" idx))
+
+(defn item-checkbox [idx class value]
+  [:input {:type "checkbox"
+           :id (ch-id idx)
+           :class (str "item-check " class)
+           :name "selected-item"
+           :value value}])
 
 (defn news-item [url title summary mark]
   [:div {:class "news-item"}
@@ -49,18 +58,18 @@
      [:body
       [:form {:action "next" :method "POST"}
        [:div {:class "news-list"}
-        (for [{title :title
-               summary :summary
-               content :content
-               link :link
-               feed :feed
-               ord-num :num} items]
-          (news-item (str "read?id=" ord-num "," feed)
-                     title
-                     (or summary content)
-                     (svg-checkbox {:name "selected-item"
-                                    :value (str ord-num "," feed)}
-                                   (bookmark-icon-svg))))
+        (for [[idx {title :title
+                    summary :summary
+                    content :content
+                    link :link
+                    feed :feed
+                    ord-num :num}] (map-indexed vector items)]
+          (list (item-checkbox idx "select-item-check" (str ord-num "," feed))
+                (news-item (str "read?id=" ord-num "," feed)
+                           title
+                           (or summary content)
+                           [:label {:class "item-check"
+                                    :for (ch-id idx)} (bookmark-icon-svg)])))
         (if (empty? items)
           [:p.no-more "No more items"])
         (for [[feed pos] next-positions]
@@ -84,17 +93,17 @@
      [:body
       [:form {:action "archive" :method "POST"}
        [:div {:class "news-list"}
-        (for [{title :title
-               summary :summary
-               content :content
-               link :link
-               ord-num :num} items]
-          (news-item (str "read?id=" ord-num ",")
-                     title
-                     (or summary content)
-                     (svg-checkbox {:name "selected-item"
-                                    :value ord-num}
-                                   (checkbox-svg))))
+        (for [[idx {title :title
+                    summary :summary
+                    content :content
+                    link :link
+                    ord-num :num}] (map-indexed vector items)]
+          (list (item-checkbox idx "archive-item-check" ord-num)
+                (news-item (str "read?id=" ord-num ",")
+                           title
+                           (or summary content)
+                           [:label {:class "item-check"
+                                    :for (ch-id idx)} (checkbox-svg)])))
         (if (empty? items)
           [:p.no-more "No more items"])
         (if-not (empty? items)
