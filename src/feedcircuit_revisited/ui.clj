@@ -69,7 +69,6 @@
         (for [[idx {title :title
                     summary :summary
                     content :content
-                    link :link
                     feed :feed
                     ord-num :num}] (map-indexed vector items)]
           (list (item-checkbox idx "select-item-check" (str ord-num "," feed))
@@ -99,7 +98,6 @@
         (for [[idx {title :title
                     summary :summary
                     content :content
-                    link :link
                     ord-num :num}] (map-indexed vector items)]
           (list (item-checkbox idx "archive-item-check" ord-num)
                 (news-item (str "read?id=" ord-num ",")
@@ -114,14 +112,18 @@
         [:a {:class "nav-btn nav-btn-right"
              :href "./"} "Back to the feed"]]]]]))
 
+(defn get-item-link [item]
+  (let [link (:link item)]
+    (if (coll? link) (first link) link)))
+
 (defn build-content [user-id item-id feed url]
   (let [dir (if (empty? feed)
               (feed/user-dir user-id)
               (get @feed/feed-dir feed))
         item (if item-id
                (first (feed/get-items dir item-id))
-               {:link [url]})
-        link (first (:link item))
+               {:link url})
+        link (get-item-link item)
         content (or (:content item) (content/detect link (:summary item)))
         title (:title item)]
     (if content

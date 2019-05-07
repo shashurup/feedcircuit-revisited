@@ -113,12 +113,15 @@
                :updated :published
                :description :summary})
 
-(def array-attrs #{:author :category :contributor :link})
+(def array-attrs #{:author :category :contributor})
 
 (defn content-str [attr] (apply str (:content attr)))
 
-(defn get-link-url [attr] (or (get-in attr [:attrs :href])
-                              (content-str attr)))
+(defn get-link-url [attr]
+  (if-let [link (get-in attr [:attrs :href])]
+    (if (= "alternate" (get-in attr [:attrs :rel] "alternate"))
+      link)
+    (content-str attr)))
 
 (defn from-rfc1123-datetime [attr] (str (jt/instant (jt/formatter :rfc-1123-date-time)
                                                     (content-str attr))))
@@ -131,9 +134,9 @@
         conv (get attr-convert tag content-str)
         upd-fn (if (contains? array-attrs tag) (fn [old new] (conj (or old []) new))
                                                (fn [old new] new))]
-    (update-in item
-               [(get attr-map tag tag)]
-               upd-fn (conv attr))))
+    (if-let [attr-val (conv attr)]
+      (update-in item [(get attr-map tag tag)] upd-fn attr-val)
+      item)))
 
 (defn parse-rss-item [item]
   (reduce parse-rss-item-attribute {} (:content item)))
