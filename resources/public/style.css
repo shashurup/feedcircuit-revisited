@@ -17,7 +17,7 @@ body {
 }
 .news-list {
     max-width: 36em;
-    margin: 5%;
+    margin: auto;
 }
 .news-header {
     font-weight: bold;
