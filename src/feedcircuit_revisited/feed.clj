@@ -6,7 +6,8 @@
             [me.raynes.fs :as fs]
             [clojure.java.io :as io]
             [feedcircuit-revisited.content :as content]
-            [clojure.core.memoize :as memz]))
+            [clojure.core.memoize :as memz]
+            [clojure.string :as s]))
 
 (defn parse-int [s] (if s (Integer. s)))
 
@@ -252,12 +253,45 @@
 
 ; === user handling ===
 
+(defn parse-feed-expression [expr]
+  (let [parse-expr #(let [include (not= \! (first %))]
+                      [(if include % (apply str (rest %)))
+                       include])
+        [url filters] (cstr/split expr #" " 2)]
+    [url
+     (if (not (cstr/blank? filters))
+       (->> (cstr/split filters #",")
+            (map cstr/trim)
+            (map cstr/lower-case)
+            (map parse-expr)
+            vec))]))
+
+(defn get-attrs-for-filter [item]
+  (->> (concat (:author item) (:category item))
+       (map cstr/lower-case)
+       vec))
+
+(defn item-matches [item expressions]
+  (if (empty? expressions)
+    true
+    (let [attrs (get-attrs-for-filter item)]
+      (if (empty? attrs)
+        true
+        (first (for [attr attrs
+                     [term verdict] expressions
+                     :when (= attr term)]
+                 verdict))))))
+
 (defn get-user-items [user count]
   (let [{feeds :feeds
          positions :positions} user]
     (->> feeds
-         (map #(vector % (get-numbered-items (get @feed-dir %)
-                                             (get positions % 0))))
+         (map parse-feed-expression)
+         (map (fn [[feed exprs]]
+                (vector feed
+                        (filter #(item-matches % exprs)
+                                (get-numbered-items (get @feed-dir feed)
+                                                    (get positions feed 0))))))
          (mapcat (fn [[feed items]]
                    (map #(assoc % :feed feed) items)))
          (take count))))
