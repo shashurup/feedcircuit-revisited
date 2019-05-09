@@ -1,5 +1,6 @@
 (ns feedcircuit-revisited.ui
-  (:require [feedcircuit-revisited.feed :as feed]
+  (:require [clojure.string :as s]
+            [feedcircuit-revisited.feed :as feed]
             [feedcircuit-revisited.content :as content]))
 
 (def page-size 16)
@@ -125,7 +126,9 @@
                {:link url})
         link (get-item-link item)
         content (or (:content item) (content/detect link (:summary item)))
-        title (:title item)]
+        title (:title item)
+        author (:author item)
+        category (:category item)]
     (if content
       [:html
        (head title)
@@ -134,7 +137,12 @@
          (news-item link
                     title
                     content
-                    "")]]]
+                    "")
+         [:div {:class "article-footer"}
+          (if (not (empty? author))
+            [:p (str "Author: " (s/join ", " author))])
+          (if (not (empty? category))
+            [:p (str "Category: " (s/join ", " category))])]]]]
       link)))
 
 (defn mark-read [user-id to-positions selected]

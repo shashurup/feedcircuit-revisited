@@ -18,6 +18,8 @@ body {
 .news-list {
     max-width: 36em;
     margin: auto;
+    margin-top: 3em;
+    margin-bottom: 3em;
 }
 .news-header {
     font-weight: bold;
@@ -27,6 +29,10 @@ body {
 .news-header a {
     text-decoration: none;
     color: inherit;
+}
+div.article-footer {
+    opacity: 0.66;
+    font-style: italic;
 }
 
 .nav-btn {
