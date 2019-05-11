@@ -155,3 +155,36 @@
   (let [user (feed/get-user-attrs user-id)]
     (feed/update-user-attrs!
      (update user :unread #(apply disj % item-ids)))))
+
+(defn build-settings [user-id]
+  (let [user (feed/get-user-attrs user-id)]
+    [:html
+     (head "Feedcircuit settings")
+     [:body
+      [:div {:class "news-list"}
+       [:p
+        "Each line in the list below defines a news source to constitute your feed. "
+        "In the simplest case it is just an URL of RSS or Atom feed. "]
+       [:p [:code "http://example.com/rss.xml"]]
+       [:p "More sofisticated setup allows you to filter news source by author and category. "
+           "For instance"]
+       [:p [:code "http://example.com/atom.xml Sport, Science, John Doe"]]
+       [:p "selects only entries in Sport and Science categories and by John Doe. Finally,"]
+       [:p [:code "http://example.com/rss.xml !Politics"]]
+       [:p "selects everything except Politics category."]
+       [:form {:action "save-settings" :method "POST"}
+        [:textarea {:name "feeds"}
+         (s/join "\n" (:feeds user))]
+        [:br]
+        (submit-button "Save")]]]]))
+
+(defn save-settings [user-id feed-lines]
+  (let [user (feed/get-user-attrs user-id)
+        feeds (s/split-lines feed-lines)
+        new-feeds (->> feeds
+                       (map feed/parse-feed-expression)
+                       (map first)
+                       (filter #(not (get @feed/feed-dir %))))]
+    (doseq [url new-feeds]
+      (feed/add-feed! url))
+    (feed/update-user-attrs! (assoc user :feeds feeds))))

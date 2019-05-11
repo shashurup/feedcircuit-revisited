@@ -47,6 +47,13 @@
                           (map as-int (ensure-coll items)))
         {:status 302 :headers {"Location" "selected"}})
 
+  (GET "/settings" []
+       (html/html (ui/build-settings (get-user-id))))
+
+  (POST "/save-settings" {{feeds "feeds"} :form-params}
+        (ui/save-settings (get-user-id) feeds)
+        {:status 302 :headers {"Location" "/"}})
+
   (route/resources "/")
 
   (route/not-found "Not Found"))

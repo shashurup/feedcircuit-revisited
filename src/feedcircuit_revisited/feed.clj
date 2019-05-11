@@ -288,12 +288,11 @@
     (->> feeds
          (map parse-feed-expression)
          (map (fn [[feed exprs]]
-                (vector feed
-                        (filter #(item-matches % exprs)
-                                (get-numbered-items (get @feed-dir feed)
-                                                    (get positions feed 0))))))
-         (mapcat (fn [[feed items]]
-                   (map #(assoc % :feed feed) items)))
+                (->> (get-numbered-items (get @feed-dir feed)
+                                         (get positions feed 0))
+                     (filter #(item-matches % exprs))
+                     (map #(assoc % :feed feed)))))
+         (apply concat)
          (take count))))
 
 (defn user-dir [id]
