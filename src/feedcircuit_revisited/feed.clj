@@ -262,7 +262,8 @@
        (map #(vector % (count (sync-and-log-safe! %))))))
 
 (defonce timer (future
-                 (while 42 (do (sync!)
+                 (while 42 (do (log/info "Starting sync by the timer")
+                               (doall (sync!))
                                (java.lang.Thread/sleep (* 30 60 1000))))))
 
 ; === user handling ===
