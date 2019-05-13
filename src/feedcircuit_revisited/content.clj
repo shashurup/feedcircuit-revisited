@@ -4,8 +4,8 @@
             [clojure.zip :as zip]
             [clojure.string :as s]
             [clj-http.client :as http]
-            [hiccup.core :as html])
-  (:use [clojure.tools.trace]))
+            [hiccup.core :as html]
+            [clojure.tools.logging :as log]))
 
 (defn http-get [url]
   (:body (http/get url {:decode-body-headers true :as :auto})))
@@ -199,8 +199,11 @@
        second))
 
 (defn detect [url hint]
-  (let [html (crouton/parse-string (http-get url))
-        hint-html (if (not (empty? hint))
-                    (crouton/parse-string hint))]
-    (if-let [content-root (find-content-element html)]
-      (hiccup/html (to-hiccup (children (rebase-fragment content-root url)))))))
+  (try
+    (let [html (crouton/parse-string (http-get url))
+          hint-html (if (not (empty? hint))
+                      (crouton/parse-string hint))]
+      (if-let [content-root (find-content-element html)]
+        (hiccup/html (to-hiccup (children (rebase-fragment content-root url))))))
+    (catch Exception ex
+      (log/error "Failed to find content from" url))))

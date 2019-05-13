@@ -7,7 +7,8 @@
             [clojure.java.io :as io]
             [feedcircuit-revisited.content :as content]
             [clojure.core.memoize :as memz]
-            [clojure.string :as s]))
+            [clojure.string :as s]
+            [clojure.tools.logging :as log]))
 
 (defn parse-int [s] (if s (Integer. s)))
 
@@ -45,7 +46,7 @@
 (defn get-attrs [dir]
   (get-data (str dir "/attrs")))
 
-(def dir-cache (atom {}))
+(defonce dir-cache (atom {}))
 
 (defn load-dir [dir]
   (let [block-list (->> (fs/list-dir dir)
@@ -184,7 +185,7 @@
        (map #(vector (:url (get-attrs %)) (str %)))
        (into {})))
 
-(def feed-dir (atom (load-feed-dirs)))
+(defonce feed-dir (atom (load-feed-dirs)))
 
 (defn dir-name [url]
   (-> url
@@ -228,6 +229,15 @@
     (append-items! dir (preproces new-items
                                   (get-attrs dir)))))
 
+(defn sync-and-log-safe! [url]
+  (log/info "Getting news from" url)
+  (try
+    (let [result (sync-feed! url)]
+      (log/info "Got" (count result) "item from" url)
+      result)
+    (catch Exception ex
+      (log/error ex "Failed to get news from" url))))
+
 (defn next-update-time [url]
   (let [dir (get @feed-dir url)
         last-items (get-items dir (max 0 (- (get-item-count dir) 10)))
@@ -249,7 +259,11 @@
   (->> (keys @feed-dir)
        (filter #(jt/before? (next-update-time %)
                             (jt/instant)))
-       (map #(vector % (count (sync-feed! %))))))
+       (map #(vector % (count (sync-and-log-safe! %))))))
+
+(defonce timer (future
+                 (while 42 (do (sync!)
+                               (java.lang.Thread/sleep (* 30 60 1000))))))
 
 ; === user handling ===
 
