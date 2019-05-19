@@ -5,9 +5,9 @@
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.middleware.session.cookie :refer [cookie-store]]
             [hiccup.core :as html]
-            [clojure.core.memoize :as memz]
             [feedcircuit-revisited.ui :as ui]
-            [feedcircuit-revisited.feed :as feed]))
+            [feedcircuit-revisited.feed :as feed]
+            [feedcircuit-revisited.conf :as conf]))
 
 (defn parse-item-id [item-id]
   (if item-id
@@ -75,23 +75,11 @@
 
   (route/resources "/"))
 
-(def app
+(defn create []
   (wrap-defaults
    (routes public-routes
            (wrap-auth protected-routes)
            (route/not-found "No such resource"))
    (-> site-defaults
        (assoc-in [:security :anti-forgery] false)
-       (assoc-in [:session :store] (cookie-store {:key "here goes a key "})))))
-
-; === Debugging convenience functions ===
-
-(defn _drop-cache []
-  (reset! feed/dir-cache {})
-  (memz/memo-clear! feed/get-data))
-
-(use 'ring.adapter.jetty)
-
-(defn _run-srv []
-  (reset! feed/feed-dir (feed/load-feed-dirs))
-  (run-jetty app {:port 8080 :join? false}))
+       (assoc-in [:session :store] (cookie-store {:key (conf/param :cookie-key)})))))

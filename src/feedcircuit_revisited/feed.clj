@@ -6,13 +6,13 @@
             [me.raynes.fs :as fs]
             [clojure.java.io :as io]
             [feedcircuit-revisited.content :as content]
+            [feedcircuit-revisited.conf :as conf]
             [clojure.core.memoize :as memz]
             [clojure.string :as s]
             [clojure.tools.logging :as log]))
 
 (defn parse-int [s] (if s (Integer. s)))
 
-(def config {:root-dir "./fc-data"})
 (def block-size 100)
 
 ; === item storage ===
@@ -178,14 +178,14 @@
 
 ; === feed handling ===
 
+(defonce feed-dir (atom {}))
+
 (defn load-feed-dirs []
-  (->> (fs/list-dir (str (:root-dir config) "/feeds"))
+  (->> (fs/list-dir (str (conf/param :data-dir) "/feeds"))
        (map fs/normalized)
        (filter fs/directory?)
        (map #(vector (:url (get-attrs %)) (str %)))
        (into {})))
-
-(defonce feed-dir (atom (load-feed-dirs)))
 
 (defn dir-name [url]
   (-> url
@@ -194,7 +194,7 @@
       (cstr/replace "/" ".")))
 
 (defn dir-path [url]
-  (str (fs/normalized (str (:root-dir config) "/feeds/" (dir-name url)))))
+  (str (fs/normalized (str (conf/param :data-dir) "/feeds/" (dir-name url)))))
 
 (defn extract-summary [item]
   (let [content (:summary item)
@@ -261,11 +261,6 @@
                             (jt/instant)))
        (map #(vector % (count (sync-and-log-safe! %))))))
 
-(defonce timer (future
-                 (while 42 (do (log/info "Starting sync by the timer")
-                               (doall (sync!))
-                               (java.lang.Thread/sleep (* 30 60 1000))))))
-
 ; === user handling ===
 
 (defn parse-feed-expression [expr]
@@ -311,7 +306,7 @@
          (take count))))
 
 (defn user-dir [id]
-  (str (:root-dir config) "/users/" id))
+  (str (conf/param :data-dir) "/users/" id))
 
 (defn get-user-attrs [id]
   (-> (get-attrs (user-dir id))
@@ -338,3 +333,13 @@
         user (get-user-attrs user-id)]
     (map #(first (get-numbered-items dir %))
          (:unread user))))
+
+(defn init-auto-sync []
+  (future
+    (while 42 (do (log/info "Starting sync by the timer")
+                  (doall (sync!))
+                  (java.lang.Thread/sleep (* 30 60 1000))))))
+
+(defn init! []
+  (reset! feed-dir (load-feed-dirs))
+  (def auto-sync (init-auto-sync)))
