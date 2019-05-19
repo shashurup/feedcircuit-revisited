@@ -5,7 +5,7 @@
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [compojure "1.6.1"]
                  [ring/ring-defaults "0.3.2"]
-                 [ring/ring-jetty-adapter "1.6.3"]
+                 [ring "1.7.1"]
                  [clj-http "3.9.1"]
                  [clojure.java-time "0.3.2"]
                  [me.raynes/fs "1.4.6"]
