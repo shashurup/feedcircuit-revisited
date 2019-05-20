@@ -7,7 +7,8 @@
             [hiccup.core :as html]
             [feedcircuit-revisited.ui :as ui]
             [feedcircuit-revisited.feed :as feed]
-            [feedcircuit-revisited.conf :as conf]))
+            [feedcircuit-revisited.conf :as conf]
+            [feedcircuit-revisited.auth :as auth]))
 
 (defn parse-item-id [item-id]
   (if item-id
@@ -64,13 +65,13 @@
 
 (defroutes public-routes
   (GET "/login-options" []
-       "Here you'll be presented with login options")
+       (html/html (ui/build-login-options)))
 
-  (GET "/authenticate/:via" {{via :via user :user000} :params}
-       (if (and (= via "backdoor000") user)
+  (GET "/authenticate/:via" {{via :via code :code} :params}
+       (if-let [user-id (auth/get-email via code)]
          {:status 302
           :headers {"Location" "/"}
-          :session {:user user}}
+          :session {:user user-id}}
          {:status 403}))
 
   (route/resources "/"))

@@ -1,7 +1,8 @@
 (ns feedcircuit-revisited.ui
   (:require [clojure.string :as s]
             [feedcircuit-revisited.feed :as feed]
-            [feedcircuit-revisited.content :as content]))
+            [feedcircuit-revisited.content :as content]
+            [feedcircuit-revisited.auth :as auth]))
 
 (def page-size 16)
 
@@ -188,3 +189,12 @@
     (doseq [url new-feeds]
       (feed/add-feed! url))
     (feed/update-user-attrs! (assoc user :feeds feeds))))
+
+(defn build-login-options []
+  [:html
+   (head "Welcome to Feedcircuit")
+   [:body
+    (for [{title :title
+           icon :icon
+           url :url} (auth/get-providers)]
+      [:p [:a {:href url} title]])]])
