@@ -45,13 +45,12 @@
            tok-params :params} (:token-endpoint auth-conf)]
       (let [{access-token :access_token
              id-token :id_token} (obtain-tokens tok-url tok-params code)]
-        (if id-token
-          (obtain-email-from-id-token id-token)
-          (if access-token
-            (let [{api-url :url
-                   auth-header-type :auth-header-type
-                   email-path :email-path} (:api-endpoint auth-conf)]
-              (obtain-email-from-api api-url
-                                     auth-header-type
-                                     email-path
-                                     access-token))))))))
+        (cond
+          id-token (obtain-email-from-id-token id-token)
+          access-token (let [{api-url :url
+                              auth-header-type :auth-header-type
+                              email-path :email-path} (:api-endpoint auth-conf)]
+                         (obtain-email-from-api api-url
+                                                auth-header-type
+                                                email-path
+                                                access-token)))))))
