@@ -197,4 +197,7 @@
     (for [{title :title
            icon :icon
            url :url} (auth/get-providers)]
-      [:p [:a {:href url} title]])]])
+      [:p [:a {:href url}
+           (when icon
+             [:img {:src icon}])
+           title]])]])
