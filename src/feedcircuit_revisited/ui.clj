@@ -181,7 +181,9 @@
         [:textarea {:name "feeds"}
          (s/join "\n" (:feeds user))]
         [:br]
-        (submit-button "Save")]]]]))
+        (submit-button "Save")
+        [:a {:class "nav-btn nav-btn-right"
+             :href "./"} "Back to the feed"]]]]]))
 
 (defn save-settings [user-id feed-lines]
   (let [user (feed/get-user-attrs user-id)
