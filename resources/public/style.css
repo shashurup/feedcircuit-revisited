@@ -46,6 +46,11 @@ div.article-footer {
     text-decoration: none;
 }
 
+.disabled {
+    opacity: 0.33;
+    cursor: not-allowed;
+}
+
 .nav-btn-right {
     float: right;
 }

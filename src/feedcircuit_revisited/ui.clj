@@ -54,10 +54,14 @@
    [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
    [:link {:rel "stylesheet" :type "text/css" :href "style.css"}]])
 
-(defn submit-button [caption]
-  [:input {:class "nav-btn"
-           :type "submit"
-           :value caption}])
+(defn submit-button
+  ([caption] (submit-button caption false))
+  ([caption disabled]
+   [:input (merge {:class (str "nav-btn"
+                               (if disabled " disabled" ""))
+                   :type "submit"
+                   :value caption}
+                  (if disabled {:disabled true} {}))]))
 
 (defn build-feed [user-id item-count]
   (let [user (feed/get-user-attrs user-id)
@@ -85,8 +89,8 @@
           [:input {:type "hidden"
                    :name "next-position"
                    :value (str pos "," feed)}])
-        (if-not (empty? items)
-          (submit-button (str "Next " page-size " >>")))
+        (submit-button (str "Next " page-size " >>")
+                       (empty? items))
         [:a {:class "nav-btn nav-btn-right"
              :href "selected"} "Go to selected items"]]]]]))
 
@@ -109,8 +113,8 @@
                                     :for (ch-id idx)} (checkbox-svg)])))
         (if (empty? items)
           [:p.no-more "No more items"])
-        (if-not (empty? items)
-          (submit-button "Archive selected"))
+        (submit-button "Archive selected"
+                       (empty? items))
         [:a {:class "nav-btn nav-btn-right"
              :href "./"} "Back to the feed"]]]]]))
 
