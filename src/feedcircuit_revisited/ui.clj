@@ -198,10 +198,12 @@
   [:html
    (head "Welcome to Feedcircuit")
    [:body
-    (for [{title :title
-           icon :icon
-           url :url} (auth/get-providers)]
-      [:p [:a {:href url}
-           (when icon
-             [:img {:src icon}])
-           title]])]])
+    [:div {:class "login-options"}
+     [:p "Sign in with:"]
+     (for [{title :title
+            icon :icon
+            url :url} (auth/get-providers)]
+       [:p [:a {:href url}
+            (when icon
+              [:img {:src icon}])
+            title]])]]])

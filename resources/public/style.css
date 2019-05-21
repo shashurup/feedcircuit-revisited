@@ -4,6 +4,24 @@ body {
     color: #2a2e23
 }
 
+div.login-options {
+    margin: auto;
+    margin-top: 6em;
+    width: fit-content;
+    font-size: 2em;
+}
+
+div.login-options a {
+    text-decoration: none;
+    color: inherit;
+}
+
+div.login-options img {
+    height: 1em;
+    vertical-align: text-top;
+    margin-right: 0.5em;
+}
+
 .news-item {
     margin-bottom: 2em;
 }
