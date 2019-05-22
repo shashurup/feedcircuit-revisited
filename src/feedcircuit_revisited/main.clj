@@ -4,15 +4,18 @@
             [feedcircuit-revisited.handler :as handler]
             [feedcircuit-revisited.feed :as feed]
             [clojure.core.memoize :as memz]
-            [ring.adapter.jetty :refer [run-jetty]]))
+            [ring.adapter.jetty :refer [run-jetty]]
+            [clojure.tools.logging :as log]))
 
 (defn -main [& args]
-  (if (not (empty args))
+  (when (not (empty? args))
+    (log/info "Using config " (first args))
     (conf/load-from-file (first args)))
-  (let [port (conf/param :port)
+  (let [jetty-params (select-keys (conf/param) [:host :port])
         handler (handler/create)]
     (feed/init!)
-    (run-jetty handler {:port port})))
+    (log/info "Running Jetty with " jetty-params)
+    (run-jetty handler jetty-params)))
 
 ; === Debugging convenience functions ===
 
