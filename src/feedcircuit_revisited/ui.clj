@@ -63,6 +63,20 @@
                    :value caption}
                   (if disabled {:disabled true} {}))]))
 
+(defn menu-button []
+  [:svg {:viewBox "0 0 22 22"}
+   [:rect {:x 1 :y 1 :width 20 :height 20 :rx 3 :ry 3}]
+   (for [y [7 11 15]]
+     [:line {:x1 5 :x2 17 :y1 y :y2 y}])])
+
+(defn menu [user-id]
+  [:div.menu
+   (menu-button)
+   [:div.menu-items
+    [:div "Logged in as:" [:br] user-id]
+    [:div [:a {:href "/settings"} "Settings"]]
+    [:div [:a {:href "/logout"} "Logout"]]]])
+
 (defn build-feed [user-id item-count]
   (let [user (feed/get-user-attrs user-id)
         items (feed/get-user-items user item-count)
@@ -70,6 +84,7 @@
     [:html
      (head "Feedcircuit")
      [:body
+      (menu user-id)
       [:form {:action "next" :method "POST"}
        [:div {:class "news-list"}
         (for [[idx {title :title
@@ -99,6 +114,7 @@
     [:html
      (head "Feedcircuit, selected items")
      [:body
+      (menu user-id)
       [:form {:action "archive" :method "POST"}
        [:div {:class "news-list"}
         (for [[idx {title :title

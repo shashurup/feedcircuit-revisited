@@ -91,6 +91,11 @@
 
          {:status 403}))
 
+  (GET "/logout" []
+       {:status 302
+        :headers {"Location" "/"}
+        :session nil})
+
   (route/resources "/"))
 
 (defn create []
