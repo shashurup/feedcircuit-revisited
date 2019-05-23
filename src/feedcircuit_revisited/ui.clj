@@ -63,19 +63,27 @@
                    :value caption}
                   (if disabled {:disabled true} {}))]))
 
-(defn menu-button []
-  [:svg {:viewBox "0 0 22 22"}
-   [:rect {:x 1 :y 1 :width 20 :height 20 :rx 3 :ry 3}]
-   (for [y [7 11 15]]
-     [:line {:x1 5 :x2 17 :y1 y :y2 y}])])
+(defn navbar [user-id selected]
+  [:div.nav-bar
+   (if selected
+     (list [:a {:href "/"} "Feed"] " | "
+           [:span "Selected"] " | ")
+     (list [:span "Feed"] " | "
+           [:a {:href "/selected"} "Selected"] " | "))
+   [:div.menu
+    [:a {:href "/extra-links"} "..."]
+    [:div.menu-items
+     [:div "Logged in as:" [:br] user-id]
+     [:div [:a {:href "/settings"} "Settings"]]
+     [:div [:a {:href "/logout"} "Logout"]]]]])
 
-(defn menu [user-id]
-  [:div.menu
-   (menu-button)
-   [:div.menu-items
-    [:div "Logged in as:" [:br] user-id]
-    [:div [:a {:href "/settings"} "Settings"]]
-    [:div [:a {:href "/logout"} "Logout"]]]])
+(defn build-extra-links [user-id]
+  [:html
+   (head "Feedcircuit")
+   [:body
+    [:p "Logged in as " user-id]
+    [:p [:a {:href "/settings"} "Settings"]]
+    [:p [:a {:href "/logout"} "Logout"]]]])
 
 (defn build-feed [user-id item-count]
   (let [user (feed/get-user-attrs user-id)
@@ -84,7 +92,7 @@
     [:html
      (head "Feedcircuit")
      [:body
-      (menu user-id)
+      (navbar user-id false)
       [:form {:action "next" :method "POST"}
        [:div {:class "news-list"}
         (for [[idx {title :title
@@ -104,17 +112,15 @@
           [:input {:type "hidden"
                    :name "next-position"
                    :value (str pos "," feed)}])
-        (submit-button (str "Next " page-size " >>")
-                       (empty? items))
-        [:a {:class "nav-btn nav-btn-right"
-             :href "selected"} "Go to selected items"]]]]]))
+        (if-not (empty? items)
+          (submit-button (str "Next " page-size " >>")))]]]]))
 
 (defn build-selected [user-id]
   (let [items (feed/get-selected-items user-id)]
     [:html
      (head "Feedcircuit, selected items")
      [:body
-      (menu user-id)
+      (navbar user-id true)
       [:form {:action "archive" :method "POST"}
        [:div {:class "news-list"}
         (for [[idx {title :title
@@ -129,10 +135,8 @@
                                     :for (ch-id idx)} (checkbox-svg)])))
         (if (empty? items)
           [:p.no-more "No more items"])
-        (submit-button "Archive selected"
-                       (empty? items))
-        [:a {:class "nav-btn nav-btn-right"
-             :href "./"} "Back to the feed"]]]]]))
+        (if-not (empty? items)
+          (submit-button "Archive selected"))]]]]))
 
 (defn get-item-link [item]
   (let [link (:link item)]
@@ -216,12 +220,13 @@
   [:html
    (head "Welcome to Feedcircuit")
    [:body
-    [:div {:class "login-options"}
-     [:p "Sign in with:"]
-     (for [{title :title
-            icon :icon
-            url :url} (auth/get-providers)]
-       [:p [:a {:href url}
-            (when icon
-              [:img {:src icon}])
-            title]])]]])
+    [:div.hv-center
+     [:div.login-options
+      [:p "Sign in with:"]
+      (for [{title :title
+             icon :icon
+             url :url} (auth/get-providers)]
+        [:p [:a {:href url}
+             (when icon
+               [:img {:src icon}])
+             title]])]]]])

@@ -4,10 +4,14 @@ body {
     color: #2a2e23
 }
 
+div.hv-center {
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
 div.login-options {
-    margin: auto;
-    margin-top: 6em;
-    width: fit-content;
     font-size: 2em;
 }
 
@@ -37,7 +41,6 @@ div.login-options img {
     margin: auto;
     margin-top: 3em;
     margin-bottom: 3em;
-    clear: left;
 }
 .news-header {
     font-weight: bold;
@@ -117,16 +120,24 @@ textarea {
     margin-bottom: 1em;
 }
 
-div.menu {
-    float: left;
+div.nav-bar {
     background-color: inherit;
-    margin: 0.4em;
+    margin-top: 2em;
+    text-align: center;
 }
 
-div.menu svg {
-    height: 2em;
-    stroke: #2a2e23;
-    fill: none;
+div.nav-bar a {
+    color: inherit;
+}
+
+div.nav-bar span {
+    font-weight: bold;
+}
+
+div.menu {
+    background-color: inherit;
+    display: inline-block;
+    text-align: initial;
 }
 
 div.menu-items {

@@ -72,7 +72,10 @@
   (POST "/save-settings" {user-id :user
                           {feeds "feeds"} :form-params}
         (ui/save-settings user-id feeds)
-        {:status 303 :headers {"Location" "/"}}))
+        {:status 303 :headers {"Location" "/"}})
+
+  (GET "/extra-links" {user-id :user}
+       (html/html (ui/build-extra-links user-id))))
 
 (defroutes public-routes
   (GET "/login-options" []
