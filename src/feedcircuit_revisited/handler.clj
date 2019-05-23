@@ -33,8 +33,8 @@
         (if (and expires (> expires (jt/to-millis-from-epoch (jt/instant))))
           (handler (assoc request :user user-id))
           (redirect-to-login (auth/get-provider-url via
-                                                    user-id
-                                                    (:uri request))))
+                                                    {:login_hint user-id
+                                                     :state (:uri request)})))
         (redirect-to-login "login-options")))))
 
 (defroutes protected-routes
@@ -86,7 +86,8 @@
                     :via via
                     :expires (+ (jt/to-millis-from-epoch (jt/instant))
                                 (int 1e9))}
-          :session-cookie-attrs {:expires "Wed, 11 Nov 2111 11:11:11 GMT"}}
+          :session-cookie-attrs {:expires "Wed, 11 Nov 2111 11:11:11 GMT"
+                                 :same-site :lax}}
 
          {:status 403}))
 

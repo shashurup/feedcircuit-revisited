@@ -4,9 +4,10 @@
             [clojure.string :as cstr]
             [cheshire.core :as json]))
 
-(defn get-provider-url [provider hint state]
-  (let [base-url (get-in (conf/param :oauth provider :auth-endpoint))]
-    (str base-url "&hint=" hint "&state=" state)))
+(defn get-provider-url [provider params]
+  (let [base-url (conf/param :oauth provider :auth-endpoint)]
+    (str base-url
+         (apply str (for [[k v] params] (str "&" (name k) "=" v))))))
 
 (defn get-providers []
   (for [{title :title
