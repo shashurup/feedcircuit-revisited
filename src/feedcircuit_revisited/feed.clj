@@ -298,10 +298,11 @@
     (->> feeds
          (map parse-feed-expression)
          (map (fn [[feed exprs]]
-                (->> (get-numbered-items (get @feed-dir feed)
-                                         (get positions feed 0))
-                     (filter #(item-matches % exprs))
-                     (map #(assoc % :feed feed)))))
+                (let [dir (@feed-dir feed)
+                      pos (get positions feed (max 0 (- (get-item-count dir) 10)))]
+                  (->> (get-numbered-items dir pos)
+                       (filter #(item-matches % exprs))
+                       (map #(assoc % :feed feed))))))
          (apply concat)
          (take count))))
 
