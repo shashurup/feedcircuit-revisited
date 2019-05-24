@@ -42,10 +42,10 @@
            :value value}])
 
 (defn news-item [url title summary mark]
-  [:div {:class "news-item"}
-   [:div {:class "news-header"}
-    [:a {:href url
-         :target "_blank"} title]]
+  [:div.fcr-news-item
+   [:div.fcr-news-header
+    [:a.fcr {:href url
+             :target "_blank"} title]]
    summary "&nbsp;" mark])
 
 (defn head [title]
@@ -57,25 +57,25 @@
 (defn submit-button
   ([caption] (submit-button caption false))
   ([caption disabled]
-   [:input (merge {:class (str "nav-btn"
+   [:input (merge {:class (str "fcr-btn"
                                (if disabled " disabled" ""))
                    :type "submit"
                    :value caption}
                   (if disabled {:disabled true} {}))]))
 
 (defn navbar [user-id selected]
-  [:div.nav-bar
+  [:div.fcr-nav-bar
    (if selected
-     (list [:a {:href "/"} "Feed"] " | "
+     (list [:a.fcr {:href "/"} "Feed"] " | "
            [:span "Selected"] " | ")
      (list [:span "Feed"] " | "
-           [:a {:href "/selected"} "Selected"] " | "))
-   [:div.menu
-    [:a {:href "/extra-links"} "..."]
-    [:div.menu-items
-     [:div "Logged in as:" [:br] user-id]
-     [:div [:a {:href "/settings"} "Settings"]]
-     [:div [:a {:href "/logout"} "Logout"]]]]])
+           [:a.fcr {:href "/selected"} "Selected"] " | "))
+   [:div.fcr-menu
+    [:a.fcr {:href "/extra-links"} "..."]
+    [:div.fcr-menu-items
+     [:div.fcr-menu-item "Logged in as:" [:br] user-id]
+     [:div.fcr-menu-item [:a.fcr {:href "/settings"} "Settings"]]
+     [:div.fcr-menu-item [:a.fcr {:href "/logout"} "Logout"]]]]])
 
 (defn build-extra-links [user-id]
   [:html
@@ -94,7 +94,7 @@
      [:body
       (navbar user-id false)
       [:form {:action "next" :method "POST"}
-       [:div {:class "news-list"}
+       [:div#fcr-content
         (for [[idx {title :title
                     summary :summary
                     content :content
@@ -107,7 +107,7 @@
                            [:label {:class "item-check"
                                     :for (ch-id idx)} (bookmark-icon-svg)])))
         (if (empty? items)
-          [:p.no-more "No more items"])
+          [:p.fcr-no-more-items "No more items"])
         (for [[feed pos] next-positions]
           [:input {:type "hidden"
                    :name "next-position"
@@ -122,7 +122,7 @@
      [:body
       (navbar user-id true)
       [:form {:action "archive" :method "POST"}
-       [:div {:class "news-list"}
+       [:div#fcr-content
         (for [[idx {title :title
                     summary :summary
                     content :content
@@ -158,12 +158,12 @@
       [:html
        (head title)
        [:body
-        [:div {:class "news-list"}
+        [:div#fcr-content
          (news-item link
                     title
                     content
                     "")
-         [:div {:class "article-footer"}
+         [:div.fcr-article-footer
           (if (not (empty? author))
             [:p (str "Author: " (s/join ", " author))])
           (if (not (empty? category))
@@ -186,7 +186,7 @@
     [:html
      (head "Feedcircuit settings")
      [:body
-      [:div {:class "news-list"}
+      [:div#fcr-content
        [:p
         "Each line in the list below defines a news source to constitute your feed. "
         "In the simplest case it is just an URL of RSS or Atom feed. "]
@@ -198,12 +198,11 @@
        [:p [:code "http://example.com/rss.xml !Politics"]]
        [:p "selects everything except Politics category."]
        [:form {:action "save-settings" :method "POST"}
-        [:textarea {:name "feeds"}
+        [:textarea#fcr-settings-text {:name "feeds"}
          (s/join "\n" (:feeds user))]
         [:br]
         (submit-button "Save")
-        [:a {:class "nav-btn nav-btn-right"
-             :href "./"} "Back to the feed"]]]]]))
+        [:a.fcr-btn.fcr-btn-right {:href "./"} "Back to the feed"]]]]]))
 
 (defn save-settings [user-id feed-lines]
   (let [user (feed/get-user-attrs user-id)
@@ -221,12 +220,12 @@
    (head "Welcome to Feedcircuit")
    [:body
     [:div.hv-center
-     [:div.login-options
+     [:div#fcr-login-options
       [:p "Sign in with:"]
       (for [{title :title
              icon :icon
              url :url} (auth/get-providers)]
-        [:p [:a {:href url}
+        [:p [:a.fcr {:href url}
              (when icon
                [:img {:src icon}])
              title]])]]]])
