@@ -36,6 +36,7 @@ div.hv-center {
 }
 .fcr-news-item * {
     max-width: 100%;
+    height: auto;
 }
 .fcr-news-item::after {
     content: "";

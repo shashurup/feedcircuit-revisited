@@ -5,6 +5,7 @@
             [java-time :as jt]
             [me.raynes.fs :as fs]
             [clojure.java.io :as io]
+            [clj-http.client :as http]
             [feedcircuit-revisited.content :as content]
             [feedcircuit-revisited.conf :as conf]
             [clojure.core.memoize :as memz]
@@ -158,7 +159,8 @@
        (reduce parse-rss-item-attribute {})))
 
 (defn fetch-new-items [url known-ids]
-  (let [feed-xml (xml/parse url)
+  (let [reply (http/get url {:as :stream})
+        feed-xml (xml/parse (:body reply))
         attrs (parse-feed-details feed-xml)
         items (map parse-rss-item (extract-rss-items feed-xml))
         new-items (->> items
