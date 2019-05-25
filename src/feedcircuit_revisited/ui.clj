@@ -46,7 +46,8 @@
    [:div.fcr-news-header
     [:a.fcr {:href url
              :target "_blank"} title]]
-   summary "&nbsp;" mark])
+   [:div.fcr-news-body summary]
+   "&nbsp;&nbsp;" mark])
 
 (defn head [title]
   [:head

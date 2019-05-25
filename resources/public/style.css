@@ -34,10 +34,6 @@ div.hv-center {
 .fcr-news-item {
     margin-bottom: 2em;
 }
-.fcr-news-item * {
-    max-width: 100%;
-    height: auto;
-}
 .fcr-news-item::after {
     content: "";
     clear: both;
@@ -50,6 +46,17 @@ div.hv-center {
 .fcr-news-header a {
     text-decoration: none;
     font-weight: bold;
+}
+
+.fcr-news-body {
+    display: inline;
+}
+.fcr-news-body * {
+    max-width: 100%;
+    height: auto;
+}
+.fcr-news-body > :last-child {
+    display: inline;
 }
 
 .fcr-article-footer {
