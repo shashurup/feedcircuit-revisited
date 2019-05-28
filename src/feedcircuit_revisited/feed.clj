@@ -288,8 +288,8 @@
   (let [attrs (get-attrs-for-filter item)]
     (if (empty? attrs)
       true
-      (first (for [attr attrs
-                   [term verdict] expressions
+      (first (for [[term verdict] expressions
+                   attr attrs
                    :when (or (= term :all)
                              (= attr term))]
                verdict)))))
