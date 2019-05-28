@@ -269,14 +269,15 @@
   (let [parse-expr #(let [include (not= \! (first %))]
                       [(if include % (apply str (rest %)))
                        include])
+        add-default #(if (some second %) % (conj % [:all true]))
         [url filters] (cstr/split expr #" " 2)]
     [url
-     (if (not (cstr/blank? filters))
-       (->> (cstr/split filters #",")
-            (map cstr/trim)
-            (map cstr/lower-case)
-            (map parse-expr)
-            vec))]))
+     (->> (if (cstr/blank? filters) [] (cstr/split filters #","))
+          (map cstr/trim)
+          (map cstr/lower-case)
+          (map parse-expr)
+          vec
+          add-default)]))
 
 (defn get-attrs-for-filter [item]
   (->> (concat (:author item) (:category item))
@@ -284,15 +285,14 @@
        vec))
 
 (defn item-matches [item expressions]
-  (if (empty? expressions)
-    true
-    (let [attrs (get-attrs-for-filter item)]
-      (if (empty? attrs)
-        true
-        (first (for [attr attrs
-                     [term verdict] expressions
-                     :when (= attr term)]
-                 verdict))))))
+  (let [attrs (get-attrs-for-filter item)]
+    (if (empty? attrs)
+      true
+      (first (for [attr attrs
+                   [term verdict] expressions
+                   :when (or (= term :all)
+                             (= attr term))]
+               verdict)))))
 
 (defn get-user-items [user count]
   (let [{feeds :feeds
