@@ -10,15 +10,13 @@
   (into {} (map #(vector (:feed %) (inc (:num %))) user-items)))
 
 (defn bookmark-icon-svg []
-  [:svg {:height  "auto"
-         :viewBox "-3 -3 66 99"}
+  [:svg {:viewBox "-3 -3 66 99"}
    [:polygon {:class  "bookmark-icon"
               :points "0,0 0,90 30,60 60,90 60,0"
               :style  "stroke-width:6"}]])
 
 (defn checkbox-svg []
-  [:svg {:height  "auto"
-         :viewBox "0 0 60 60"}
+  [:svg {:viewBox "0 0 60 60"}
    [:rect {:width  "60"
            :height "60"
            :style  "stroke-width:3;fill:none"}]
@@ -53,6 +51,7 @@
   [:head
    [:title title]
    [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
+   [:script {:src "code.js"}]
    [:link {:rel "stylesheet" :type "text/css" :href "style.css"}]])
 
 (defn submit-button
@@ -135,7 +134,7 @@
                            [:label {:class "item-check"
                                     :for (ch-id idx)} (checkbox-svg)])))
         (if (empty? items)
-          [:p.no-more "No more items"])
+          [:p.fcr-no-more-items "No more items"])
         (if-not (empty? items)
           (submit-button "Archive selected"))]]]]))
 
@@ -154,7 +153,10 @@
         content (or (:content item) (content/detect link (:summary item)))
         title (:title item)
         author (:author item)
-        category (:category item)]
+        category (:category item)
+        done-action (if (empty? feed)
+                      (str "archiveItem(" item-id ");")
+                      "window.close();")]
     (if content
       [:html
        (head title)
@@ -168,7 +170,8 @@
           (if (not (empty? author))
             [:p (str "Author: " (s/join ", " author))])
           (if (not (empty? category))
-            [:p (str "Category: " (s/join ", " category))])]]]]
+            [:p (str "Category: " (s/join ", " category))])]
+         [:button.fcr-btn {:onclick done-action} "Done"]]]]
       link)))
 
 (defn mark-read [user-id to-positions selected]
