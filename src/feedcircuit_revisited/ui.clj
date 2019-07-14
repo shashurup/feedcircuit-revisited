@@ -211,6 +211,7 @@
   (let [user (feed/get-user-attrs user-id)
         feeds (s/split-lines feed-lines)
         new-feeds (->> feeds
+                       (filter #(not= (first %) \#))
                        (map feed/parse-feed-expression)
                        (map first)
                        (filter #(not (get @feed/feed-dir %))))]

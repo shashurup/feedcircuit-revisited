@@ -299,6 +299,7 @@
   (let [{feeds :feeds
          positions :positions} user]
     (->> feeds
+         (filter #(not= (first %) \#))
          (map parse-feed-expression)
          (map (fn [[feed exprs]]
                 (let [dir (@feed-dir feed)
