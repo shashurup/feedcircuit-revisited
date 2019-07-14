@@ -32,11 +32,12 @@
 
 (defn ch-id [idx] (str "ch" idx))
 
-(defn item-checkbox [idx class value]
+(defn item-checkbox [idx class onchange value]
   [:input {:type "checkbox"
            :id (ch-id idx)
            :class (str "item-check " class)
            :name "selected-item"
+           :onchange (or onchange "")
            :value value}])
 
 (defn news-item [url title summary mark]
@@ -93,21 +94,25 @@
      (head "Feedcircuit")
      [:body
       (navbar user-id false)
-      [:form {:action "next" :method "POST"}
-       [:div#fcr-content
-        (for [[idx {title :title
-                    summary :summary
-                    content :content
-                    feed :feed
-                    ord-num :num}] (map-indexed vector items)]
-          (list (item-checkbox idx "select-item-check" (str ord-num "," feed))
-                (news-item (str "read?id=" ord-num "," feed)
-                           title
-                           (or summary content)
-                           [:label {:class "item-check"
-                                    :for (ch-id idx)} (bookmark-icon-svg)])))
-        (if (empty? items)
-          [:p.fcr-no-more-items "No more items"])
+      [:div#fcr-content
+       (for [[idx {title :title
+                   summary :summary
+                   content :content
+                   url :link
+                   feed :feed
+                   ord-num :num}] (map-indexed vector items)]
+         (list (item-checkbox idx
+                              "select-item-check"
+                              (str "feedItemChanged(this, '" url "');")
+                              (str ord-num "," feed))
+               (news-item (str "read?source=fc&id=" ord-num "," feed)
+                          title
+                          (or summary content)
+                          [:label {:class "item-check"
+                                   :for (ch-id idx)} (bookmark-icon-svg)])))
+       (if (empty? items)
+         [:p.fcr-no-more-items "No more items"])
+       [:form {:action "next" :method "POST"}
         (for [[feed pos] next-positions]
           [:input {:type "hidden"
                    :name "next-position"
@@ -121,41 +126,40 @@
      (head "Feedcircuit, selected items")
      [:body
       (navbar user-id true)
-      [:form {:action "archive" :method "POST"}
-       [:div#fcr-content
-        (for [[idx {title :title
-                    summary :summary
-                    content :content
-                    ord-num :num}] (map-indexed vector items)]
-          (list (item-checkbox idx "archive-item-check" ord-num)
-                (news-item (str "read?id=" ord-num ",")
-                           title
-                           (or summary content)
-                           [:label {:class "item-check"
-                                    :for (ch-id idx)} (checkbox-svg)])))
-        (if (empty? items)
-          [:p.fcr-no-more-items "No more items"])
-        (if-not (empty? items)
-          (submit-button "Archive selected"))]]]]))
+      [:div#fcr-content
+       (for [[idx {title :title
+                   summary :summary
+                   content :content
+                   url :link
+                   feed    :feed
+                   ord-num :num}] (map-indexed vector items)]
+         (list (item-checkbox idx
+                              "archive-item-check"
+                              (str "selectedItemChanged(this, '" url "');")
+                              (str ord-num "," feed))
+               (news-item (str "read?source=selected&id=" ord-num "," feed)
+                          title
+                          (or summary content)
+                          [:label {:class "item-check"
+                                   :for (ch-id idx)} (checkbox-svg)])))
+       (if (empty? items)
+         [:p.fcr-no-more-items "No more items"])]]]))
 
 (defn get-item-link [item]
   (let [link (:link item)]
     (if (coll? link) (first link) link)))
 
-(defn build-content [user-id item-id feed url]
-  (let [dir (if (empty? feed)
-              (feed/user-dir user-id)
-              (get @feed/feed-dir feed))
-        item (if item-id
-               (first (feed/get-items dir item-id))
-               {:link url})
+(defn build-content [user-id feed ord-num url source]
+  (let [item (if (empty? feed)
+               {:link url}
+               (first (feed/get-items (@feed/feed-dir feed) ord-num)))
         link (get-item-link item)
         content (or (:content item) (content/detect link (:summary item)))
         title (:title item)
         author (:author item)
         category (:category item)
-        done-action (if (empty? feed)
-                      (str "archiveItem(" item-id ");")
+        done-action (if (= source "selected")
+                      (str "removeFromSelected('" link "');")
                       "window.close();")]
     (if content
       [:html
@@ -171,19 +175,14 @@
             [:p (str "Author: " (s/join ", " author))])
           (if (not (empty? category))
             [:p (str "Category: " (s/join ", " category))])]
-         [:button.fcr-btn {:onclick done-action} "Done"]]]]
+         (if source [:button.fcr-btn {:onclick done-action} "Done"])]]]
       link)))
 
 (defn mark-read [user-id to-positions selected]
   (let [user (feed/get-user-attrs user-id)]
-    (-> (update-in user [:unread] into (feed/select-items! user-id selected))
+    (-> user
         (update-in [:positions] merge (into {} to-positions))
         (feed/update-user-attrs!))))
-
-(defn archive-items [user-id item-ids]
-  (let [user (feed/get-user-attrs user-id)]
-    (feed/update-user-attrs!
-     (update user :unread #(apply disj % item-ids)))))
 
 (defn build-settings [user-id]
   (let [user (feed/get-user-attrs user-id)]
@@ -195,7 +194,7 @@
         "Each line in the list below defines a news source to constitute your feed. "
         "In the simplest case it is just an URL of RSS or Atom feed. "]
        [:p [:code "http://example.com/rss.xml"]]
-       [:p "More sofisticated setup allows you to filter news source by author and category. "
+       [:p "More sofisticated setup allows you to filter a news source by its author or category. "
            "For instance"]
        [:p [:code "http://example.com/atom.xml Sport, Science, John Doe"]]
        [:p "selects only entries in Sport and Science categories and by John Doe. Finally,"]

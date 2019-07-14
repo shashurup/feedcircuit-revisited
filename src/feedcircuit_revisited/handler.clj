@@ -13,8 +13,9 @@
 
 (defn parse-item-id [item-id]
   (if item-id
-    (let [[_ ord-num feed] (re-matches #"([0-9]+),(.*)" item-id)]
-      [feed (as-int ord-num)])))
+    (if-let [[_ ord-num feed] (re-matches #"([0-9]+),(.*)" item-id)]
+      [feed (as-int ord-num)]
+      item-id)))
 
 (defn ensure-coll [x]
   (cond
@@ -45,9 +46,20 @@
   (GET "/selected" {user-id :user}
        (html/html (ui/build-selected user-id)))
 
-  (GET "/read" {user-id :user {id :id url :url} :params}
-       (let [[feed item-id] (parse-item-id id)
-             result (ui/build-content user-id item-id feed url)]
+  (POST "/selected-add" {user-id :user {id "id"
+                                        url "url"} :form-params}
+        (let [ids (map parse-item-id (ensure-coll id))]
+          (feed/selected-add! user-id ids)))
+
+  (POST "/selected-remove" {user-id :user {url "url"} :form-params}
+        (let [urls (ensure-coll url)]
+          (feed/selected-remove! user-id urls)))
+
+  (GET "/read" {user-id :user {id :id
+                               url :url
+                               source :source} :params}
+       (let [[feed ord-num] (parse-item-id id)
+             result (ui/build-content user-id feed ord-num url source)]
          (if (string? result)
            {:status 302 :headers {"Location" result}}
            (html/html result))))
@@ -59,12 +71,6 @@
               selected-ids (map parse-item-id (ensure-coll si))]
           (ui/mark-read user-id positions selected-ids)
           {:status 303 :headers {"Location" "/"}}))
-
-  (POST "/archive" {user-id :user
-                    {items "selected-item"} :form-params}
-        (ui/archive-items user-id
-                          (map as-int (ensure-coll items)))
-        {:status 303 :headers {"Location" "selected"}})
 
   (GET "/settings" {user-id :user}
        (html/html (ui/build-settings user-id)))

@@ -33,7 +33,8 @@
 
 (defn set-data [filename data]
   (write-file filename data)
-  (memz/memo-clear! get-data [filename]))
+  (memz/memo-clear! get-data [filename])
+  data)
 
 (defn get-block [dir block-num]
   (get-data (str dir "/" block-num)))
@@ -324,7 +325,7 @@
                    (dissoc :id)
                    (update :unread vec)))))
 
-(defn select-items! [user ids]
+(defn archive-items! [user ids]
   (let [dir (user-dir user)
         items (map (fn [[url pos]]
                      (first (get-items (get @feed-dir url) pos))) ids)]
@@ -332,10 +333,25 @@
     (append-items! dir items)))
 
 (defn get-selected-items [user-id]
-  (let [dir (user-dir user-id)
-        user (get-user-attrs user-id)]
-    (map #(first (get-numbered-items dir %))
-         (:unread user))))
+  (let [user (get-user-attrs user-id)]
+    (sort-by #(vector (.indexOf (:feeds user) (:feed %))
+                      (:num %))
+             (:selected user []))))
+
+(defn selected-add! [user-id ids]
+  (let [user (get-user-attrs user-id)
+        items-to-add (for [[feed pos] ids]
+                       (-> (get-numbered-items (@feed-dir feed) pos)
+                           first
+                           (assoc :feed feed)))]
+    (update-user-attrs!
+     (update user :selected into items-to-add))))
+
+(defn selected-remove! [user-id urls]
+  (let [user (get-user-attrs user-id)
+        pred (fn [{url :link}] (some #(= url %) urls))]
+    (update-user-attrs!
+     (update user :selected #(remove pred %)))))
 
 (defn init-auto-sync []
   (future
