@@ -280,6 +280,11 @@
           vec
           add-default)]))
 
+(defn make-expressions [feeds]
+  (->> feeds
+       (filter #(not= (first %) \#))
+       (map parse-feed-expression)))
+
 (defn get-attrs-for-filter [item]
   (->> (concat (:author item) (:category item))
        (map cstr/lower-case)
@@ -298,9 +303,7 @@
 (defn get-user-items [user count]
   (let [{feeds :feeds
          positions :positions} user]
-    (->> feeds
-         (filter #(not= (first %) \#))
-         (map parse-feed-expression)
+    (->> (make-expressions feeds)
          (map (fn [[feed exprs]]
                 (let [dir (@feed-dir feed)
                       pos (get positions feed (max 0 (- (get-item-count dir) 10)))]
@@ -334,8 +337,9 @@
     (append-items! dir items)))
 
 (defn get-selected-items [user-id]
-  (let [user (get-user-attrs user-id)]
-    (sort-by #(vector (.indexOf (:feeds user) (:feed %))
+  (let [user (get-user-attrs user-id)
+        feed-urls (map first (make-expressions (:feeds user)))]
+    (sort-by #(vector (.indexOf feed-urls (:feed %))
                       (:num %))
              (:selected user []))))
 

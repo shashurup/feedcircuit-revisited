@@ -210,9 +210,7 @@
 (defn save-settings [user-id feed-lines]
   (let [user (feed/get-user-attrs user-id)
         feeds (s/split-lines feed-lines)
-        new-feeds (->> feeds
-                       (filter #(not= (first %) \#))
-                       (map feed/parse-feed-expression)
+        new-feeds (->> (feed/make-expressions feeds)
                        (map first)
                        (filter #(not (get @feed/feed-dir %))))]
     (doseq [url new-feeds]
