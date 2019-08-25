@@ -53,7 +53,8 @@
    [:title title]
    [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
    [:script {:src "code.js"}]
-   [:link {:rel "stylesheet" :type "text/css" :href "style.css"}]])
+   [:link {:rel "stylesheet" :type "text/css" :href "style.css"}]
+   [:link {:rel "shortcut icon" :type "image/png" :href "favicon.png"}]])
 
 (defn submit-button
   ([caption] (submit-button caption false))
