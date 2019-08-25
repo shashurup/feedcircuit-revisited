@@ -55,15 +55,6 @@
         (let [urls (ensure-coll url)]
           (feed/selected-remove! user-id urls)))
 
-  (GET "/read" {user-id :user {id :id
-                               url :url
-                               source :source} :params}
-       (let [[feed ord-num] (parse-item-id id)
-             result (ui/build-content user-id feed ord-num url source)]
-         (if (string? result)
-           {:status 302 :headers {"Location" result}}
-           (html/html result))))
-
   (POST "/next" {user-id :user
                  {np "next-position"
                   si "selected-item"} :form-params}
@@ -86,6 +77,13 @@
 (defroutes public-routes
   (GET "/login-options" []
        (html/html (ui/build-login-options)))
+
+  (GET "/read" {{id :id url :url source :source} :params}
+       (let [[feed ord-num] (parse-item-id id)
+             result (ui/build-content feed ord-num url source)]
+         (if (string? result)
+           {:status 302 :headers {"Location" result}}
+           (html/html result))))
 
   (GET "/authenticate/:via" {{via :via code :code} :params}
        (if-let [user-id (auth/get-email via code)]

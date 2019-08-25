@@ -83,7 +83,16 @@
        html-zipper
        (el-map #(zip/edit % make-absolute base))))
 
-(defn text-size [html]
+; === content detection core ===
+
+(defn text-size [node]
+  (->> (children node)
+       (filter string?)
+       (map s/trim)
+       (map count)
+       (reduce +)))
+
+(defn text-size-recursively [html]
   (->> (content-zipper html)
        node-seq
        (map zip/node)
@@ -95,30 +104,26 @@
 (defn text-size-in-paragraphs [node]
   (->> (children node)
        (filter #(= (tag %) :p))
-       (map text-size)
+       (map text-size-recursively)
        (reduce +)))
 
-(defn count-paragraphs [node]
-  (->> (children node)
-       (filter #(= (tag %) :p))
-       count))
-
-(defn find-content-element [html]
+(defn find-content-element-by [html f]
   (let [winner (->> html
                     html-zipper
                     node-seq
                     (map zip/node)
                     (filter element?)
-                    (map #(vector (text-size-in-paragraphs %) %))
+                    (map #(vector (f %) %))
                     (reduce #(max-key first %1 %2)))
         [size content-element] winner]
     (if (> size minimal-article-size)
       content-element)))
 
-(defn text-only [node]
-  (if (string? node)
-    node
-    (apply str (map text-only (children node)))))
+(defn find-content-element [html]
+  (or (find-content-element-by html text-size-in-paragraphs)
+      (find-content-element-by html text-size)))
+
+; === figure content summary ===
 
 (defn expectation [coll]
   (quot (apply + coll) (count coll)))
@@ -144,7 +149,7 @@
 (defn summarize-raw [html]
   (when-let [content-element (find-content-element html)]
     (let [paragraphs (->> (children content-element)
-                          (map #(vector (text-size %) %))
+                          (map #(vector (text-size-recursively %) %))
                           (reduce accumulate-content-size []))
           sizes (->> paragraphs
                      (filter #(= (tag (nth % 2)) :p))
@@ -159,6 +164,8 @@
   (if-let [summary (summarize-raw (crouton/parse-string html))]
     (hiccup/html (to-hiccup summary))))
 
+; === experimental feature - detect by content hint ===
+
 (defn alphabetic-only [s]
   (s/replace s #"\P{IsAlphabetic}" ""))
 
@@ -168,6 +175,11 @@
   (->> (node-seq zipper)
        (filter text-node?)
        (reduce #(max-key (comp count zip/node) %1 %2))))
+
+(defn text-only [node]
+  (if (string? node)
+    node
+    (apply str (map text-only (children node)))))
 
 (defn find-element-containing [zipper hint]
   (let [source (alphabetic-only (text-only hint))
@@ -189,7 +201,7 @@
     (->> (iterate zip/up anchor)
          (map zip/node)
          (take-while #(not= :html (tag %)))
-         (map #(vector (text-size %) %)))))
+         (map #(vector (text-size-recursively %) %)))))
 
 (defn find-content-element2 [html hint]
   (->> (content-axis html hint)
@@ -197,6 +209,8 @@
        (map (fn [[[l1 n1] [l2 n2]]] (vector (- l2 l1) n2)))
        (reduce #(max-key first %1 %2))
        second))
+
+; === main interface function ===
 
 (defn detect [url hint]
   (try

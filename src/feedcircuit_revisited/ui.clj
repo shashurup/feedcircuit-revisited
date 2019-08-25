@@ -149,7 +149,7 @@
   (let [link (:link item)]
     (if (coll? link) (first link) link)))
 
-(defn build-content [user-id feed ord-num url source]
+(defn build-content [feed ord-num url source]
   (let [item (if (empty? feed)
                {:link url}
                (first (feed/get-items (@feed/feed-dir feed) ord-num)))
