@@ -258,12 +258,6 @@
                        (jt/millis (quot (apply + deltas)
                                         (count deltas))))))))
 
-(defn sync! []
-  (->> (keys @feed-dir)
-       (filter #(jt/before? (next-update-time %)
-                            (jt/instant)))
-       (map #(vector % (count (sync-and-log-safe! %))))))
-
 ; === user handling ===
 
 (defn parse-feed-expression [expr]
@@ -313,6 +307,11 @@
          (apply concat)
          (take count))))
 
+(defn all-users []
+  (->> (str (conf/param :data-dir) "/users")
+       fs/list-dir
+       (map fs/base-name)))
+
 (defn user-dir [id]
   (str (conf/param :data-dir) "/users/" id))
 
@@ -357,6 +356,25 @@
         pred (fn [{url :link}] (some #(= url %) urls))]
     (update-user-attrs!
      (update user :selected #(remove pred %)))))
+
+; === sync ===
+
+(defn active-feeds []
+  (->> (all-users)
+       (map get-user-attrs)
+       (map :feeds)
+       (reduce into)
+       make-expressions
+       (map first)
+       set))
+
+(defn sync! []
+  (let [active (active-feeds)]
+    (->> (keys @feed-dir)
+         (filter active)
+         (filter #(jt/before? (next-update-time %)
+                              (jt/instant)))
+         (map #(vector % (count (sync-and-log-safe! %)))))))
 
 (defn init-auto-sync []
   (future
