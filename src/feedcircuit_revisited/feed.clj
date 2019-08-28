@@ -172,13 +172,6 @@
 (defn average [coll]
   (quot (apply + coll) (count coll)))
 
-(defn long-content? [items]
-  (->> items
-       (map :summary)
-       (map count)
-       average
-       (<= 1024)))
-
 ; === feed handling ===
 
 (defonce feed-dir (atom {}))
@@ -199,18 +192,20 @@
 (defn dir-path [url]
   (str (fs/normalized (str (conf/param :data-dir) "/feeds/" (dir-name url)))))
 
-(defn extract-summary [item]
-  (let [content (:summary item)
-        summary (content/summarize content)]
-    (if summary
-      (assoc item :content content
-             :summary summary)
-      item)))
+(defn fix-summary-and-content [item]
+  (let [summary (:summary item)
+        content (:content item)]
+    (if (empty? summary)
+      (if (empty? content)
+        item
+        (assoc item :summary (content/summarize content)))
+      (if (> (count summary) 1024)
+        (assoc item :summary (content/summarize summary)
+                    :content (or content summary))
+        item))))
 
 (defn preproces [items attrs]
-  (if (:long-content attrs)
-    (map extract-summary items)
-    items))
+  (map fix-summary-and-content items))
 
 (defn add-feed! [url]
   (let [dir (dir-path url)
@@ -218,8 +213,7 @@
     (fs/mkdirs dir)
     (swap! feed-dir assoc url dir)
     (set-attrs dir (assoc attrs
-                          :url url
-                          :long-content (long-content? new-items)))
+                          :url url))
     (append-items! dir (preproces new-items
                                   (get-attrs dir)))))
 
