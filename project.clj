@@ -1,4 +1,4 @@
-(defproject feedcircuit-revisited "0.4.0_SNAPSHOT"
+(defproject feedcircuit-revisited "0.3.2"
   :description "Old friend Feedcircuit revisited"
   :url "http://example.com/FIXME"
   :min-lein-version "2.0.0"
