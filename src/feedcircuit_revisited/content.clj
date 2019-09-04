@@ -1,5 +1,5 @@
 (ns feedcircuit-revisited.content
-  (:require [crouton.html :as crouton]
+  (:require [feedcircuit-revisited.jsoup :as jsoup]
             [hiccup.core :as hiccup]
             [clojure.zip :as zip]
             [clojure.string :as s]
@@ -13,21 +13,24 @@
 (def minimal-summary-size 128)
 (def minimal-article-size 512)
 
-(def tag :tag)
+(def tag first)
 
-(def children :content)
+(defn children [el] (nthrest el 2))
 
-(def attrs :attrs)
+(def attrs second)
 
-(def element? map?)
+(def element? vector?)
+
+(defn make-element [tag attrs children]
+  (into [tag attrs] children))
 
 (defn html-zipper
   ([html]
    (html-zipper html nil))
   ([html branch?]
-   (zip/zipper (or branch? map?)
+   (zip/zipper (or branch? element?)
                children
-               #(assoc %1 :content (vec %2))
+               #(make-element (tag %1) (attrs %1) %2)
                html)))
 
 (def elements-to-ignore #{:a :head :script :style :nav
@@ -35,7 +38,7 @@
 
 (defn content-zipper [html]
   (html-zipper html
-               #(and (map? %)
+               #(and (element? %)
                      (nil? (get elements-to-ignore (tag %))))))
 
 (defn node-seq [zipper]
@@ -48,12 +51,6 @@
        (take-while (complement zip/end?))
        last
        zip/root))
-
-(defn to-hiccup [node]
-  (cond
-    (map? node) (into [(:tag node) (:attrs node)] (map to-hiccup (:content node)))
-    (coll? node) (map to-hiccup node)
-    :else node))
 
 (def url-attrs {:a :href
                 :area :href
@@ -75,7 +72,9 @@
   (let [tag (tag element)
         url-attr (get url-attrs tag)]
     (if (and url-attr (get (attrs element) url-attr))
-      (update-in element [:attrs url-attr] absolute-url base)
+      (make-element tag
+                    (update (attrs element) url-attr absolute-url base)
+                    (children element))
       element)))
 
 (defn rebase-fragment [fragment base]
@@ -161,8 +160,8 @@
            (map #(nth % 2))))))
 
 (defn summarize [html]
-  (if-let [summary (summarize-raw (crouton/parse-string html))]
-    (hiccup/html (to-hiccup summary))))
+  (if-let [summary (summarize-raw (jsoup/parse-string html))]
+    (hiccup/html summary)))
 
 ; === experimental feature - detect by content hint ===
 
@@ -214,10 +213,10 @@
 
 (defn detect [url hint]
   (try
-    (let [html (crouton/parse-string (http-get url))
+    (let [html (jsoup/parse-string (http-get url))
           hint-html (if (not (empty? hint))
-                      (crouton/parse-string hint))]
+                      (jsoup/parse-string hint))]
       (if-let [content-root (find-content-element html)]
-        (hiccup/html (to-hiccup (children (rebase-fragment content-root url))))))
+        (hiccup/html (children (rebase-fragment content-root url)))))
     (catch Exception ex
       (log/error "Failed to find content from" url))))
