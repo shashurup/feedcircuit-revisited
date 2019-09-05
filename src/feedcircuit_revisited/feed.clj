@@ -204,8 +204,15 @@
                     :content (or content summary))
         item))))
 
+(defn fix-refs [item base-url]
+  (cond-> item
+    (:summary item) (update :summary content/make-refs-absolute base-url)
+    (:content item) (update :content content/make-refs-absolute base-url)))
+
 (defn preproces [items attrs]
-  (map fix-summary-and-content items))
+  (->> items
+       (map #(fix-refs % (:url attrs)))
+       (map fix-summary-and-content)))
 
 (defn add-feed! [url]
   (let [dir (dir-path url)

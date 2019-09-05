@@ -82,6 +82,15 @@
        html-zipper
        (el-map #(zip/edit % make-absolute base))))
 
+(defn find-body [html]
+  (->> html
+       html-zipper
+       node-seq
+       (map zip/node)
+       (filter element?)
+       (filter #(= (tag %) :body))
+       first))
+
 ; === content detection core ===
 
 (defn text-size [node]
@@ -151,7 +160,6 @@
                           (map #(vector (text-size-recursively %) %))
                           (reduce accumulate-content-size []))
           sizes (->> paragraphs
-                     (filter #(= (tag (nth % 2)) :p))
                      (map first)
                      (filter #(> % 0)))
           min-size (minimal-size sizes)]
@@ -220,3 +228,7 @@
         (hiccup/html (children (rebase-fragment content-root url)))))
     (catch Exception ex
       (log/error "Failed to find content from" url))))
+
+(defn make-refs-absolute [subj base-url]
+  (let [changed (rebase-fragment (jsoup/parse-string subj) base-url)]
+    (hiccup/html (children (find-body changed)))))
