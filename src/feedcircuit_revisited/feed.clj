@@ -199,7 +199,7 @@
       (if (empty? content)
         item
         (assoc item :summary (content/summarize content)))
-      (if (> (count summary) 1024)
+      (if (> (content/calculate-size summary) 1024)
         (assoc item :summary (content/summarize summary)
                     :content (or content summary))
         item))))

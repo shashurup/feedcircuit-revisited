@@ -232,3 +232,9 @@
 (defn make-refs-absolute [subj base-url]
   (let [changed (rebase-fragment (jsoup/parse-string subj) base-url)]
     (hiccup/html (children (find-body changed)))))
+
+(defn calculate-size [html]
+  (->> html
+       jsoup/parse-string
+       find-body
+       text-size-recursively))
