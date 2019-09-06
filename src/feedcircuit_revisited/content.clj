@@ -82,13 +82,18 @@
        html-zipper
        (el-map #(zip/edit % make-absolute base))))
 
-(defn find-body [html]
+(defn find-nodes [pred html]
   (->> html
        html-zipper
        node-seq
+       (filter #(pred (zip/node %)))))
+
+(defn find-tags [pred html]
+  (find-nodes #(and (element? %) (pred (tag %))) html))
+
+(defn find-body [html]
+  (->> (find-tags #{:body} html)
        (map zip/node)
-       (filter element?)
-       (filter #(= (tag %) :body))
        first))
 
 ; === content detection core ===
@@ -130,6 +135,11 @@
 (defn find-content-element [html]
   (or (find-content-element-by html text-size-in-paragraphs)
       (find-content-element-by html text-size)))
+
+(defn remove-h1 [html]
+  (if-let [h1 (first (find-tags #{:h1} html))]
+    (zip/root (zip/remove h1))
+    html))
 
 ; === figure content summary ===
 
@@ -225,7 +235,11 @@
           hint-html (if (not (empty? hint))
                       (jsoup/parse-string hint))]
       (if-let [content-root (find-content-element html)]
-        (hiccup/html (children (rebase-fragment content-root url)))))
+        (-> content-root
+            (rebase-fragment url)
+            remove-h1
+            children
+            hiccup/html)))
     (catch Exception ex
       (log/error "Failed to find content from" url))))
 
