@@ -26,20 +26,20 @@
 
 (defn html-zipper
   ([html]
-   (html-zipper html nil))
-  ([html branch?]
-   (zip/zipper (or branch? element?)
-               children
-               #(make-element (tag %1) (attrs %1) %2)
-               html)))
+   (html-zipper nil html))
+  ([pred html]
+   (let [pred (or pred (constantly true))]
+     (zip/zipper #(and (element? %) (pred %))
+                 children
+                 #(make-element (tag %1) (attrs %1) %2)
+                 html))))
 
-(def elements-to-ignore #{:a :head :script :style :nav
+(def non-content-tags #{:a :head :script :style :nav
                           :aside :footer :header :svg})
 
-(defn content-zipper [html]
-  (html-zipper html
-               #(and (element? %)
-                     (nil? (get elements-to-ignore (tag %))))))
+(defn content-element? [subj]
+  (and (element? subj)
+       (-> subj tag non-content-tags nil?)))
 
 (defn node-seq [zipper]
   (take-while (complement zip/end?)
@@ -106,7 +106,7 @@
        (reduce +)))
 
 (defn text-size-recursively [html]
-  (->> (content-zipper html)
+  (->> (html-zipper content-element? html)
        node-seq
        (map zip/node)
        (filter string?)
@@ -122,10 +122,10 @@
 
 (defn find-content-element-by [html f]
   (let [winner (->> html
-                    html-zipper
+                    (html-zipper content-element?)
                     node-seq
                     (map zip/node)
-                    (filter element?)
+                    (filter content-element?)
                     (map #(vector (f %) %))
                     (reduce #(max-key first %1 %2)))
         [size content-element] winner]
@@ -213,7 +213,7 @@
       (find-biggest-text zipper)))
 
 (defn content-axis [html hint]
-  (let [zipper (content-zipper html)
+  (let [zipper (html-zipper content-element? html)
         anchor (find-anchor-element zipper hint)]
     (->> (iterate zip/up anchor)
          (map zip/node)

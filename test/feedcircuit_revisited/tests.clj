@@ -2,7 +2,8 @@
   (:require  [clojure.test :as t]
              [feedcircuit-revisited.content :as content]
              [feedcircuit-revisited.jsoup :as jsoup]
-             [clojure.zip :as zip]))
+             [clojure.zip :as zip]
+             [hiccup.core :as html]))
 
 (t/deftest find-nodes-test
   (defn find-nodes' [html pred]
@@ -43,4 +44,40 @@
                 jsoup/parse-string
                 content/remove-h1)
            [:html nil [:head nil] [:body nil "abc"]]))
+)
+
+(t/deftest html-zipper-test
+  (defn list-nodes [html pred]
+    (->> html
+         (content/html-zipper pred)
+         content/node-seq
+         (map zip/node)
+         vec))
+  (t/is (= (list-nodes [:body nil "abc" [:p nil "def"]] nil)
+           [[:body nil "abc" [:p nil "def"]]
+            "abc"
+            [:p nil "def"]
+            "def"]))
+  (t/is (= (list-nodes [:body nil "abc" [:script nil "def"]]
+                       (comp nil? #{:script} content/tag))
+           [[:body nil "abc" [:script nil "def"]]
+            "abc"
+            [:script nil "def"]]))
+)
+
+(t/deftest content-element-test
+  (t/is (not (content/content-element? "abc")))
+  (t/is (not (content/content-element? [:script nil])))
+  (t/is (content/content-element? [:div nil]))
+  (t/is (content/content-element? [:p nil]))
+)
+
+(t/deftest text-size-recursively-test
+  (defn calc-text-size [html]
+    (->> html
+         jsoup/parse-string
+         content/text-size-recursively))
+  (t/is (= (calc-text-size "abc") 3))
+  (t/is (= (calc-text-size "abc<p>def") 6))
+  (t/is (= (calc-text-size "abc<p>def</p><script>bla bla bla</script>") 6))
 )
