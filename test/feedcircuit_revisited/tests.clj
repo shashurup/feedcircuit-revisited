@@ -53,13 +53,13 @@
          content/node-seq
          (map zip/node)
          vec))
-  (t/is (= (list-nodes [:body nil "abc" [:p nil "def"]] nil)
+  (t/is (= (list-nodes [:body nil "abc" [:p nil "def"]] content/element?)
            [[:body nil "abc" [:p nil "def"]]
             "abc"
             [:p nil "def"]
             "def"]))
   (t/is (= (list-nodes [:body nil "abc" [:script nil "def"]]
-                       (comp nil? #{:script} content/tag))
+                       (content/tag-pred (comp nil? #{:script})))
            [[:body nil "abc" [:script nil "def"]]
             "abc"
             [:script nil "def"]]))

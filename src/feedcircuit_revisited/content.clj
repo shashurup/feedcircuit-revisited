@@ -26,20 +26,21 @@
 
 (defn html-zipper
   ([html]
-   (html-zipper nil html))
+   (html-zipper element? html))
   ([pred html]
-   (let [pred (or pred (constantly true))]
-     (zip/zipper #(and (element? %) (pred %))
-                 children
-                 #(make-element (tag %1) (attrs %1) %2)
-                 html))))
+   (zip/zipper pred
+               children
+               #(make-element (tag %1) (attrs %1) %2)
+               html)))
+
+(defn tag-pred [pred]
+  #(and (element? %) (pred (tag %))))
 
 (def non-content-tags #{:a :head :script :style :nav
                           :aside :footer :header :svg})
 
-(defn content-element? [subj]
-  (and (element? subj)
-       (-> subj tag non-content-tags nil?)))
+(def content-element?
+  (tag-pred (comp nil? non-content-tags)))
 
 (defn node-seq [zipper]
   (take-while (complement zip/end?)
