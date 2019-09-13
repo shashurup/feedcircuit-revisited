@@ -352,6 +352,17 @@
     (update-user-attrs!
      (update user :selected into items-to-add))))
 
+(defn selected-add-urls! [user-id urls]
+  (let [user (get-user-attrs user-id)]
+    (->> urls
+         (map #(vector % (content/retrieve-and-parse %)))
+         (map (fn [[url html]]
+                {:link url
+                 :title (content/get-title html)
+                 :summary (content/summarize html)}))
+         (update user :selected into)
+         update-user-attrs!)))
+
 (defn selected-remove! [user-id urls]
   (let [user (get-user-attrs user-id)
         pred (fn [{url :link}] (some #(= url %) urls))]

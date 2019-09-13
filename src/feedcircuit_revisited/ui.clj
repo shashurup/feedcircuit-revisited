@@ -138,7 +138,9 @@
                               "archive-item-check"
                               (str "selectedItemChanged(this, '" url "');")
                               (str ord-num "," feed))
-               (news-item (str "read?source=selected&id=" ord-num "," feed)
+               (news-item (str "read?source=selected&" (if feed
+                                                         (str "id=" ord-num "," feed)
+                                                         (str "url=" url)))
                           title
                           (or summary content)
                           [:label {:class "item-check"
@@ -151,12 +153,17 @@
     (if (coll? link) (first link) link)))
 
 (defn build-content [feed ord-num url source]
-  (let [item (if (empty? feed)
-               {:link url}
-               (first (feed/get-items (@feed/feed-dir feed) ord-num)))
-        link (get-item-link item)
-        content (or (:content item) (content/detect link (:summary item)))
-        title (:title item)
+  (let [item (when (not-empty feed)
+                (first (feed/get-items (@feed/feed-dir feed) ord-num)))
+        link (or (get-item-link item) url)
+        html (when (empty? (:content item))
+               (content/retrieve-and-parse link))
+        title (if html
+                (content/get-title html)
+                (:title item))
+        content (or
+                 (:content item)
+                 (content/detect html link (:summary item)))
         author (:author item)
         category (:category item)
         done-action (if (= source "selected")

@@ -48,8 +48,10 @@
 
   (POST "/selected-add" {user-id :user {id "id"
                                         url "url"} :form-params}
-        (let [ids (map parse-item-id (ensure-coll id))]
-          (feed/selected-add! user-id ids)))
+        (cond
+          id (let [ids (map parse-item-id (ensure-coll id))]
+               (feed/selected-add! user-id ids))
+          url (feed/selected-add-urls! user-id (ensure-coll url))))
 
   (POST "/selected-remove" {user-id :user {url "url"} :form-params}
         (let [urls (ensure-coll url)]

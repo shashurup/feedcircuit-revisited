@@ -97,6 +97,11 @@
        (map zip/node)
        first))
 
+(defn get-base [html]
+  (->> (find-tags #{:base} html)
+       (map (comp :href attrs zip/node))
+       first))
+
 ; === content detection core ===
 
 (defn text-size [node]
@@ -165,7 +170,9 @@
   (let [current-size (or (second (last result)) 0)]
     (conj result [size (+ size current-size) element])))
 
-(defn summarize-raw [html]
+(defmulti summarize class)
+
+(defmethod summarize clojure.lang.PersistentVector [html]
   (when-let [content-element (find-content-element html)]
     (let [paragraphs (->> (children content-element)
                           (map #(vector (text-size-recursively %) %))
@@ -176,11 +183,11 @@
           min-size (minimal-size sizes)]
       (->> paragraphs
            (take-while #(< (-(second %) (first %)) min-size))
-           (map #(nth % 2))))))
+           (map #(nth % 2))
+           hiccup/html))))
 
-(defn summarize [html]
-  (if-let [summary (summarize-raw (jsoup/parse-string html))]
-    (hiccup/html summary)))
+(defmethod summarize String [raw-html]
+  (summarize (jsoup/parse-string raw-html)))
 
 ; === experimental feature - detect by content hint ===
 
@@ -230,19 +237,37 @@
 
 ; === main interface function ===
 
-(defn detect [url hint]
+(defn retrieve-and-parse [url]
+  (jsoup/parse-string (http-get url)))
+
+(defmulti detect (fn [x _ _] (class x)))
+
+(defmethod detect clojure.lang.PersistentVector [html base-url hint]
   (try
-    (let [html (jsoup/parse-string (http-get url))
+    (let [base (or (get-base html) base-url)
           hint-html (if (not (empty? hint))
                       (jsoup/parse-string hint))]
       (if-let [content-root (find-content-element html)]
         (-> content-root
-            (rebase-fragment url)
+            (rebase-fragment base)
             remove-h1
             children
             hiccup/html)))
     (catch Exception ex
-      (log/error "Failed to find content from" url))))
+      (log/error "Failed to find content from" base-url))))
+
+(defmethod detect String [raw-html base-url hint]
+  (detect (jsoup/parse-string raw-html) base-url hint))
+
+(defmulti get-title class)
+
+(defmethod get-title clojure.lang.PersistentVector [html]
+  (->> (find-tags #{:title} html)
+       (map (comp text-only zip/node))
+       first))
+
+(defmethod get-title String [raw-html]
+  (get-title (jsoup/parse-string raw-html)))
 
 (defn make-refs-absolute [subj base-url]
   (let [changed (rebase-fragment (jsoup/parse-string subj) base-url)]
