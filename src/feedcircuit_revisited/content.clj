@@ -174,7 +174,9 @@
 
 (defmethod summarize clojure.lang.PersistentVector [html]
   (when-let [content-element (find-content-element html)]
-    (let [paragraphs (->> (children content-element)
+    (let [paragraphs (->> content-element
+                          remove-h1
+                          children
                           (map #(vector (text-size-recursively %) %))
                           (reduce accumulate-content-size []))
           sizes (->> paragraphs
