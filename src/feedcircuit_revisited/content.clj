@@ -245,18 +245,15 @@
 (defmulti detect (fn [x _ _] (class x)))
 
 (defmethod detect clojure.lang.PersistentVector [html base-url hint]
-  (try
-    (let [base (or (get-base html) base-url)
-          hint-html (if (not (empty? hint))
-                      (jsoup/parse-string hint))]
-      (if-let [content-root (find-content-element html)]
-        (-> content-root
-            (rebase-fragment base)
-            remove-h1
-            children
-            hiccup/html)))
-    (catch Exception ex
-      (log/error "Failed to find content from" base-url))))
+  (let [base (or (get-base html) base-url)
+        hint-html (if (not (empty? hint))
+                    (jsoup/parse-string hint))]
+    (if-let [content-root (find-content-element html)]
+      (-> content-root
+          (rebase-fragment base)
+          remove-h1
+          children
+          hiccup/html))))
 
 (defmethod detect String [raw-html base-url hint]
   (detect (jsoup/parse-string raw-html) base-url hint))

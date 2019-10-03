@@ -6,4 +6,5 @@
 * DONE Remove h1 when making content summary
   CLOSED: [2019-10-03 Чт 18:37]
   [[file:~/devel/feedcircuit-revisited/src/feedcircuit_revisited/content.clj::defmulti summarize][Summarize fn]]
-* TODO Handle 404 upon opening the content
+* DONE Handle 404 upon opening the content
+  CLOSED: [2019-10-03 Чт 19:26]

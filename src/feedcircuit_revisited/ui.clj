@@ -2,7 +2,8 @@
   (:require [clojure.string :as s]
             [feedcircuit-revisited.feed :as feed]
             [feedcircuit-revisited.content :as content]
-            [feedcircuit-revisited.auth :as auth]))
+            [feedcircuit-revisited.auth :as auth]
+            [clojure.tools.logging :as log]))
 
 (def page-size 16)
 
@@ -154,37 +155,41 @@
 
 (defn build-content [feed ord-num url source]
   (let [item (when (not-empty feed)
-                (first (feed/get-items (@feed/feed-dir feed) ord-num)))
-        link (or (get-item-link item) url)
-        html (when (empty? (:content item))
-               (content/retrieve-and-parse link))
-        title (if html
-                (content/get-title html)
-                (:title item))
-        content (or
-                 (:content item)
-                 (content/detect html link (:summary item)))
-        author (:author item)
-        category (:category item)
-        done-action (if (= source "selected")
-                      (str "removeFromSelected('" link "');")
-                      "window.close();")]
-    (if content
-      [:html
-       (head title)
-       [:body
-        [:div#fcr-content
-         (news-item link
-                    title
-                    content
-                    "")
-         [:div.fcr-article-footer
-          (if (not (empty? author))
-            [:p (str "Author: " (s/join ", " author))])
-          (if (not (empty? category))
-            [:p (str "Category: " (s/join ", " category))])]
-         (if source [:button.fcr-btn {:onclick done-action} "Done"])]]]
-      link)))
+               (first (feed/get-items (@feed/feed-dir feed) ord-num)))
+        link (or (get-item-link item) url)]
+    (or
+     (try
+       (let [html (when (empty? (:content item))
+                    (content/retrieve-and-parse link))
+             title (if html
+                     (content/get-title html)
+                     (:title item))
+             content (or
+                      (:content item)
+                      (content/detect html link (:summary item)))
+             author (:author item)
+             category (:category item)
+             done-action (if (= source "selected")
+                           (str "removeFromSelected('" link "');")
+                           "window.close();")]
+         (if content
+           [:html
+            (head title)
+            [:body
+             [:div#fcr-content
+              (news-item link
+                         title
+                         content
+                         "")
+              [:div.fcr-article-footer
+               (if (not (empty? author))
+                 [:p (str "Author: " (s/join ", " author))])
+               (if (not (empty? category))
+                 [:p (str "Category: " (s/join ", " category))])]
+              (if source [:button.fcr-btn {:onclick done-action} "Done"])]]]))
+       (catch Exception ex
+         (log/error "Failed to make content for" link)))
+     link)))
 
 (defn mark-read [user-id to-positions selected]
   (let [user (feed/get-user-attrs user-id)]
