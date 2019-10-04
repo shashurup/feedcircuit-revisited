@@ -101,12 +101,6 @@ label.item-check svg {
     stroke: #2a2e23;
     fill: #cd625a;
 }
-input.archive-item-check + .fcr-news-item label.item-check svg .checkmark {
-    stroke-opacity: 0;
-}
-input.archive-item-check:checked + .fcr-news-item label.item-check svg .checkmark {
-    stroke-opacity: 1;
-}
 input.archive-item-check + .fcr-news-item {
     opacity: 1;
 }

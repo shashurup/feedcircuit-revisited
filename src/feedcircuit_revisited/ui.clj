@@ -16,14 +16,14 @@
               :points "0,0 0,90 30,60 60,90 60,0"
               :style  "stroke-width:6"}]])
 
-(defn checkbox-svg []
-  [:svg {:viewBox "0 0 60 60"}
-   [:rect {:width  "60"
-           :height "60"
-           :style  "stroke-width:3;fill:none"}]
-   [:polyline {:class  "checkmark"
-               :points "10,20 20,40 50,25"
-               :style  "fill:none;stroke-width:8"}]])
+(defn backspace-svg []
+  [:svg {:viewBox "-2 -2 33 33"}
+   [:polygon {:points "10,0 0,10 10,20 30,20 30,0"
+              :style "stroke-width:2;fill:none;stroke-linejoin:round"}]
+   [:line {:x1 "15" :y1 "5" :x2 "25" :y2 "15"
+           :style "stroke-width:2;stroke-linecap:round"}]
+   [:line {:x1 "15" :y1 "15" :x2 "25" :y2 "5"
+           :style "stroke-width:2;stroke-linecap:round"}]])
 
 (defn svg-checkbox [input-attrs svg]
   [:label {:class "svg-checkbox"}
@@ -145,7 +145,7 @@
                           title
                           (or summary content)
                           [:label {:class "item-check"
-                                   :for (ch-id idx)} (checkbox-svg)])))
+                                   :for (ch-id idx)} (backspace-svg)])))
        (if (empty? items)
          [:p.fcr-no-more-items "No more items"])]]]))
 
