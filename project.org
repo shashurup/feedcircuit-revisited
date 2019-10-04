@@ -1,7 +1,8 @@
 * TODO Improve content detection, tell article from comments
 * TODO Appearance settings (themes, font size etc.)
 * TODO Feeds discovery
-* TODO Choose new icon for marking items as read
+* DONE Choose new icon for marking items as read
+  CLOSED: [2019-10-04 Пт 09:01]
   [[~/devel/feedcircuit-revisited/src/feedcircuit_revisited/ui.clj::defn checkbox-svg][SVG to fix]]
 * DONE Remove h1 when making content summary
   CLOSED: [2019-10-03 Чт 18:37]
