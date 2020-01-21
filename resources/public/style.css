@@ -101,17 +101,17 @@ label.item-check svg {
     stroke: #2a2e23;
     fill: #cd625a;
 }
-input.archive-item-check + .fcr-news-item {
+input.gray-checked + .fcr-news-item {
     opacity: 1;
 }
-input.archive-item-check:checked + .fcr-news-item {
+input.gray-checked:checked + .fcr-news-item {
     opacity: 0.33;
 }
 
-input.select-item-check + .fcr-news-item label.item-check svg .bookmark-icon {
+input.fill-checked + .fcr-news-item label.item-check svg .bookmark-icon {
     fill: none;
 }
-input.select-item-check:checked + .fcr-news-item label.item-check svg .bookmark-icon {
+input.fill-checked:checked + .fcr-news-item label.item-check svg .bookmark-icon {
     fill: inherit;
 }
 

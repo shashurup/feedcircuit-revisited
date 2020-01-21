@@ -1,26 +1,28 @@
 
-function postTo(resource, body) {
+function addToSelected(id) {
     req = new XMLHttpRequest();
-    req.open("POST", resource);
+    req.open("POST", "/selected");
     req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    req.send(body);
+    req.send("id=" + id);
 }
 
-function feedItemChanged(item, url) {
-    if (item.checked)
-        postTo("/selected-add", "id=" + item.value)
+function removeFromSelected(id) {
+    req = new XMLHttpRequest();
+    req.open("DELETE", "/selected?id="+id);
+    req.send();
+}
+
+function toggleItem(item) {
+    var add = item.checked;
+    if (item.className.search(/selected-item/) >= 0)
+        add = !add;
+    if (add)
+        addToSelected(item.value);
     else
-        postTo("/selected-remove", "url=" + url)
+        removeFromSelected(item.value);
 }
 
-function selectedItemChanged(item, url) {
-    if (item.checked)
-        postTo("/selected-remove", "url=" + url)
-    else
-        postTo("/selected-add", "id=" + item.value)
-}
-
-function removeFromSelected(url) {
+function UnselectAndClose(id) {
     req = new XMLHttpRequest();
     req.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
@@ -28,7 +30,6 @@ function removeFromSelected(url) {
             window.close();
         }
     };
-    req.open("POST", "/selected-remove");
-    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    req.send("url=" + url);
+    req.open("DELETE", "/selected?id="+id);
+    req.send();
 }

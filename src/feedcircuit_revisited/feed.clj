@@ -95,6 +95,11 @@
   (map-indexed #(assoc %2 :num (+ start %1))
                (get-items dir start)))
 
+(defn get-internal-id [item]
+  (if-let [num (:num item)]
+    [(:feed item) num]
+    (:link item)))
+
 (defn append-items! [dir items]
   (let [last-block-num (get-last-block-num dir)
         last-block (get-block dir last-block-num)
@@ -259,6 +264,10 @@
                        (jt/millis (quot (apply + deltas)
                                         (count deltas))))))))
 
+(defn get-feed-items [feed start]
+  (->> (get-numbered-items (@feed-dir feed) start)
+       (map #(assoc % :iid [feed (:num %)]))))
+
 ; === user handling ===
 
 (defn parse-feed-expression [expr]
@@ -295,7 +304,7 @@
                              (= attr term))]
                verdict)))))
 
-(defn get-user-items [user count]
+(defn get-unread-items [user]
   (let [{feeds :feeds
          positions :positions} user]
     (->> (make-expressions feeds)
@@ -304,9 +313,9 @@
                       pos (get positions feed (max 0 (- (get-item-count dir) 10)))]
                   (->> (get-numbered-items dir pos)
                        (filter #(item-matches % exprs))
-                       (map #(assoc % :feed feed))))))
-         (apply concat)
-         (take count))))
+                       (map #(assoc % :feed feed
+                                      :iid [feed (:num %)]))))))
+         (apply concat))))
 
 (defn all-users []
   (->> (str (conf/param :data-dir) "/users")
@@ -338,36 +347,37 @@
 
 (defn get-selected-items [user-id]
   (let [user (get-user-attrs user-id)
-        feed-urls (map first (make-expressions (:feeds user)))]
+        feed-urls (map first (make-expressions (:feeds user)))
+        items (:selected user [])]
     (sort-by #(vector (.indexOf feed-urls (:feed %))
                       (:num %))
-             (:selected user []))))
+             (map #(assoc % :iid (get-internal-id %)) items))))
+
+(defn retrieve-item [id]
+  (if (coll? id)
+    (let [[feed pos] id]
+      (-> (get-numbered-items (@feed-dir feed) pos)
+          first
+          (assoc :feed feed)))
+    (let [html (content/retrieve-and-parse id)]
+      {:link id
+       :title (content/get-title html)
+       :summary (content/summarize html)})))
 
 (defn selected-add! [user-id ids]
-  (let [user (get-user-attrs user-id)
-        items-to-add (for [[feed pos] ids]
-                       (-> (get-numbered-items (@feed-dir feed) pos)
-                           first
-                           (assoc :feed feed)))]
-    (update-user-attrs!
-     (update user :selected into items-to-add))))
-
-(defn selected-add-urls! [user-id urls]
   (let [user (get-user-attrs user-id)]
-    (->> urls
-         (map #(vector % (content/retrieve-and-parse %)))
-         (map (fn [[url html]]
-                {:link url
-                 :title (content/get-title html)
-                 :summary (content/summarize html)}))
-         (update user :selected into)
-         update-user-attrs!)))
+    (->> ids
+       (map retrieve-item)
+       (update user :selected into)
+       update-user-attrs!)))
 
-(defn selected-remove! [user-id urls]
+(defn selected-remove! [user-id ids]
   (let [user (get-user-attrs user-id)
-        pred (fn [{url :link}] (some #(= url %) urls))]
+        in-ids? (fn [item]
+                  (let [id (get-internal-id item)]
+                    (some #(= id %) ids)))]
     (update-user-attrs!
-     (update user :selected #(remove pred %)))))
+     (update user :selected #(remove in-ids? %)))))
 
 ; === sync ===
 

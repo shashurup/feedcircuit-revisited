@@ -40,35 +40,31 @@
 
 (defroutes protected-routes
   (GET "/" {user-id :user {count :count} :params}
-       (html/html (ui/build-feed user-id
+       (html/html (ui/build-unread user-id
                                  (or (as-int count) ui/page-size))))
 
   (GET "/selected" {user-id :user}
        (html/html (ui/build-selected user-id)))
 
-  (POST "/selected-add" {user-id :user {id "id"
-                                        url "url"} :form-params}
-        (cond
-          id (let [ids (map parse-item-id (ensure-coll id))]
-               (feed/selected-add! user-id ids))
-          url (feed/selected-add-urls! user-id (ensure-coll url))))
+  (POST "/selected" {user-id :user {id "id"} :form-params}
+        (->> (ensure-coll id)
+             (map parse-item-id)
+             (feed/selected-add! user-id)))
 
-  (POST "/selected-remove" {user-id :user {url "url"} :form-params}
-        (let [urls (ensure-coll url)]
-          (feed/selected-remove! user-id urls)))
+  (DELETE "/selected" {user-id :user {id :id} :params}
+          (->> (ensure-coll id)
+               (map parse-item-id)
+               (feed/selected-remove! user-id)))
 
-  (POST "/next" {user-id :user
-                 {np "next-position"
-                  si "selected-item"} :form-params}
-        (let [positions (map parse-item-id (ensure-coll np))
-              selected-ids (map parse-item-id (ensure-coll si))]
-          (ui/mark-read user-id positions selected-ids)
+  (POST "/positions" {user-id :user {np "next-position"} :form-params}
+        (let [positions (map parse-item-id (ensure-coll np))]
+          (ui/mark-read user-id positions)
           {:status 303 :headers {"Location" "/"}}))
 
   (GET "/settings" {user-id :user}
        (html/html (ui/build-settings user-id)))
 
-  (POST "/save-settings" {user-id :user
+  (POST "/settings" {user-id :user
                           {feeds "feeds"} :form-params}
         (ui/save-settings user-id feeds)
         {:status 303 :headers {"Location" "/"}})
@@ -90,8 +86,14 @@
   (GET "/login-options" []
        (html/html (ui/build-login-options)))
 
-  (GET "/read" {{id :id url :url source :source} :params}
-       (let [[feed ord-num] (parse-item-id id)
+  (GET "/feed" {{url :url count :count} :params}
+       (html/html (ui/build-feed url
+                                 (or (as-int count) ui/page-size))))
+
+  (GET "/plain" {{url :url source :source} :params}
+       (let [iid (parse-item-id url)
+             [feed ord-num] (when (coll? iid) iid)
+             url (when (string? iid) iid)
              result (ui/build-content feed ord-num url source)]
          (if (string? result)
            {:status 302 :headers {"Location" result}}
