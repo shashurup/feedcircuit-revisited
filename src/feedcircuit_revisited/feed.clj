@@ -264,6 +264,12 @@
                        (jt/millis (quot (apply + deltas)
                                         (count deltas))))))))
 
+(defn get-feed-attrs [feed]
+  (get-attrs (@feed-dir feed)))
+
+(defn get-feed-item-count [feed]
+  (get-item-count (@feed-dir feed)))
+
 (defn get-feed-items [feed start]
   (->> (get-numbered-items (@feed-dir feed) start)
        (map #(assoc % :iid [feed (:num %)]))))

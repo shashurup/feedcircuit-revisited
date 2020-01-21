@@ -107,15 +107,31 @@
                        [:label {:class "item-check"
                                 :for (ch-id idx)} icon])))))
 
-(defn build-feed [feed item-count]
-  (let [items (take item-count (feed/get-feed-items feed))]
+(defn build-feed [feed from item-count]
+  (let [total-count (feed/get-feed-item-count feed)
+        item-count (or item-count page-size)
+        start-from (or from (if (> total-count item-count)
+                              (- total-count item-count)
+                              0))
+        next-from (if (> start-from item-count)
+                    (- start-from item-count)
+                    0)
+        next-count (if (> start-from item-count)
+                     item-count
+                     start-from)
+        title (:title (feed/get-feed-attrs feed))
+        items (reverse (take item-count (feed/get-feed-items feed start-from)))]
     [:html
-     (head "Feedcircuit")
+     (head title)
      [:body
       [:div#fcr-content (build-item-list items
                                          "fill-checked"
                                          (bookmark-icon-svg)
-                                         "fc")]]]))
+                                         "fc")
+       (if (> start-from 0)
+         [:a.fcr-btn
+          {:href (str "feed?from=" next-from "&count=" next-count "&url=" feed)}
+          (str "<< Previous " next-count)])]]]))
 
 (defn build-unread [user-id item-count]
   (let [user (feed/get-user-attrs user-id)

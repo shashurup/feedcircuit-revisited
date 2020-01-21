@@ -86,9 +86,8 @@
   (GET "/login-options" []
        (html/html (ui/build-login-options)))
 
-  (GET "/feed" {{url :url count :count} :params}
-       (html/html (ui/build-feed url
-                                 (or (as-int count) ui/page-size))))
+  (GET "/feed" {{url :url from :from count :count} :params}
+       (html/html (ui/build-feed url (as-int from) (as-int count))))
 
   (GET "/plain" {{url :url source :source} :params}
        (let [iid (parse-item-id url)
