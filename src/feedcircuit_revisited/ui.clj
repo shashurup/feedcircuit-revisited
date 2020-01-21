@@ -66,13 +66,10 @@
                    :value caption}
                   (if disabled {:disabled true} {}))]))
 
-(defn navbar [user-id selected]
+(defn navbar [user-id feed selected]
   [:div.fcr-nav-bar
-   (if selected
-     (list [:a.fcr {:href "/"} "Feed"] " | "
-           [:span "Selected"] " | ")
-     (list [:span "Feed"] " | "
-           [:a.fcr {:href "/selected"} "Selected"] " | "))
+   (list (if feed [:span "Feed"] [:a.fcr {:href "/"} "Feed"]) " | "
+         (if selected [:span "Selected"] [:a.fcr {:href "/selected"} "Selected"]) " | ")
    [:div.fcr-menu
     [:a.fcr {:href "/extra-links"} "..."]
     [:div.fcr-menu-items
@@ -107,7 +104,7 @@
                        [:label {:class "item-check"
                                 :for (ch-id idx)} icon])))))
 
-(defn build-feed [feed from item-count]
+(defn build-feed [user-id feed from item-count]
   (let [total-count (feed/get-feed-item-count feed)
         item-count (or item-count page-size)
         start-from (or from (if (> total-count item-count)
@@ -124,6 +121,7 @@
     [:html
      (head title)
      [:body
+      (navbar user-id false false)
       [:div#fcr-content (build-item-list items
                                          "fill-checked"
                                          (bookmark-icon-svg)
@@ -140,7 +138,7 @@
     [:html
      (head "Feedcircuit")
      [:body
-      (navbar user-id false)
+      (navbar user-id true false)
       [:div#fcr-content
        (build-item-list items
                         "fill-checked"
@@ -159,7 +157,7 @@
     [:html
      (head "Feedcircuit, selected items")
      [:body
-      (navbar user-id true)
+      (navbar user-id false true)
       [:div#fcr-content
        (build-item-list items
                         "gray-checked selected-item"

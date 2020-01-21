@@ -61,6 +61,12 @@
           (ui/mark-read user-id positions)
           {:status 303 :headers {"Location" "/"}}))
 
+  (GET "/feed" {user-id :user
+                {url :url
+                 from :from
+                 count :count} :params}
+       (html/html (ui/build-feed user-id url (as-int from) (as-int count))))
+
   (GET "/settings" {user-id :user}
        (html/html (ui/build-settings user-id)))
 
@@ -85,9 +91,6 @@
 (defroutes public-routes
   (GET "/login-options" []
        (html/html (ui/build-login-options)))
-
-  (GET "/feed" {{url :url from :from count :count} :params}
-       (html/html (ui/build-feed url (as-int from) (as-int count))))
 
   (GET "/plain" {{url :url source :source} :params}
        (let [iid (parse-item-id url)
