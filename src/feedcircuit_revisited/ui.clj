@@ -98,7 +98,7 @@
                 content :content
                 iid :iid}] (map-indexed vector items)]
       (list (item-checkbox idx class "toggleItem(this);" (iid-to-str iid))
-            (news-item (str "plain?url=" (iid-to-str iid) "&source=" source )
+            (news-item (str "plain?source=" source "&url=" (iid-to-str iid))
                        title
                        (or summary content)
                        [:label {:class "item-check"

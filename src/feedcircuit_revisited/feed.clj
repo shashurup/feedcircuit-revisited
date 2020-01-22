@@ -200,14 +200,16 @@
 (defn fix-summary-and-content [item]
   (let [summary (:summary item)
         content (:content item)]
-    (if (empty? summary)
-      (if (empty? content)
-        item
-        (assoc item :summary (content/summarize content)))
-      (if (> (content/calculate-size summary) 1024)
-        (assoc item :summary (content/summarize summary)
-                    :content (or content summary))
-        item))))
+    (cond
+      (and (empty? summary) (not (empty? content)))
+        (assoc item :summary (content/summarize content))
+      (and summary (> (content/calculate-size summary) 1024))
+        (let [new-summary (content/summarize summary)]
+          (if (> (- (count summary) (count new-summary)) 512)
+            (assoc item :summary new-summary
+                        :content (or content summary))
+            item))
+      :else item)))
 
 (defn fix-refs [item base-url]
   (cond-> item
