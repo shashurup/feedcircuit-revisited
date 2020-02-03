@@ -151,17 +151,20 @@
 (defn parse-rss-item [item]
   (reduce parse-rss-item-attribute {} (:content item)))
 
-(defn find-root [feed-xml]
-  (or (first (filter #(= (:tag %) :channel)
-                     (:content feed-xml)))
-             feed-xml))
+(defn find-channel [feed-xml]
+  (first (filter #(= (:tag %) :channel)
+                 (:content feed-xml))))
 
 (defn extract-rss-items [feed-xml]
-  (let [root (find-root feed-xml)]
-    (filter #(contains? #{:item :entry} (:tag %)) (:content root))))
+  (let [items (concat (:content (find-channel feed-xml))
+                      (:content feed-xml))]
+    (filter #(contains? #{:item :entry} (:tag %)) items)))
+
+(defn find-details [feed-xml]
+  (or (find-channel feed-xml) feed-xml))
 
 (defn parse-feed-details [feed-xml]
-  (->> (:content (find-root feed-xml))
+  (->> (:content (find-details feed-xml))
        (filter #(not (contains? #{:item :entry} (:tag %))))
        (reduce parse-rss-item-attribute {})))
 
