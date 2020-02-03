@@ -104,8 +104,8 @@
 
 ; === content detection core ===
 
-(defn text-size [node]
-  (->> (children node)
+(defn text-size [zipper]
+  (->> (zip/children zipper)
        (filter string?)
        (map s/trim)
        (map count)
@@ -120,8 +120,8 @@
        (map count)
        (reduce +)))
 
-(defn text-size-in-paragraphs [node]
-  (->> (children node)
+(defn text-size-in-paragraphs [zipper]
+  (->> (zip/children zipper)
        (filter #(= (tag %) :p))
        (map text-size-recursively)
        (reduce +)))
@@ -130,8 +130,7 @@
   (let [winner (->> html
                     (html-zipper content-element?)
                     node-seq
-                    (map zip/node)
-                    (filter content-element?)
+                    (filter zip/branch?)
                     (map #(vector (f %) %))
                     (reduce #(max-key first %1 %2)))
         [size content-element] winner]
@@ -175,6 +174,7 @@
 (defmethod summarize clojure.lang.PersistentVector [html]
   (when-let [content-element (find-content-element html)]
     (let [paragraphs (->> content-element
+                          zip/node
                           remove-h1
                           children
                           (map #(vector (text-size-recursively %) %))
@@ -250,6 +250,7 @@
                     (jsoup/parse-string hint))]
     (if-let [content-root (find-content-element html)]
       (-> content-root
+          zip/node
           (rebase-fragment base)
           remove-h1
           children
