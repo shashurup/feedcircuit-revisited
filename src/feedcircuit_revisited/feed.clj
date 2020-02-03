@@ -8,6 +8,7 @@
             [clj-http.client :as http]
             [feedcircuit-revisited.content :as content]
             [feedcircuit-revisited.conf :as conf]
+            [feedcircuit-revisited.rfc822 :as rfc822]
             [clojure.core.memoize :as memz]
             [clojure.string :as s]
             [clojure.tools.logging :as log]))
@@ -62,7 +63,7 @@
                    (+ (* (dec (count block-list)) block-size)
                       (count (get-block dir (last block-list)))))
      :known-ids (->> block-list
-                     (map #(read-file (str dir "/" %))) ; avoid caching all blocks
+
                      (apply concat)
                      (map :id)
                      (set))}))
@@ -132,8 +133,8 @@
       link)
     (content-str attr)))
 
-(defn from-rfc1123-datetime [attr] (str (jt/instant (jt/formatter :rfc-1123-date-time)
-                                                    (content-str attr))))
+(defn from-rfc1123-datetime [attr]
+  (rfc822/parse-datetime (content-str attr)))
 
 (def attr-convert {:pubDate from-rfc1123-datetime
                    :link get-link-url})
