@@ -63,7 +63,7 @@
                    (+ (* (dec (count block-list)) block-size)
                       (count (get-block dir (last block-list)))))
      :known-ids (->> block-list
-
+                     (map #(read-file (str dir "/" %))) ; avoid caching all blocks
                      (apply concat)
                      (map :id)
                      (set))}))
