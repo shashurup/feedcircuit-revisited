@@ -264,7 +264,7 @@
                     (partition 2 1)
                     (map (fn [[b e]] (- e b))))]
     (if (empty? deltas)
-      (jt/instant)
+      (jt/instant 0)
       (jt/plus (apply jt/max dates)
                (jt/min (jt/hours 24)
                        (jt/millis (quot (apply + deltas)
