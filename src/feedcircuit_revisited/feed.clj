@@ -413,7 +413,11 @@
 (defn init-auto-sync []
   (future
     (while 42 (do (log/info "Starting sync by the timer")
-                  (doall (sync!))
+                  (try
+                    (doall (sync!))
+                    (log/info "Sync is complete")
+                    (catch Exception ex
+                      (log/error ex "Sync failed")))
                   (java.lang.Thread/sleep (* 30 60 1000))))))
 
 (defn init! []
