@@ -258,6 +258,7 @@
         last-items (get-items dir (max 0 (- (get-item-count dir) 10)))
         dates (->> last-items
                    (map :published)
+                   (remove nil?)
                    (map #(jt/instant (jt/formatter :iso-date-time) %)))
         deltas (->> dates
                     (map jt/to-millis-from-epoch)
