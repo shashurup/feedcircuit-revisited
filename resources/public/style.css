@@ -48,6 +48,10 @@ div.hv-center {
     font-weight: bold;
 }
 
+.fcr-news-item h1 a {
+    text-decoration: none;
+}
+
 .fcr-news-body {
     display: inline;
 }

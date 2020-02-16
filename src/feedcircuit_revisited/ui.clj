@@ -49,6 +49,13 @@
    [:div.fcr-news-body summary]
    "&nbsp;&nbsp;" mark])
 
+(defn news-content [url title content]
+  [:div.fcr-news-item
+   [:h1
+    [:a.fcr {:href url
+             :target "_blank"} title]]
+   [:div.fcr-news-body content]])
+
 (defn head [title]
   [:head
    [:title title]
@@ -182,7 +189,8 @@
              content-ident (when (not-empty feed)
                              (->> (@feed/feed-dir feed)
                                   feed/get-attrs
-                                  :content-ident))
+                                  :content-ident)
+                             )
              content (or
                       (:content item)
                       (content/detect html link content-ident))
@@ -197,10 +205,7 @@
             (head title)
             [:body
              [:div#fcr-content
-              (news-item link
-                         title
-                         content
-                         "")
+              (news-content link title content)
               [:div.fcr-article-footer
                (if (not (empty? author))
                  [:p (str "Author: " (s/join ", " author))])
