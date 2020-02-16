@@ -3,6 +3,7 @@
   (:require [feedcircuit-revisited.conf :as conf]
             [feedcircuit-revisited.handler :as handler]
             [feedcircuit-revisited.feed :as feed]
+            [feedcircuit-revisited.stat :as stat]
             [clojure.core.memoize :as memz]
             [ring.adapter.jetty :refer [run-jetty]]
             [clojure.tools.logging :as log]))
@@ -29,6 +30,7 @@
 (defn _run-srv []
   (conf/load-from-file "config")
   (feed/init!)
+  (stat/init!)
   (def _srv
     (run-jetty (handler/create)
                {:port 8080 :join? false})))

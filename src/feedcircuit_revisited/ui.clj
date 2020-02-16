@@ -179,9 +179,13 @@
              title (if html
                      (content/get-title html)
                      (:title item))
+             content-ident (when (not-empty feed)
+                             (->> (@feed/feed-dir feed)
+                                  feed/get-attrs
+                                  :content-ident))
              content (or
                       (:content item)
-                      (content/detect html link (:summary item)))
+                      (content/detect html link content-ident))
              author (:author item)
              category (:category item)
              iid (or (:iid item) url)

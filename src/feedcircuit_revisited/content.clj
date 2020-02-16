@@ -102,6 +102,16 @@
        (map (comp :href attrs zip/node))
        first))
 
+(defn get-identifier [node]
+  (let [attrs (attrs node)]
+    (if-let [id (:id attrs)]
+      [:id id]
+      (if-let [class (:class attrs)]
+        [:class class]))))
+
+(defn find-by-identifier [ident html]
+  (find-nodes #(= (get-identifier %) ident) html))
+
 ; === content detection core ===
 
 (defn text-size [zipper]
@@ -137,9 +147,16 @@
     (if (> size minimal-article-size)
       content-element)))
 
-(defn find-content-element [html]
-  (or (find-content-element-by html text-size-in-paragraphs)
-      (find-content-element-by html text-size)))
+(defn find-content-by-ident [html ident]
+  (when ident
+    (first (find-by-identifier ident html))))
+
+(defn find-content-element
+  ([html] (find-content-element html nil))
+  ([html hint]
+   (or (find-content-by-ident html hint)
+       (find-content-element-by html text-size-in-paragraphs)
+       (find-content-element-by html text-size))))
 
 (defn remove-h1 [html]
   (if-let [h1 (first (find-tags #{:h1} html))]
@@ -245,10 +262,8 @@
 (defmulti detect (fn [x _ _] (class x)))
 
 (defmethod detect clojure.lang.PersistentVector [html base-url hint]
-  (let [base (or (get-base html) base-url)
-        hint-html (if (not (empty? hint))
-                    (jsoup/parse-string hint))]
-    (if-let [content-root (find-content-element html)]
+  (let [base (or (get-base html) base-url)]
+    (if-let [content-root (find-content-element html hint)]
       (-> content-root
           zip/node
           (rebase-fragment base)
