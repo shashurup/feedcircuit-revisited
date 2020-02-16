@@ -35,6 +35,7 @@
 (defn collect-feed! [url]
   (let [feed-dir (@feed/feed-dir url)
         attrs (feed/get-attrs feed-dir)]
+    (log/info "Collecting statistics for " url)
     (feed/set-attrs feed-dir
                     (assoc attrs :content-ident (compute url)))))
 

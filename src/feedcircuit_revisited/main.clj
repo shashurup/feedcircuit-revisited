@@ -15,6 +15,7 @@
   (let [jetty-params (select-keys (conf/param) [:host :port])
         handler (handler/create)]
     (feed/init!)
+    (stat/init!)
     (log/info "Running Jetty with " jetty-params)
     (run-jetty handler jetty-params)))
 
