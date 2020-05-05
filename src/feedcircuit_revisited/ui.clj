@@ -41,20 +41,20 @@
            :onchange (or onchange "")
            :value value}])
 
-(defn news-item [url title summary mark]
+(defn news-item [url title summary footer]
   [:div.fcr-news-item
    [:div.fcr-news-header
     [:a.fcr {:href url
              :target "_blank"} title]]
-   [:div.fcr-news-body summary]
-   "&nbsp;&nbsp;" mark])
+   [:div.fcr-news-body summary footer]])
 
-(defn news-content [url title content]
+(defn news-content [url title content footer]
   [:div.fcr-news-item
    [:h1
     [:a.fcr {:href url
              :target "_blank"} title]]
-   [:div.fcr-news-body content]])
+   [:div.fcr-news-body content]
+   [:div.fcr-item-footer footer]])
 
 (defn head [title]
   [:head
@@ -92,6 +92,11 @@
     [:p [:a {:href "/settings"} "Settings"]]
     [:p [:a {:href "/logout"} "Logout"]]]])
 
+(defn get-feed-title [iid]
+  (if (coll? iid)
+    (:title (feed/get-feed-attrs (first iid)))
+    (.getHost (new java.net.URL iid))))
+
 (defn iid-to-str [iid]
   (if (coll? iid)
     (str (second iid) "," (first iid))
@@ -108,8 +113,15 @@
             (news-item (str "plain?source=" source "&url=" (iid-to-str iid))
                        title
                        (or summary content)
-                       [:label {:class "item-check"
-                                :for (ch-id idx)} icon])))))
+                       (list
+                        " |&nbsp;"
+                        [:a.fcr-item-footer
+                         {:href (str "feed?url=" (first iid))}
+                         (get-feed-title iid)]
+                        " "
+                        [:label {:class "item-check"
+                                 :for (ch-id idx)} icon]
+                        ))))))
 
 (defn build-feed [user-id feed from item-count]
   (let [total-count (feed/get-feed-item-count feed)
@@ -205,12 +217,12 @@
             (head title)
             [:body
              [:div#fcr-content
-              (news-content link title content)
-              [:div.fcr-article-footer
-               (if (not (empty? author))
-                 [:p (str "Author: " (s/join ", " author))])
-               (if (not (empty? category))
-                 [:p (str "Category: " (s/join ", " category))])]
+              (news-content link title content
+                            (list
+                             (if (not (empty? author))
+                               [:p (str "Author: " (s/join ", " author))])
+                             (if (not (empty? category))
+                               [:p (str "Category: " (s/join ", " category))])))
               (if source [:button.fcr-btn {:onclick done-action} "Done"])]]]))
        (catch Exception ex
          (log/error "Failed to make content for" link)))

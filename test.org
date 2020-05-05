@@ -1,27 +1,77 @@
 #+begin_src clojure :results output
-(ns feedcircuit-revisited.handler)
-(use '[clojure.pprint :only [pprint pp]])
-(add-feed "https://exler.ru/rss.xml")
-(add-feed "https://xkcd.com/atom.xml")
-(pp)
+(ns feedcircuit-revisited.main)
+(_run-srv)
 #+end_src
 
 #+RESULTS:
-: 
+: мая 04, 2020 2:09:22 PM feedcircuit-revisited.feed invoke
+: INFO: Starting sync by the timer
+: мая 04, 2020 2:09:22 PM feedcircuit-revisited.stat invoke
+: INFO: Starting statistics collection
+: мая 04, 2020 2:09:22 PM feedcircuit-revisited.stat invoke
+: INFO: Collecting statistics for  http://4pda.ru/feed/
+: 2020-05-04 14:09:22.604:INFO:oejs.Server:nREPL-session-a7135fd7-1e1c-422c-a46e-10e464ce110b: jetty-9.4.22.v20191022; built: 2019-10-22T13:37:13.455Z; git: b1e6b55512e008f7fbdf1cbea4ff8a6446d1073b; jvm 11.0.6+10
+: 2020-05-04 14:09:22.675:INFO:oejs.AbstractConnector:nREPL-session-a7135fd7-1e1c-422c-a46e-10e464ce110b: Started ServerConnector@23acb618{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+: 2020-05-04 14:09:22.675:INFO:oejs.Server:nREPL-session-a7135fd7-1e1c-422c-a46e-10e464ce110b: Started @90812ms
 
 #+begin_src clojure :results pp
-(ns feedcircuit-revisited.handler)
-(use '[clojure.pprint :only [pprint pp]])
-(def feed (merge-new-items {} '({:id 1} {:id 2} {:id 3} {:id 4})))
-(pprint feed)
-(merge-new-items feed '({:id 5} {:id 6} {:id 7} {:id 8}))
+(ns feedcircuit-revisited.main)
+(.stop _srv)
+(.start _srv)
 #+end_src
 
 #+RESULTS:
 : class clojure.lang.Compiler$CompilerExceptionclass clojure.lang.Compiler$CompilerExceptionCompilerException java.lang.RuntimeException: Unable to resolve symbol: feed2 in this context, compiling:(*cider-repl devel/feedcircuit-revisited:localhost:35909(clj)*:6:1) 
 
 #+begin_src clojure :results pp
-(ns feedcircuit-revisited.handler)
-(map parse-rss-item (extract-rss-items (xml/parse "https://xkcd.com/atom.xml")))
+@feedcircuit-revisited.feed/feed-dir
 #+end_src
+
+#+RESULTS:
+#+begin_example
+{"http://sgolub.ru/feed/"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/sgolub.ru.feed.",
+ "http://www.opennet.ru/opennews/opennews_all.rss"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.opennet.ru.opennews.opennews_all.rss",
+ "https://www.kommersant.ru/RSS/section-politics.xml"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.section-politics.xml",
+ "http://4pda.ru/feed/"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/4pda.ru.feed.",
+ "https://clojure.org/feed.xml"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/clojure.org.feed.xml",
+ "https://www.archlinux.org/feeds/news/"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.archlinux.org.feeds.news.",
+ "https://www.anandtech.com/rss/"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.anandtech.com.rss.",
+ "https://www.kommersant.ru/RSS/section-hitech.xml"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.section-hitech.xml",
+ "http://blog.cleancoder.com/atom.xml"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/blog.cleancoder.com.atom.xml",
+ "https://www.kommersant.ru/RSS/Autopilot_on.xml"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.Autopilot_on.xml",
+ "https://bikepost.ru/rss/index/"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/bikepost.ru.rss.index.",
+ "http://rss.slashdot.org/Slashdot/slashdotMain"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/rss.slashdot.org.Slashdot.slashdotMain",
+ "https://www.computerra.ru/feed/"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.computerra.ru.feed.",
+ "https://exler.ru/films/rss.xml"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/exler.ru.films.rss.xml",
+ "https://xkcd.com/atom.xml"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/xkcd.com.atom.xml",
+ "https://content.novayagazeta.ru/rss/all.xml"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/content.novayagazeta.ru.rss.all.xml",
+ "https://www.kommersant.ru/RSS/section-world.xml"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.section-world.xml",
+ "https://www.archlinux.org/feeds/packages/"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.archlinux.org.feeds.packages.",
+ "http://comicfeeds.chrisbenard.net/view/dilbert/default"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/comicfeeds.chrisbenard.net.view.dilbert.default",
+ "https://www.zerohedge.com/fullrss2.xml"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.zerohedge.com.fullrss2.xml",
+ "https://kiwibyrd.org/feed/"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/kiwibyrd.org.feed.",
+ "http://static.feed.rbc.ru/rbc/logical/footer/news.rss"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/static.feed.rbc.ru.rbc.logical.footer.news.rss"}
+#+end_example
 

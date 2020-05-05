@@ -52,20 +52,23 @@ div.hv-center {
     text-decoration: none;
 }
 
-.fcr-news-body {
-    display: inline;
-}
-.fcr-news-body * {
+.fcr-news-body img,video {
     max-width: 100%;
     height: auto;
 }
-.fcr-news-body > :last-child {
+
+.fcr-news-body > p:only-of-type {
     display: inline;
 }
 
-.fcr-article-footer {
+.fcr-item-footer {
     opacity: 0.66;
-    font-style: italic;
+    font-size: 80%;
+}
+
+a.fcr-item-footer {
+    text-decoration: none;
+    color: inherit;
 }
 
 .fcr-btn {
