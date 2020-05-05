@@ -1,4 +1,6 @@
-* TODO Improve content detection, tell article from comments
+* TODO Support RSS 2 (and atom) enclosures
+* DONE Improve content detection, tell article from comments
+  CLOSED: [2020-05-04 Пн 14:04]
 * TODO Appearance settings (themes, font size etc.)
 * TODO Feeds discovery
 * DONE Choose new icon for marking items as read
