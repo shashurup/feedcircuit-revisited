@@ -1,3 +1,5 @@
+* TODO Deal with auth failure upon pressing "Done"
+  By now nothing happens
 * TODO Support RSS 2 (and atom) enclosures
 * DONE Improve content detection, tell article from comments
   CLOSED: [2020-05-04 Пн 14:04]

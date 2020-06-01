@@ -1,77 +1,96 @@
+#+begin_src clojure :results pp
+(ns user
+  (:require [feedcircuit-revisited.main :as m]
+            [feedcircuit-revisited.feed :as f]
+	    [feedcircuit-revisited.content :as c]
+	    [feedcircuit-revisited.ui :as u]
+            [hiccup.core :as html]
+            [clojure.zip :as zip]
+))
+#+end_src
+
+#+RESULTS:
+: nil
+
+#+name: scratch
+#+begin_src clojure :results pp :wrap src clojure
+(reduce + [1 2 3 4 5])
+#+end_src
+
+#+RESULTS: scratch
+#+BEGIN_src clojure
+15
+#+END_src
+
+#+RESULTS:
+: #namespace[user]
+
 #+begin_src clojure :results output
-(ns feedcircuit-revisited.main)
-(_run-srv)
+(m/_run-srv)
 #+end_src
 
 #+RESULTS:
-: мая 04, 2020 2:09:22 PM feedcircuit-revisited.feed invoke
+: мая 31, 2020 5:05:54 PM feedcircuit-revisited.feed invoke
 : INFO: Starting sync by the timer
-: мая 04, 2020 2:09:22 PM feedcircuit-revisited.stat invoke
+: мая 31, 2020 5:05:54 PM feedcircuit-revisited.stat invoke
 : INFO: Starting statistics collection
-: мая 04, 2020 2:09:22 PM feedcircuit-revisited.stat invoke
+: мая 31, 2020 5:05:54 PM feedcircuit-revisited.stat invoke
 : INFO: Collecting statistics for  http://4pda.ru/feed/
-: 2020-05-04 14:09:22.604:INFO:oejs.Server:nREPL-session-a7135fd7-1e1c-422c-a46e-10e464ce110b: jetty-9.4.22.v20191022; built: 2019-10-22T13:37:13.455Z; git: b1e6b55512e008f7fbdf1cbea4ff8a6446d1073b; jvm 11.0.6+10
-: 2020-05-04 14:09:22.675:INFO:oejs.AbstractConnector:nREPL-session-a7135fd7-1e1c-422c-a46e-10e464ce110b: Started ServerConnector@23acb618{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
-: 2020-05-04 14:09:22.675:INFO:oejs.Server:nREPL-session-a7135fd7-1e1c-422c-a46e-10e464ce110b: Started @90812ms
+: 2020-05-31 17:05:54.328:INFO:oejs.Server:nREPL-session-eaee55ce-96bc-45d8-9027-03afb03dbe6c: jetty-9.4.22.v20191022; built: 2019-10-22T13:37:13.455Z; git: b1e6b55512e008f7fbdf1cbea4ff8a6446d1073b; jvm 11.0.7+10
+: 2020-05-31 17:05:54.362:INFO:oejs.AbstractConnector:nREPL-session-eaee55ce-96bc-45d8-9027-03afb03dbe6c: Started ServerConnector@6e26ee86{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+: 2020-05-31 17:05:54.363:INFO:oejs.Server:nREPL-session-eaee55ce-96bc-45d8-9027-03afb03dbe6c: Started @1999641ms
 
 #+begin_src clojure :results pp
-(ns feedcircuit-revisited.main)
-(.stop _srv)
-(.start _srv)
+(.stop m/_srv)
+(.start m/_srv)
 #+end_src
 
 #+RESULTS:
-: class clojure.lang.Compiler$CompilerExceptionclass clojure.lang.Compiler$CompilerExceptionCompilerException java.lang.RuntimeException: Unable to resolve symbol: feed2 in this context, compiling:(*cider-repl devel/feedcircuit-revisited:localhost:35909(clj)*:6:1) 
+: nil
+: 2020-05-30 21:17:00.830:INFO:oejs.AbstractConnector:nREPL-session-5bdb2938-f5ce-4816-9aee-e2d61c30cc29: Stopped ServerConnector@726e38c9{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+: 2020-05-30 21:17:00.833:INFO:oejs.Server:nREPL-session-5bdb2938-f5ce-4816-9aee-e2d61c30cc29: jetty-9.4.22.v20191022; built: 2019-10-22T13:37:13.455Z; git: b1e6b55512e008f7fbdf1cbea4ff8a6446d1073b; jvm 11.0.6+10
+: 2020-05-30 21:17:00.842:INFO:oejs.AbstractConnector:nREPL-session-5bdb2938-f5ce-4816-9aee-e2d61c30cc29: Started ServerConnector@726e38c9{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+: 2020-05-30 21:17:00.842:INFO:oejs.Server:nREPL-session-5bdb2938-f5ce-4816-9aee-e2d61c30cc29: Started @22233625ms
 
-#+begin_src clojure :results pp
-@feedcircuit-revisited.feed/feed-dir
+#+begin_src clojure :results pp :wrap src clojure
+@f/feed-dir
 #+end_src
 
 #+RESULTS:
-#+begin_example
-{"http://sgolub.ru/feed/"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/sgolub.ru.feed.",
- "http://www.opennet.ru/opennews/opennews_all.rss"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.opennet.ru.opennews.opennews_all.rss",
- "https://www.kommersant.ru/RSS/section-politics.xml"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.section-politics.xml",
- "http://4pda.ru/feed/"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/4pda.ru.feed.",
- "https://clojure.org/feed.xml"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/clojure.org.feed.xml",
- "https://www.archlinux.org/feeds/news/"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.archlinux.org.feeds.news.",
- "https://www.anandtech.com/rss/"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.anandtech.com.rss.",
- "https://www.kommersant.ru/RSS/section-hitech.xml"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.section-hitech.xml",
- "http://blog.cleancoder.com/atom.xml"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/blog.cleancoder.com.atom.xml",
- "https://www.kommersant.ru/RSS/Autopilot_on.xml"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.Autopilot_on.xml",
- "https://bikepost.ru/rss/index/"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/bikepost.ru.rss.index.",
- "http://rss.slashdot.org/Slashdot/slashdotMain"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/rss.slashdot.org.Slashdot.slashdotMain",
- "https://www.computerra.ru/feed/"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.computerra.ru.feed.",
- "https://exler.ru/films/rss.xml"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/exler.ru.films.rss.xml",
- "https://xkcd.com/atom.xml"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/xkcd.com.atom.xml",
- "https://content.novayagazeta.ru/rss/all.xml"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/content.novayagazeta.ru.rss.all.xml",
- "https://www.kommersant.ru/RSS/section-world.xml"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.section-world.xml",
- "https://www.archlinux.org/feeds/packages/"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.archlinux.org.feeds.packages.",
- "http://comicfeeds.chrisbenard.net/view/dilbert/default"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/comicfeeds.chrisbenard.net.view.dilbert.default",
- "https://www.zerohedge.com/fullrss2.xml"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.zerohedge.com.fullrss2.xml",
- "https://kiwibyrd.org/feed/"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/kiwibyrd.org.feed.",
- "http://static.feed.rbc.ru/rbc/logical/footer/news.rss"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/static.feed.rbc.ru.rbc.logical.footer.news.rss"}
-#+end_example
+: {}
 
+#+begin_src clojure :results pp :wrap src clojure
+(c/detect (c/retrieve-and-parse "https://www.phoronix.com/scan.php?page=news_item&px=Intel-AVX-512-Golang-Container") "https://www.phoronix.com" nil)
+#+end_src
+
+#+RESULTS:
+#+BEGIN_src clojure
+("\n"
+ [:div
+  {:style "float: left; padding: 0 10px 10px;"}
+  [:img
+   {:alt "INTEL -- ",
+    :src "https://www.phoronix.com/assets/categories/intel.jpg",
+    :width "100",
+    :height "100"}]]
+ "\nOne of the latest performance optimizations being pursued by Intel on the open-source Linux side is providing an AVX-512-optimized container for Golang usage.\r"
+ [:br]
+ "\r"
+ [:br]
+ "Intel's Clear Linux crew has assembled a new container providing AVX-512 tuned Go language support paired with AVX-512 optimized Glibc, OpenMP, and OpenBLAS libraries for operating on Intel's Xeon Scalable servers.\r"
+ [:br]
+ "\r"
+ [:br]
+ "The impact can be far reaching with Kubernetes, Docker, and other popular container software relying upon the Go programming language. This optimized container is being distributed as "
+ [:strong "clearlinux/golang"]
+ ". AVX-512 usage can be performed via Go assembly, cgo with AVX-512 intrinsics, and via third-party libraries.\r"
+ [:br]
+ "\r"
+ [:br]
+ "For performance details and other information on this AVX-512 optimized Golang container powered by Clear Linux via "
+ [:a
+  {:href
+   "https://clearlinux.org/blogs-news/performant-containerized-go-applications-intel-advanced-vector-extensions-512-clear"}
+  "the ClearLinux.org blog"]
+ ".")
+#+END_src

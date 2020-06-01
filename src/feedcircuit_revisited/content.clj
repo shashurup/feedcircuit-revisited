@@ -15,14 +15,21 @@
 
 (def tag first)
 
-(defn children [el] (nthrest el 2))
+(defn attrs [el]
+  (when (map? (second el))
+    (second el)))
 
-(def attrs second)
+(defn children [el]
+  (if (attrs el)
+    (nthrest el 2)
+    (rest el)))
 
 (def element? vector?)
 
 (defn make-element [tag attrs children]
-  (into [tag attrs] children))
+  (->> (list* tag attrs children)
+       (remove nil?)
+       vec))
 
 (defn html-zipper
   ([html]
@@ -268,11 +275,13 @@
           zip/node
           (rebase-fragment base)
           remove-h1
-          children
-          hiccup/html))))
+          children))))
 
 (defmethod detect String [raw-html base-url hint]
-  (detect (jsoup/parse-string raw-html) base-url hint))
+  (-> raw-html
+      jsoup/parse-string
+      (detect base-url hint)
+      hiccup/html))
 
 (defmulti get-title class)
 
