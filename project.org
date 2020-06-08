@@ -1,3 +1,7 @@
+* TODO Get rid of aside
+* TODO Fix iframe size to usual video ratio
+* TODO Get rid of classes and styles
+* DONE Fix RSS items without id or guid
 * TODO Deal with auth failure upon pressing "Done"
   By now nothing happens
 * TODO Support RSS 2 (and atom) enclosures

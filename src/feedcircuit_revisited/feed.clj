@@ -148,8 +148,14 @@
       (update-in item [(get attr-map tag tag)] upd-fn attr-val)
       item)))
 
+(defn ensure-item-id [item]
+  (assoc item :id (or (:id item)
+                      (:link item)
+                      (:title item)
+                      (hash (:summary item)))))
+
 (defn parse-rss-item [item]
-  (reduce parse-rss-item-attribute {} (:content item)))
+  (ensure-item-id (reduce parse-rss-item-attribute {} (:content item))))
 
 (defn find-channel [feed-xml]
   (first (filter #(= (:tag %) :channel)
