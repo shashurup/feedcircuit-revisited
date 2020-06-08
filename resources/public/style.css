@@ -57,6 +57,11 @@ div.hv-center {
     height: auto;
 }
 
+.fcr-news-body iframe {
+    max-width: 100%;
+    height: 18em; /* Make videos 16:9 */
+}
+
 .fcr-news-body > p:only-of-type {
     display: inline;
 }
