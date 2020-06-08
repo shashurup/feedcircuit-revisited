@@ -14,12 +14,17 @@
 
 #+name: scratch
 #+begin_src clojure :results pp :wrap src clojure
-(c/neutralize [:div [:p "abc" "def" [:span {:class "bla"} "some text"] [:p {:style "width"}]]])
+(c/ditch-unwelcome [:div [:p "abc" "def" [:span {:class "bla"} "some text" [:aside "misc"]] [:p {:style "width"}]]])
 #+end_src
 
 #+RESULTS: scratch
 #+BEGIN_src clojure
-[:div [:p "abc" "def" [:span {} "some text"] [:p {}]]]
+[:div
+ [:p
+  "abc"
+  "def"
+  [:span {:class "bla"} "some text"]
+  [:p {:style "width"}]]]
 #+END_src
 
 #+begin_src clojure :results output

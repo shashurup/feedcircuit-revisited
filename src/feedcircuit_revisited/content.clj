@@ -182,6 +182,15 @@
       html-zipper
       (el-map #(zip/edit % remove-class-and-style))))
 
+(def unwelcome-tags #{:aside})
+
+(defn ditch-unwelcome [html]
+  (->> html
+       html-zipper
+       (el-map #(if (unwelcome-tags (tag (zip/node %)))
+                  (zip/remove %)
+                  %))))
+
 ; === figure content summary ===
 
 (defn expectation [coll]
@@ -285,6 +294,7 @@
     (if-let [content-root (find-content-element html hint)]
       (-> content-root
           zip/node
+          ditch-unwelcome
           neutralize
           (rebase-fragment base)
           remove-h1

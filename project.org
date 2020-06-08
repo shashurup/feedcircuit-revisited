@@ -1,6 +1,6 @@
-* TODO Get rid of aside
+* DONE Get rid of aside
 * TODO Fix iframe size to usual video ratio
-* TODO Get rid of classes and styles
+* DONE Get rid of classes and styles
 * DONE Fix RSS items without id or guid
 * TODO Deal with auth failure upon pressing "Done"
   By now nothing happens
