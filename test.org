@@ -14,12 +14,12 @@
 
 #+name: scratch
 #+begin_src clojure :results pp :wrap src clojure
-(reduce + [1 2 3 4 5])
+(c/neutralize [:div [:p "abc" "def" [:span {:class "bla"} "some text"] [:p {:style "width"}]]])
 #+end_src
 
 #+RESULTS: scratch
 #+BEGIN_src clojure
-15
+[:div [:p "abc" "def" [:span {} "some text"] [:p {}]]]
 #+END_src
 
 #+begin_src clojure :results output
@@ -50,11 +50,128 @@
 : 2020-05-30 21:17:00.842:INFO:oejs.Server:nREPL-session-5bdb2938-f5ce-4816-9aee-e2d61c30cc29: Started @22233625ms
 
 #+begin_src clojure :results pp :wrap src clojure
+(f/sync!)
+#+end_src
+
+#+RESULTS:
+#+BEGIN_src clojure
+(["https://news.ycombinator.com/rss" 30]
+ ["https://clojure.org/feed.xml" 0]
+ ["https://www.archlinux.org/feeds/news/" 0]
+ ["https://www.anandtech.com/rss/" 0]
+ ["http://blog.cleancoder.com/atom.xml" 0]
+ ["http://rss.slashdot.org/Slashdot/slashdotMain" 15]
+ ["http://feeds.arstechnica.com/arstechnica/index/" 0]
+ ["https://www.computerra.ru/feed/" 1]
+ ["https://xkcd.com/atom.xml" 0]
+ ["https://www.kommersant.ru/RSS/section-world.xml" 3]
+ ["https://www.zerohedge.com/fullrss2.xml" 1]
+ ["http://static.feed.rbc.ru/rbc/logical/footer/news.rss" 1])
+июн. 08, 2020 9:56:03 AM feedcircuit-revisited.feed invoke
+INFO: Getting news from https://news.ycombinator.com/rss
+июн. 08, 2020 9:56:04 AM feedcircuit-revisited.feed invoke
+INFO: Got 30 item from https://news.ycombinator.com/rss
+июн. 08, 2020 9:56:04 AM feedcircuit-revisited.feed invoke
+INFO: Getting news from https://clojure.org/feed.xml
+июн. 08, 2020 9:56:05 AM feedcircuit-revisited.feed invoke
+INFO: Got 0 item from https://clojure.org/feed.xml
+июн. 08, 2020 9:56:05 AM feedcircuit-revisited.feed invoke
+INFO: Getting news from https://www.archlinux.org/feeds/news/
+июн. 08, 2020 9:56:05 AM feedcircuit-revisited.feed invoke
+INFO: Got 0 item from https://www.archlinux.org/feeds/news/
+июн. 08, 2020 9:56:05 AM feedcircuit-revisited.feed invoke
+INFO: Getting news from https://www.anandtech.com/rss/
+июн. 08, 2020 9:56:07 AM feedcircuit-revisited.feed invoke
+INFO: Got 0 item from https://www.anandtech.com/rss/
+июн. 08, 2020 9:56:07 AM feedcircuit-revisited.feed invoke
+INFO: Getting news from http://blog.cleancoder.com/atom.xml
+июн. 08, 2020 9:56:08 AM feedcircuit-revisited.feed invoke
+INFO: Got 0 item from http://blog.cleancoder.com/atom.xml
+июн. 08, 2020 9:56:08 AM feedcircuit-revisited.feed invoke
+INFO: Getting news from http://rss.slashdot.org/Slashdot/slashdotMain
+июн. 08, 2020 9:56:08 AM feedcircuit-revisited.feed invoke
+INFO: Got 15 item from http://rss.slashdot.org/Slashdot/slashdotMain
+июн. 08, 2020 9:56:08 AM feedcircuit-revisited.feed invoke
+INFO: Getting news from http://feeds.arstechnica.com/arstechnica/index/
+июн. 08, 2020 9:56:08 AM feedcircuit-revisited.feed invoke
+INFO: Got 0 item from http://feeds.arstechnica.com/arstechnica/index/
+июн. 08, 2020 9:56:08 AM feedcircuit-revisited.feed invoke
+INFO: Getting news from https://www.computerra.ru/feed/
+июн. 08, 2020 9:56:09 AM feedcircuit-revisited.feed invoke
+INFO: Got 1 item from https://www.computerra.ru/feed/
+июн. 08, 2020 9:56:09 AM feedcircuit-revisited.feed invoke
+INFO: Getting news from https://xkcd.com/atom.xml
+июн. 08, 2020 9:56:09 AM feedcircuit-revisited.feed invoke
+INFO: Got 0 item from https://xkcd.com/atom.xml
+июн. 08, 2020 9:56:09 AM feedcircuit-revisited.feed invoke
+INFO: Getting news from https://www.kommersant.ru/RSS/section-world.xml
+июн. 08, 2020 9:56:10 AM feedcircuit-revisited.feed invoke
+INFO: Got 3 item from https://www.kommersant.ru/RSS/section-world.xml
+июн. 08, 2020 9:56:10 AM feedcircuit-revisited.feed invoke
+INFO: Getting news from https://www.zerohedge.com/fullrss2.xml
+июн. 08, 2020 9:56:13 AM feedcircuit-revisited.feed invoke
+INFO: Got 1 item from https://www.zerohedge.com/fullrss2.xml
+июн. 08, 2020 9:56:13 AM feedcircuit-revisited.feed invoke
+INFO: Getting news from http://static.feed.rbc.ru/rbc/logical/footer/news.rss
+июн. 08, 2020 9:56:13 AM feedcircuit-revisited.feed invoke
+INFO: Got 1 item from http://static.feed.rbc.ru/rbc/logical/footer/news.rss
+#+END_src
+
+#+begin_src clojure :results pp :wrap src clojure
 @f/feed-dir
 #+end_src
 
 #+RESULTS:
-: {}
+#+BEGIN_src clojure
+{"http://sgolub.ru/feed/"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/sgolub.ru.feed.",
+ "https://news.ycombinator.com/rss"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/news.ycombinator.com.rss",
+ "http://www.opennet.ru/opennews/opennews_all.rss"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.opennet.ru.opennews.opennews_all.rss",
+ "https://www.kommersant.ru/RSS/section-politics.xml"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.section-politics.xml",
+ "http://4pda.ru/feed/"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/4pda.ru.feed.",
+ "https://clojure.org/feed.xml"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/clojure.org.feed.xml",
+ "https://www.archlinux.org/feeds/news/"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.archlinux.org.feeds.news.",
+ "https://www.anandtech.com/rss/"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.anandtech.com.rss.",
+ "https://www.kommersant.ru/RSS/section-hitech.xml"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.section-hitech.xml",
+ "http://blog.cleancoder.com/atom.xml"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/blog.cleancoder.com.atom.xml",
+ "https://www.kommersant.ru/RSS/Autopilot_on.xml"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.Autopilot_on.xml",
+ "https://bikepost.ru/rss/index/"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/bikepost.ru.rss.index.",
+ "http://rss.slashdot.org/Slashdot/slashdotMain"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/rss.slashdot.org.Slashdot.slashdotMain",
+ "http://feeds.arstechnica.com/arstechnica/index/"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/feeds.arstechnica.com.arstechnica.index.",
+ "https://www.computerra.ru/feed/"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.computerra.ru.feed.",
+ "https://exler.ru/films/rss.xml"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/exler.ru.films.rss.xml",
+ "https://xkcd.com/atom.xml"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/xkcd.com.atom.xml",
+ "https://content.novayagazeta.ru/rss/all.xml"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/content.novayagazeta.ru.rss.all.xml",
+ "https://www.kommersant.ru/RSS/section-world.xml"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.section-world.xml",
+ "https://www.archlinux.org/feeds/packages/"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.archlinux.org.feeds.packages.",
+ "http://comicfeeds.chrisbenard.net/view/dilbert/default"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/comicfeeds.chrisbenard.net.view.dilbert.default",
+ "https://www.zerohedge.com/fullrss2.xml"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.zerohedge.com.fullrss2.xml",
+ "https://kiwibyrd.org/feed/"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/kiwibyrd.org.feed.",
+ "http://static.feed.rbc.ru/rbc/logical/footer/news.rss"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/static.feed.rbc.ru.rbc.logical.footer.news.rss"}
+#+END_src
 
 #+begin_src clojure :results pp :wrap src clojure
 (c/detect (c/retrieve-and-parse "https://www.phoronix.com/scan.php?page=news_item&px=Intel-AVX-512-Golang-Container") "https://www.phoronix.com" nil)

@@ -44,7 +44,7 @@
   #(and (element? %) (pred (tag %))))
 
 (def non-content-tags #{:a :head :script :style :nav
-                          :aside :footer :header :svg})
+                        :aside :footer :header :svg})
 
 (def content-element?
   (tag-pred (comp nil? non-content-tags)))
@@ -170,6 +170,18 @@
     (zip/root (zip/remove h1))
     html))
 
+(defn remove-class-and-style [el]
+  (if (element? el)
+    (make-element (tag el)
+                  (dissoc (attrs el) :class :style)
+                  (children el))
+    el))
+
+(defn neutralize [html]
+ (->> html
+      html-zipper
+      (el-map #(zip/edit % remove-class-and-style))))
+
 ; === figure content summary ===
 
 (defn expectation [coll]
@@ -273,6 +285,7 @@
     (if-let [content-root (find-content-element html hint)]
       (-> content-root
           zip/node
+          neutralize
           (rebase-fragment base)
           remove-h1
           children))))
