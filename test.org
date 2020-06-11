@@ -14,17 +14,20 @@
 
 #+name: scratch
 #+begin_src clojure :results pp :wrap src clojure
-(c/ditch-unwelcome [:div [:p "abc" "def" [:span {:class "bla"} "some text" [:aside "misc"]] [:p {:style "width"}]]])
+(c/update-html
+  [#{:a1 :a2} :delete
+   #(= (c/tag %) :a3) :delete
+   #{:a :img} #(c/update-attrs % update :href clojure.string/upper-case)
+   c/element? #(c/update-attrs % dissoc :class :style)]
+  [:div [:p "abc" [:a3 [:p "jkl"]]]
+        [:a1 "def"]
+	[:a {:href "hhrreeff" :class "bright"}]
+	"just text"])
 #+end_src
 
 #+RESULTS: scratch
 #+BEGIN_src clojure
-[:div
- [:p
-  "abc"
-  "def"
-  [:span {:class "bla"} "some text"]
-  [:p {:style "width"}]]]
+[:div [:p "abc"] [:a {:href "HHRREEFF"}] "just text"]
 #+END_src
 
 #+begin_src clojure :results output

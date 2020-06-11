@@ -15,7 +15,7 @@
 
 (defn parse-int [s] (if s (Integer. s)))
 
-(def block-size 100)
+(def block-size "Number of items in each file" 100)
 
 ; === item storage ===
 
@@ -84,7 +84,10 @@
 (defn get-last-block-num [dir]
   (quot (get-item-count dir) block-size))
 
-(defn get-items [dir start]
+(defn get-items 
+  "Returns lazy sequence of items in the directory dir
+   beginning from the start"
+  [dir start]
   (let [last-block-num (get-last-block-num dir)
         start-block (quot start block-size)
         start-offset (rem start block-size)
@@ -92,7 +95,10 @@
                                  (range start-block (inc last-block-num))))]
     (nthrest items start-offset)))
 
-(defn get-numbered-items [dir start]
+(defn get-numbered-items 
+  "Returns lazy numbered sequence of items
+   in the directory dir beginning from the start"
+  [dir start]
   (map-indexed #(assoc %2 :num (+ start %1))
                (get-items dir start)))
 
@@ -101,7 +107,9 @@
     [(:feed item) num]
     (:link item)))
 
-(defn append-items! [dir items]
+(defn append-items!
+  "Appends items to the end of the list in the directory dir"
+  [dir items]
   (let [last-block-num (get-last-block-num dir)
         last-block (get-block dir last-block-num)
         new-blocks (->> (concat last-block items)
@@ -174,7 +182,10 @@
        (filter #(not (contains? #{:item :entry} (:tag %))))
        (reduce parse-rss-item-attribute {})))
 
-(defn fetch-new-items [url known-ids]
+(defn fetch-new-items
+  "Fetches new items from the feed located at the url.
+   The known-ids is a set of already fetched items."
+  [url known-ids]
   (let [reply (http/get url {:as :stream})
         feed-xml (xml/parse (:body reply))
         attrs (parse-feed-details feed-xml)
@@ -207,7 +218,12 @@
 (defn dir-path [url]
   (str (fs/normalized (str (conf/param :data-dir) "/feeds/" (dir-name url)))))
 
-(defn fix-summary-and-content [item]
+(defn fix-summary-and-content
+  "Summary may be absent from item, in this case
+   it is deduced from content. Summary may be too long,
+   in this case it is made shorter. At the same time
+   content may be absent, in this case summary takes its place."
+  [item]
   (let [summary (:summary item)
         content (:content item)]
     (cond
@@ -221,7 +237,9 @@
             item))
       :else item)))
 
-(defn fix-refs [item base-url]
+(defn fix-refs
+  "Make all references in content and summary absolute"
+  [item base-url]
   (cond-> item
     (:summary item) (update :summary content/make-refs-absolute base-url)
     (:content item) (update :content content/make-refs-absolute base-url)))
@@ -259,7 +277,10 @@
     (catch Exception ex
       (log/error ex "Failed to get news from" url))))
 
-(defn next-update-time [url]
+(defn next-update-time
+  "Deduce next update time for the feed located at url.
+   The algorithm takes into account how often the feed is updated."
+  [url]
   (let [dir (get @feed-dir url)
         last-items (get-items dir (max 0 (- (get-item-count dir) 10)))
         dates (->> last-items
@@ -289,7 +310,10 @@
 
 ; === user handling ===
 
-(defn parse-feed-expression [expr]
+(defn parse-feed-expression
+  "Feed expression consists of the feed url and a list of
+   authors and categories to include or exclude."
+  [expr]
   (let [parse-expr #(let [include (not= \! (first %))]
                       [(if include % (apply str (rest %)))
                        include])
@@ -364,7 +388,9 @@
     (fs/mkdirs dir)
     (append-items! dir items)))
 
-(defn get-selected-items [user-id]
+(defn get-selected-items
+  "Lazy sequence of items user marked for later reading."
+  [user-id]
   (let [user (get-user-attrs user-id)
         feed-urls (map first (make-expressions (:feeds user)))
         items (:selected user [])]
@@ -400,7 +426,9 @@
 
 ; === sync ===
 
-(defn active-feeds []
+(defn active-feeds
+  "List of feeds subscribed to by at least one user."
+  []
   (->> (all-users)
        (map get-user-attrs)
        (map :feeds)

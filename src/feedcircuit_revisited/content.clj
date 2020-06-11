@@ -31,6 +31,13 @@
        (remove nil?)
        vec))
 
+(defn update-attrs [node update-fn & params]
+  (if (element? node)
+    (make-element (tag node)
+                  (apply update-fn (attrs node) params)
+                  (children node))
+    node))
+
 (defn html-zipper
   ([html]
    (html-zipper element? html))
@@ -43,8 +50,10 @@
 (defn tag-pred [pred]
   #(and (element? %) (pred (tag %))))
 
-(def non-content-tags #{:a :head :script :style :nav
-                        :aside :footer :header :svg})
+(def non-content-tags
+  "Tags where content isn't searched for"
+  #{:a :head :script :style :nav
+    :aside :footer :header :svg})
 
 (def content-element?
   (tag-pred (comp nil? non-content-tags)))
@@ -59,6 +68,31 @@
        (take-while (complement zip/end?))
        last
        zip/root))
+
+(defn update-html [rules html]
+  (let [tr (->> rules
+                (partition 2)
+                (map (fn [[pred fn]]
+                       [(if (set? pred)
+                          #(and (element? %) (pred (tag %)))
+                          pred)
+                        fn])))
+        update-fn (fn [loc]
+                    (let [node (zip/node loc)
+                          fns (->> tr
+                                   (filter (fn [[pred _]] (pred node)))
+                                   (map second))]
+                      (cond
+                        (empty? fns) loc
+                        (some #(= % :delete) fns) (zip/remove loc)
+                        :else (zip/edit loc (apply comp fns))
+                        )))]
+    (->> html
+         html-zipper
+         (iterate #(zip/next (update-fn %)))
+         (take-while (complement zip/end?))
+         last
+         zip/root)))
 
 (def url-attrs {:a :href
                 :area :href
@@ -214,7 +248,10 @@
   (let [current-size (or (second (last result)) 0)]
     (conj result [size (+ size current-size) element])))
 
-(defmulti summarize class)
+(defmulti summarize
+  "Makes a summary from an article. The size of the summary
+   is calculated basing on an average paragraph size."
+  class)
 
 (defmethod summarize clojure.lang.PersistentVector [html]
   (when-let [content-element (find-content-element html)]
@@ -287,7 +324,9 @@
 (defn retrieve-and-parse [url]
   (jsoup/parse-string (http-get url)))
 
-(defmulti detect (fn [x _ _] (class x)))
+(defmulti detect
+  "Finds HTML element containing core content"
+  (fn [x _ _] (class x)))
 
 (defmethod detect clojure.lang.PersistentVector [html base-url hint]
   (let [base (or (get-base html) base-url)]
