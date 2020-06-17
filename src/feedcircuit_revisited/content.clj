@@ -124,6 +124,11 @@
        html-zipper
        (el-map #(zip/edit % make-absolute base))))
 
+(defn text-only [node]
+  (if (string? node)
+    node
+    (apply str (map text-only (children node)))))
+
 (defn find-nodes [pred html]
   (->> html
        html-zipper
@@ -272,52 +277,6 @@
 
 (defmethod summarize String [raw-html]
   (summarize (jsoup/parse-string raw-html)))
-
-; === experimental feature - detect by content hint ===
-
-(defn alphabetic-only [s]
-  (s/replace s #"\P{IsAlphabetic}" ""))
-
-(def text-node? (comp string? zip/node))
-
-(defn find-biggest-text [zipper]
-  (->> (node-seq zipper)
-       (filter text-node?)
-       (reduce #(max-key (comp count zip/node) %1 %2))))
-
-(defn text-only [node]
-  (if (string? node)
-    node
-    (apply str (map text-only (children node)))))
-
-(defn find-element-containing [zipper hint]
-  (let [source (alphabetic-only (text-only hint))
-        size (min minimal-summary-size (count source))]
-    (->> (node-seq zipper)
-         (filter text-node?)
-         (filter #(> (count (zip/node %)) size))
-         (filter #(s/includes? source
-                               (alphabetic-only (subs (zip/node %) 0 size))))
-         first)))
-
-(defn find-anchor-element [zipper hint]
-  (or (if hint (find-element-containing zipper hint))
-      (find-biggest-text zipper)))
-
-(defn content-axis [html hint]
-  (let [zipper (html-zipper content-element? html)
-        anchor (find-anchor-element zipper hint)]
-    (->> (iterate zip/up anchor)
-         (map zip/node)
-         (take-while #(not= :html (tag %)))
-         (map #(vector (text-size-recursively %) %)))))
-
-(defn find-content-element2 [html hint]
-  (->> (content-axis html hint)
-       (partition 2 1)
-       (map (fn [[[l1 n1] [l2 n2]]] (vector (- l2 l1) n2)))
-       (reduce #(max-key first %1 %2))
-       second))
 
 ; === main interface function ===
 
