@@ -62,13 +62,6 @@
   (take-while (complement zip/end?)
               (iterate zip/next zipper)))
 
-(defn el-map [f zipper]
-  (->> zipper
-       (iterate #(zip/next (f %)))
-       (take-while (complement zip/end?))
-       last
-       zip/root))
-
 (defn update-html [rules html]
   (let [tr (->> rules
                 (partition 2)
@@ -93,36 +86,6 @@
          (take-while (complement zip/end?))
          last
          zip/root)))
-
-(def url-attrs {:a :href
-                :area :href
-                :img :src
-                :script :src
-                :iframe :src
-                :embed :src
-                :video :src
-                :audio :src
-                :track :src
-                :source :src
-                :input :src
-                :form :action})
-
-(defn absolute-url [url base]
-  (str (new java.net.URL (new java.net.URL base) url)))
-
-(defn make-absolute [element base]
-  (let [tag (tag element)
-        url-attr (get url-attrs tag)]
-    (if (and url-attr (get (attrs element) url-attr))
-      (make-element tag
-                    (update (attrs element) url-attr absolute-url base)
-                    (children element))
-      element)))
-
-(defn rebase-fragment [fragment base]
-  (->> fragment
-       html-zipper
-       (el-map #(zip/edit % make-absolute base))))
 
 (defn text-only [node]
   (if (string? node)
@@ -209,27 +172,6 @@
     (zip/root (zip/remove h1))
     html))
 
-(defn remove-class-and-style [el]
-  (if (element? el)
-    (make-element (tag el)
-                  (dissoc (attrs el) :class :style)
-                  (children el))
-    el))
-
-(defn neutralize [html]
- (->> html
-      html-zipper
-      (el-map #(zip/edit % remove-class-and-style))))
-
-(def unwelcome-tags #{:aside})
-
-(defn ditch-unwelcome [html]
-  (->> html
-       html-zipper
-       (el-map #(if (unwelcome-tags (tag (zip/node %)))
-                  (zip/remove %)
-                  %))))
-
 ; === figure content summary ===
 
 (defn expectation [coll]
@@ -280,6 +222,23 @@
 
 ; === main interface function ===
 
+(def unwelcome-tags #{:aside})
+
+(def tags-with-href #{:a :area})
+(def tags-with-src #{:img :script :iframe :embed
+                     :video :audio :track :source :input})
+
+(defn absolute-url [url base]
+  (str (new java.net.URL (new java.net.URL base) url)))
+
+(defn rebase-rules [base]
+  [#{:a :area}             #(update-attrs % update :href absolute-url base)
+   #{:img :script
+     :iframe :embed
+     :video :audio :track
+     :source :input}       #(update-attrs % update :src absolute-url base)
+   #{:form}                #(update-attrs % update :action absolute-url base)])
+
 (defn retrieve-and-parse [url]
   (jsoup/parse-string (http-get url)))
 
@@ -288,15 +247,16 @@
   (fn [x _ _] (class x)))
 
 (defmethod detect clojure.lang.PersistentVector [html base-url hint]
-  (let [base (or (get-base html) base-url)]
+  (let [base (or (get-base html) base-url)
+        transform-rules (into [unwelcome-tags :delete
+                               element?       #(update-attrs % dissoc :style)]
+                              (rebase-rules base))]
     (if-let [content-root (find-content-element html hint)]
-      (-> content-root
-          zip/node
-          ditch-unwelcome
-          neutralize
-          (rebase-fragment base)
-          remove-h1
-          children))))
+      (->> content-root
+           zip/node
+           (update-html transform-rules)
+           remove-h1
+           children))))
 
 (defmethod detect String [raw-html base-url hint]
   (-> raw-html
@@ -315,7 +275,8 @@
   (get-title (jsoup/parse-string raw-html)))
 
 (defn make-refs-absolute [subj base-url]
-  (let [changed (rebase-fragment (jsoup/parse-string subj) base-url)]
+  (let [changed (update-html (rebase-rules base-url)
+                             (jsoup/parse-string subj))]
     (hiccup/html (children (find-body changed)))))
 
 (defn calculate-size [html]
