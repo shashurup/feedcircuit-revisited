@@ -249,15 +249,27 @@
        (map #(fix-refs % (:url attrs)))
        (map fix-summary-and-content)))
 
-(defn add-feed! [url]
+(defonce pending-feeds (atom {}))
+
+(defn do-add-feed! [url]
   (let [dir (dir-path url)
         [attrs new-items] (fetch-new-items url #{})]
     (fs/mkdirs dir)
-    (swap! feed-dir assoc url dir)
-    (set-attrs dir (assoc attrs
-                          :url url))
+    (set-attrs dir (assoc attrs :url url))
     (append-items! dir (preproces new-items
-                                  (get-attrs dir)))))
+                                  (get-attrs dir)))
+    (swap! feed-dir assoc url dir)
+    dir))
+
+(defn add-feed! [url]
+  (letfn [(push [pending url]
+            (if (pending url)
+              pending
+              (assoc pending url (delay (do-add-feed! url)))))]
+    ;; signal that feed is being added
+    (swap! pending-feeds push url))
+  ;; wait until feed addition is complete
+  (deref (@pending-feeds url)))
 
 (defn sync-feed! [url]
   (let [dir (get @feed-dir url)
