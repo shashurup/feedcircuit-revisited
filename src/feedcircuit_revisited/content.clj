@@ -240,7 +240,10 @@
    #{:form}                #(update-attrs % update :action absolute-url base)])
 
 (defn retrieve-and-parse [url]
-  (jsoup/parse-string (http-get url)))
+  (let [response (http/get url {:decode-body-headers true :as :auto})]
+    (if (= (:content-type response) :text/html)
+      (jsoup/parse-string (:body response))
+      (throw (new Exception "text/html is expected")))))
 
 (defmulti detect
   "Finds HTML element containing core content"
