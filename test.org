@@ -14,20 +14,12 @@
 
 #+name: scratch
 #+begin_src clojure :results pp :wrap src clojure
-(c/update-html
-  [#{:a1 :a2} :delete
-   #(= (c/tag %) :a3) :delete
-   #{:a :img} #(c/update-attrs % update :href clojure.string/upper-case)
-   c/element? #(c/update-attrs % dissoc :class :style)]
-  [:div [:p "abc" [:a3 [:p "jkl"]]]
-        [:a1 "def"]
-	[:a {:href "hhrreeff" :class "bright"}]
-	"just text"])
+(f/add-feed2! "http://www.opennet.ru/opennews/opennews_all.rss")
 #+end_src
 
 #+RESULTS: scratch
 #+BEGIN_src clojure
-[:div [:p "abc"] [:a {:href "HHRREEFF"}] "just text"]
+"/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.opennet.ru.opennews.opennews_all.rss"
 #+END_src
 
 #+begin_src clojure :results output
@@ -35,15 +27,19 @@
 #+end_src
 
 #+RESULTS:
-: июн. 17, 2020 5:01:22 PM feedcircuit-revisited.feed invoke
-: INFO: Starting sync by the timer
-: июн. 17, 2020 5:01:22 PM feedcircuit-revisited.stat invoke
-: INFO: Starting statistics collection
-: июн. 17, 2020 5:01:23 PM feedcircuit-revisited.stat invoke
-: INFO: Collecting statistics for  https://news.ycombinator.com/rss
-: 2020-06-17 17:01:23.018:INFO:oejs.Server:nREPL-session-40493782-cd28-4a72-a345-7206e65fa69b: jetty-9.4.22.v20191022; built: 2019-10-22T13:37:13.455Z; git: b1e6b55512e008f7fbdf1cbea4ff8a6446d1073b; jvm 11.0.7+10
-: 2020-06-17 17:01:23.060:INFO:oejs.AbstractConnector:nREPL-session-40493782-cd28-4a72-a345-7206e65fa69b: Started ServerConnector@5e9909b6{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
-: 2020-06-17 17:01:23.060:INFO:oejs.Server:nREPL-session-40493782-cd28-4a72-a345-7206e65fa69b: Started @21348ms
+#+begin_example
+июн. 19, 2020 9:59:23 AM feedcircuit-revisited.feed invoke
+INFO: Starting sync by the timer
+июн. 19, 2020 9:59:23 AM feedcircuit-revisited.stat invoke
+INFO: Starting statistics collection
+июн. 19, 2020 9:59:23 AM feedcircuit-revisited.stat invoke
+INFO: Collecting statistics for  https://news.ycombinator.com/rss
+2020-06-19 09:59:23.447:INFO:oejs.Server:nREPL-session-a525c747-f5e3-4139-9dc4-3628d48e5092: jetty-9.4.22.v20191022; built: 2019-10-22T13:37:13.455Z; git: b1e6b55512e008f7fbdf1cbea4ff8a6446d1073b; jvm 11.0.7+10
+июн. 19, 2020 9:59:23 AM feedcircuit-revisited.feed invoke
+INFO: Getting news from https://news.ycombinator.com/rss
+2020-06-19 09:59:23.480:INFO:oejs.AbstractConnector:nREPL-session-a525c747-f5e3-4139-9dc4-3628d48e5092: Started ServerConnector@678ec307{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+2020-06-19 09:59:23.480:INFO:oejs.Server:nREPL-session-a525c747-f5e3-4139-9dc4-3628d48e5092: Started @26782ms
+#+end_example
 
 #+begin_src clojure :results pp
 (.stop m/_srv)

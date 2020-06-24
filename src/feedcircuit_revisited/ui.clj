@@ -229,10 +229,8 @@
      link)))
 
 (defn mark-read [user-id to-positions]
-  (let [user (feed/get-user-attrs user-id)]
-    (-> user
-        (update-in [:positions] merge (into {} to-positions))
-        (feed/update-user-attrs!))))
+  (let [pos-map (into {} to-positions)]
+    (feed/update-user-attrs! user-id update :positions merge pos-map)))
 
 (defn build-settings [user-id]
   (let [user (feed/get-user-attrs user-id)]
@@ -258,14 +256,13 @@
         [:a.fcr-btn.fcr-btn-right {:href "./"} "Back to the feed"]]]]]))
 
 (defn save-settings [user-id feed-lines]
-  (let [user (feed/get-user-attrs user-id)
-        feeds (s/split-lines feed-lines)
+  (let [feeds (s/split-lines feed-lines)
         new-feeds (->> (feed/make-expressions feeds)
                        (map first)
                        (filter #(not (get @feed/feed-dir %))))]
     (doseq [url new-feeds]
       (feed/add-feed! url))
-    (feed/update-user-attrs! (assoc user :feeds feeds))))
+    (feed/update-user-attrs! user-id assoc :feeds feeds)))
 
 (defn build-login-options []
   [:html

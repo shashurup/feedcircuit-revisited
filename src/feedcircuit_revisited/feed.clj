@@ -380,25 +380,41 @@
 (defn user-dir [id]
   (str (conf/param :data-dir) "/users/" id))
 
-(defn get-user-attrs [id]
-  (-> (get-attrs (user-dir id))
-      (assoc :id id)
+(defonce user-attrs (atom {}))
+
+(defonce attrs-updater (agent nil))
+
+(defn write-user-attrs [attrs]
+  (let [dir (user-dir (:id attrs))
+        attr-file (str dir "/attrs")]
+    (fs/mkdirs dir)
+    (write-file attr-file
+                (-> attrs
+                    (dissoc :id)
+                    (update :unread vec)))))
+
+(defn attr-update-watcher [_ _ _ attrs]
+  (send attrs-updater (fn [_] (write-user-attrs attrs))))
+
+(defn read-user-attrs [user-id]
+  (-> (str (user-dir user-id) "/attrs")
+      read-file
+      (assoc :id user-id)
       (update :unread #(apply sorted-set %))))
 
-(defn update-user-attrs! [attrs]
-  (let [dir (user-dir (:id attrs))]
-    (fs/mkdirs dir)
-    (set-attrs dir
-               (-> attrs
-                   (dissoc :id)
-                   (update :unread vec)))))
+(defn ensure-user-attrs [user-id]
+  (let [mk-atom #(add-watch (atom %) user-id attr-update-watcher)
+        add-user #(if (% user-id)
+                    %
+                    (assoc % user-id (mk-atom (read-user-attrs user-id))))]
+    (or (@user-attrs user-id)
+        ((swap! user-attrs add-user) user-id))))
 
-(defn archive-items! [user ids]
-  (let [dir (user-dir user)
-        items (map (fn [[url pos]]
-                     (first (get-items (get @feed-dir url) pos))) ids)]
-    (fs/mkdirs dir)
-    (append-items! dir items)))
+(defn get-user-attrs [user-id]
+  (deref (ensure-user-attrs user-id)))
+
+(defn update-user-attrs! [user-id f & args]
+  (apply swap! (ensure-user-attrs user-id) f args))
 
 (defn get-selected-items
   "Lazy sequence of items user marked for later reading."
@@ -422,19 +438,14 @@
        :summary (content/summarize html)})))
 
 (defn selected-add! [user-id ids]
-  (let [user (get-user-attrs user-id)]
-    (->> ids
-       (map retrieve-item)
-       (update user :selected into)
-       update-user-attrs!)))
+  (let [items (map retrieve-item ids)]
+    (update-user-attrs! user-id update :selected into items)))
 
 (defn selected-remove! [user-id ids]
-  (let [user (get-user-attrs user-id)
-        in-ids? (fn [item]
-                  (let [id (get-internal-id item)]
-                    (some #(= id %) ids)))]
-    (update-user-attrs!
-     (update user :selected #(remove in-ids? %)))))
+  (letfn [(in-ids? [item]
+            (let [id (get-internal-id item)]
+              (some #(= id %) ids)))]
+    (update-user-attrs! user-id update :selected #(remove in-ids? %))))
 
 ; === sync ===
 

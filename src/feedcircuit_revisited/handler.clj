@@ -77,11 +77,10 @@
 
   (GET "/subscribe" {user-id :user
                      {url :url} :params}
-       (let [user (feed/get-user-attrs user-id)]
-         (if-not (@feed/feed-dir url)
-           (feed/add-feed! url))
-         (feed/update-user-attrs! (update user :feeds conj url))
-         {:status 303 :headers {"Location" "/"}}))
+       (if-not (@feed/feed-dir url)
+         (feed/add-feed! url))
+       (feed/update-user-attrs! user-id update :feeds conj url)
+       {:status 303 :headers {"Location" "/"}})
 
   (GET "/debug" request (str request))
 
