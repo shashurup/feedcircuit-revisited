@@ -48,10 +48,10 @@ INFO: Getting news from https://news.ycombinator.com/rss
 
 #+RESULTS:
 : nil
-: 2020-05-30 21:17:00.830:INFO:oejs.AbstractConnector:nREPL-session-5bdb2938-f5ce-4816-9aee-e2d61c30cc29: Stopped ServerConnector@726e38c9{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
-: 2020-05-30 21:17:00.833:INFO:oejs.Server:nREPL-session-5bdb2938-f5ce-4816-9aee-e2d61c30cc29: jetty-9.4.22.v20191022; built: 2019-10-22T13:37:13.455Z; git: b1e6b55512e008f7fbdf1cbea4ff8a6446d1073b; jvm 11.0.6+10
-: 2020-05-30 21:17:00.842:INFO:oejs.AbstractConnector:nREPL-session-5bdb2938-f5ce-4816-9aee-e2d61c30cc29: Started ServerConnector@726e38c9{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
-: 2020-05-30 21:17:00.842:INFO:oejs.Server:nREPL-session-5bdb2938-f5ce-4816-9aee-e2d61c30cc29: Started @22233625ms
+: 2020-06-25 09:46:14.006:INFO:oejs.AbstractConnector:nREPL-session-a525c747-f5e3-4139-9dc4-3628d48e5092: Stopped ServerConnector@678ec307{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+: 2020-06-25 09:46:14.007:INFO:oejs.Server:nREPL-session-a525c747-f5e3-4139-9dc4-3628d48e5092: jetty-9.4.22.v20191022; built: 2019-10-22T13:37:13.455Z; git: b1e6b55512e008f7fbdf1cbea4ff8a6446d1073b; jvm 11.0.7+10
+: 2020-06-25 09:46:14.009:INFO:oejs.AbstractConnector:nREPL-session-a525c747-f5e3-4139-9dc4-3628d48e5092: Started ServerConnector@678ec307{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+: 2020-06-25 09:46:14.009:INFO:oejs.Server:nREPL-session-a525c747-f5e3-4139-9dc4-3628d48e5092: Started @164602110ms
 
 #+begin_src clojure :results pp :wrap src clojure
 (f/sync!)

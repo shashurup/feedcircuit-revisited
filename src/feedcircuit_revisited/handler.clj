@@ -25,6 +25,12 @@
 (defn redirect-to-login [url]
   {:session nil :status 302 :headers {"Location" url}})
 
+(defn wrap-auth-everlasting [handler]
+  (fn [request]
+    (if-let [user-id (get-in request [:session :user])]
+      (handler (assoc request :user user-id))
+      {:status 403})))
+
 (defn wrap-auth [handler]
   (fn [request]
     (let [{user-id :user
@@ -38,11 +44,7 @@
                                                      :state (:uri request)})))
         (redirect-to-login "login-options")))))
 
-(defroutes protected-routes
-  (GET "/" {user-id :user {count :count} :params}
-       (html/html (ui/build-unread user-id
-                                 (or (as-int count) ui/page-size))))
-
+(defroutes non-interactive-routes
   (GET "/selected" {user-id :user}
        (html/html (ui/build-selected user-id)))
 
@@ -54,7 +56,12 @@
   (DELETE "/selected" {user-id :user {id :id} :params}
           (->> (ensure-coll id)
                (map parse-item-id)
-               (feed/selected-remove! user-id)))
+               (feed/selected-remove! user-id))))
+
+(defroutes protected-routes
+  (GET "/" {user-id :user {count :count} :params}
+       (html/html (ui/build-unread user-id
+                                 (or (as-int count) ui/page-size))))
 
   (POST "/positions" {user-id :user {np "next-position"} :form-params}
         (let [positions (map parse-item-id (ensure-coll np))]
@@ -124,6 +131,7 @@
   (wrap-defaults
    (routes public-routes
            (wrap-auth protected-routes)
+           (wrap-auth-everlasting non-interactive-routes)
            (route/not-found "No such resource"))
    (-> site-defaults
        (assoc-in [:security :anti-forgery] false)

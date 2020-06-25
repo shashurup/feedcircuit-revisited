@@ -3,8 +3,8 @@
 * DONE Get rid of classes and styles
 * DONE Fix RSS items without id or guid
 * TODO Come up with better solution for iframe aspect ratio
-* TODO Do not try to parse non HTML content
-* TODO Deal with auth failure upon pressing "Done"
+* DONE Do not try to parse non HTML content
+* DONE Deal with auth failure upon pressing "Done"
   By now nothing happens
 * TODO Support RSS 2 (and atom) enclosures
 * DONE Improve content detection, tell article from comments
