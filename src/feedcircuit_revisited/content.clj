@@ -229,7 +229,10 @@
                      :video :audio :track :source :input})
 
 (defn absolute-url [url base]
-  (str (new java.net.URL (new java.net.URL base) url)))
+  (when url
+    (if base
+      (str (new java.net.URL (new java.net.URL base) url))
+      url)))
 
 (defn rebase-rules [base]
   [#{:a :area}             #(update-attrs % update :href absolute-url base)
