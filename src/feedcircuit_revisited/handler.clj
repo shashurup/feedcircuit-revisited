@@ -45,8 +45,9 @@
         (redirect-to-login "login-options")))))
 
 (defroutes non-interactive-routes
-  (GET "/selected" {user-id :user}
-       (html/html (ui/build-selected user-id)))
+  (GET "/selected" {user-id :user
+                    {{extra-style :value} "extra-style"} :cookies}
+       (html/html (ui/build-selected user-id extra-style)))
 
   (POST "/selected" {user-id :user {id "id"} :form-params}
         (->> (ensure-coll id)
@@ -59,9 +60,12 @@
                (feed/selected-remove! user-id))))
 
 (defroutes protected-routes
-  (GET "/" {user-id :user {count :count} :params}
+  (GET "/" {user-id :user
+            {count :count} :params
+            {{extra-style :value} "extra-style"} :cookies}
        (html/html (ui/build-unread user-id
-                                 (or (as-int count) ui/page-size))))
+                                   (or (as-int count) ui/page-size)
+                                   extra-style)))
 
   (POST "/positions" {user-id :user {np "next-position"} :form-params}
         (let [positions (map parse-item-id (ensure-coll np))]
@@ -71,16 +75,25 @@
   (GET "/feed" {user-id :user
                 {url :url
                  from :from
-                 count :count} :params}
-       (html/html (ui/build-feed user-id url (as-int from) (as-int count))))
+                 count :count} :params
+                {{extra-style :value} "extra-style"} :cookies}
+       (html/html (ui/build-feed user-id
+                                 url
+                                 (as-int from)
+                                 (as-int count)
+                                 extra-style)))
 
-  (GET "/settings" {user-id :user}
-       (html/html (ui/build-settings user-id)))
+  (GET "/settings" {user-id :user
+                    {{extra-style :value} "extra-style"} :cookies}
+       (html/html (ui/build-settings user-id extra-style)))
 
   (POST "/settings" {user-id :user
-                          {feeds "feeds"} :form-params}
+                     {feeds "feeds"
+                      extra-style "extra-style"} :form-params}
         (ui/save-settings user-id feeds)
-        {:status 303 :headers {"Location" "/"}})
+        {:status 303
+         :headers {"Location" "/"}
+         :cookies {"extra-style" {:value extra-style}}})
 
   (GET "/subscribe" {user-id :user
                      {url :url} :params}
@@ -91,18 +104,20 @@
 
   (GET "/debug" request (str request))
 
-  (GET "/extra-links" {user-id :user}
-       (html/html (ui/build-extra-links user-id))))
+  (GET "/extra-links" {user-id :user
+                       {{extra-style :value} "extra-style"} :cookies}
+       (html/html (ui/build-extra-links user-id extra-style))))
 
 (defroutes public-routes
-  (GET "/login-options" []
-       (html/html (ui/build-login-options)))
+  (GET "/login-options" {{{extra-style :value} "extra-style"} :cookies}
+       (html/html (ui/build-login-options extra-style)))
 
-  (GET "/plain" {{url :url source :source} :params}
+  (GET "/plain" {{url :url source :source} :params
+                 {{extra-style :value} "extra-style"} :cookies}
        (let [iid (parse-item-id url)
              [feed ord-num] (when (coll? iid) iid)
              url (when (string? iid) iid)
-             result (ui/build-content feed ord-num url source)]
+             result (ui/build-content feed ord-num url source extra-style)]
          (if (string? result)
            {:status 302 :headers {"Location" result}}
            (html/html result))))

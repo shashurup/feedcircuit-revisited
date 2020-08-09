@@ -1,7 +1,5 @@
 body {
-    background-color: #daded3;
-    font-family: serif;
-    color: #2a2e23
+    background-color: white;
 }
 
 a.fcr {
@@ -110,8 +108,8 @@ label.item-check {
 label.item-check svg {
     height: 1em;
     vertical-align: middle;
-    stroke: #2a2e23;
-    fill: #cd625a;
+    stroke: currentcolor;
+    fill: orangered;
 }
 input.gray-checked + .fcr-news-item {
     opacity: 1;
@@ -127,10 +125,17 @@ input.fill-checked:checked + .fcr-news-item label.item-check svg .bookmark-icon 
     fill: inherit;
 }
 
-textarea#fcr-settings-text {
-    width: 100%;
+textarea.fcr-setting-input {
     height: 24em;
+}
+
+.fcr-setting-input {
+    width: 100%;
     margin-bottom: 1em;
+}
+
+.fcr-bottom-buttons {
+    margin-top: 2em
 }
 
 .fcr-nav-bar {

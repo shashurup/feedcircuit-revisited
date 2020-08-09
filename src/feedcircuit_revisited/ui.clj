@@ -56,12 +56,14 @@
    [:div.fcr-news-body content]
    [:div.fcr-item-footer footer]])
 
-(defn head [title]
+(defn head [title extra-style]
   [:head
    [:title title]
    [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
    [:script {:src "code.js"}]
    [:link {:rel "stylesheet" :type "text/css" :href "style.css"}]
+   (if (seq extra-style)
+     [:link {:rel "stylesheet" :type "text/css" :href extra-style}])
    [:link {:rel "shortcut icon" :type "image/png" :href "favicon.png"}]])
 
 (defn submit-button
@@ -84,9 +86,9 @@
      [:div.fcr-menu-item [:a.fcr {:href "/settings"} "Settings"]]
      [:div.fcr-menu-item [:a.fcr {:href "/logout"} "Logout"]]]]])
 
-(defn build-extra-links [user-id]
+(defn build-extra-links [user-id extra-style]
   [:html
-   (head "Feedcircuit")
+   (head "Feedcircuit" extra-style)
    [:body
     [:p "Logged in as " user-id]
     [:p [:a {:href "/settings"} "Settings"]]
@@ -123,7 +125,7 @@
                                  :for (ch-id idx)} icon]
                         ))))))
 
-(defn build-feed [user-id feed from item-count]
+(defn build-feed [user-id feed from item-count extra-style]
   (let [total-count (feed/get-feed-item-count feed)
         item-count (or item-count page-size)
         start-from (or from (if (> total-count item-count)
@@ -138,7 +140,7 @@
         title (:title (feed/get-feed-attrs feed))
         items (reverse (take item-count (feed/get-feed-items feed start-from)))]
     [:html
-     (head title)
+     (head title extra-style)
      [:body
       (navbar user-id false false)
       [:div#fcr-content (build-item-list items
@@ -150,12 +152,12 @@
           {:href (str "feed?from=" next-from "&count=" next-count "&url=" feed)}
           (str "<< Previous " next-count)])]]]))
 
-(defn build-unread [user-id item-count]
+(defn build-unread [user-id item-count extra-style]
   (let [user (feed/get-user-attrs user-id)
         items (take item-count (feed/get-unread-items user))
         next-positions (get-next-positions items)]
     [:html
-     (head "Feedcircuit")
+     (head "Feedcircuit" extra-style)
      [:body
       (navbar user-id true false)
       [:div#fcr-content
@@ -171,10 +173,10 @@
         (if-not (empty? items)
           (submit-button (str "Next " page-size " >>")))]]]]))
 
-(defn build-selected [user-id]
+(defn build-selected [user-id extra-style]
   (let [items (feed/get-selected-items user-id)]
     [:html
-     (head "Feedcircuit, selected items")
+     (head "Feedcircuit, selected items" extra-style)
      [:body
       (navbar user-id false true)
       [:div#fcr-content
@@ -187,7 +189,7 @@
   (let [link (:link item)]
     (if (coll? link) (first link) link)))
 
-(defn build-content [feed ord-num url source]
+(defn build-content [feed ord-num url source extra-style]
   (let [item (when (not-empty feed)
                (first (feed/get-feed-items feed ord-num)))
         link (or (get-item-link item) url)]
@@ -214,7 +216,7 @@
                            "window.close();")]
          (if content
            [:html
-            (head title)
+            (head title extra-style)
             [:body
              [:div#fcr-content
               (news-content link title content
@@ -232,10 +234,10 @@
   (let [pos-map (into {} to-positions)]
     (feed/update-user-attrs! user-id update :positions merge pos-map)))
 
-(defn build-settings [user-id]
+(defn build-settings [user-id extra-style]
   (let [user (feed/get-user-attrs user-id)]
     [:html
-     (head "Feedcircuit settings")
+     (head "Feedcircuit settings" extra-style)
      [:body
       [:div#fcr-content
        [:p
@@ -249,11 +251,14 @@
        [:p [:code "http://example.com/rss.xml !Politics"]]
        [:p "selects everything except Politics category."]
        [:form {:action "settings" :method "POST"}
-        [:textarea#fcr-settings-text {:name "feeds"}
+        [:textarea.fcr-setting-input {:name "feeds"}
          (s/join "\n" (:feeds user))]
-        [:br]
-        (submit-button "Save")
-        [:a.fcr-btn.fcr-btn-right {:href "./"} "Back to the feed"]]]]]))
+        [:p "External stylesheet url makes it possible to customize Feedcircuit appearance. "
+            "The url is stored on per browser basis."]
+        [:input.fcr-setting-input {:name "extra-style" :value extra-style}]
+        [:div.fcr-bottom-buttons
+         (submit-button "Save")
+         [:a.fcr-btn.fcr-btn-right {:href "./"} "Back to the feed"]]]]]]))
 
 (defn save-settings [user-id feed-lines]
   (let [feeds (s/split-lines feed-lines)
@@ -264,9 +269,9 @@
       (feed/add-feed! url))
     (feed/update-user-attrs! user-id assoc :feeds feeds)))
 
-(defn build-login-options []
+(defn build-login-options [extra-style]
   [:html
-   (head "Welcome to Feedcircuit")
+   (head "Welcome to Feedcircuit" extra-style)
    [:body
     [:div.hv-center
      [:div#fcr-login-options
