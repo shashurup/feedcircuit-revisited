@@ -45,6 +45,7 @@
   [:div.fcr-news-item
    [:div.fcr-news-header
     [:a.fcr {:href url
+             :rel "opener"
              :target "_blank"} title]]
    [:div.fcr-news-body summary footer]])
 
