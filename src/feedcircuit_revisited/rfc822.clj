@@ -196,6 +196,6 @@
   (str (jt/instant (jt/formatter :rfc-1123-date-time) subj)))
 
 (defn parse-datetime [subj]
-  (if-let [tz (re-find tz-pattern subj)]
-    (jt-parse-datetime (s/replace subj tz-pattern (timezones tz)))
+  (if-let [tz (timezones (re-find tz-pattern subj))]
+    (jt-parse-datetime (s/replace subj tz-pattern tz))
     (jt-parse-datetime subj)))
