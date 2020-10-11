@@ -57,14 +57,14 @@
    [:div.fcr-news-body content]
    [:div.fcr-item-footer footer]])
 
-(defn head [title extra-style]
+(defn head [title & styles]
   [:head
    [:title title]
    [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
    [:script {:src "code.js"}]
    [:link {:rel "stylesheet" :type "text/css" :href "style.css"}]
-   (if (seq extra-style)
-     [:link {:rel "stylesheet" :type "text/css" :href extra-style}])
+   (for [style styles :when (seq style)]
+     [:link {:rel "stylesheet" :type "text/css" :href style}])
    [:link {:rel "shortcut icon" :type "image/png" :href "favicon.png"}]])
 
 (defn submit-button
@@ -190,7 +190,12 @@
   (let [link (:link item)]
     (if (coll? link) (first link) link)))
 
-(defn build-content [feed ord-num url source extra-style]
+(defn find-style [user-id url]
+  (let [styles (:styles (feed/get-user-attrs user-id))]
+    (some (fn [[pattern style]]
+            (if (s/includes? url pattern) style)) styles)))
+
+(defn build-content [feed ord-num url source extra-style user-id]
   (let [item (when (not-empty feed)
                (first (feed/get-feed-items feed ord-num)))
         link (or (get-item-link item) url)]
@@ -214,10 +219,11 @@
              iid (or (:iid item) url)
              done-action (if (= source "selected")
                            (str "UnselectAndClose('" (iid-to-str iid) "');")
-                           "window.close();")]
+                           "window.close();")
+             site-style (find-style user-id link)]
          (if content
            [:html
-            (head title extra-style)
+            (head title extra-style site-style)
             [:body
              [:div#fcr-content
               (news-content link title content
@@ -239,36 +245,51 @@
   (let [user (feed/get-user-attrs user-id)]
     [:html
      (head "Feedcircuit settings" extra-style)
-     [:body
+     [:body {:onLoad "initAppearance();"}
       [:div#fcr-content
+       [:p [:b "Sources"]]
        [:p
         "Each line in the list below defines a news source to constitute your feed. "
         "In the simplest case it is just an URL of RSS or Atom feed. "]
        [:p [:code "http://example.com/rss.xml"]]
-       [:p "More sofisticated setup allows you to filter a news source by its author or category. "
+       [:p "The more sofisticated setup allows you to filter a news source by its author or category. "
            "For instance"]
        [:p [:code "http://example.com/atom.xml Sport, Science, John Doe"]]
        [:p "selects only entries in Sport and Science categories and by John Doe. Finally,"]
        [:p [:code "http://example.com/rss.xml !Politics"]]
        [:p "selects everything except Politics category."]
        [:form {:action "settings" :method "POST"}
-        [:textarea.fcr-setting-input {:name "feeds"}
+        [:textarea#feeds {:class "fcr-setting-input" :name "feeds"}
          (s/join "\n" (:feeds user))]
-        [:p "External stylesheet url makes it possible to customize Feedcircuit appearance. "
-            "The url is stored on per browser basis."]
-        [:input.fcr-setting-input {:name "extra-style" :value extra-style}]
+        [:a#appearance-header {:onClick "toggleAppearance();" :href "#"}
+         "Appearance settings"]
+        [:div#appearance {:style "display: none"}
+         [:p "External stylesheet url makes it possible to customize Feedcircuit appearance. "
+          "The url is stored on per browser basis."]
+         [:input.fcr-setting-input {:name "extra-style" :value extra-style}]
+         [:p "Each source peculiarities can also be taken into account "
+          "by setting site specific stylesheets."]
+         [:p "Each line contains site and corresponing stylesheet."]
+         [:p [:code "example.com  http://www.example.com/style.css"]]
+         [:p "The site is expected to be a substring of the source url."]
+         [:textarea#styles {:class "fcr-setting-input" :name "styles"}
+          (->> (:styles user)
+               (map #(s/join " " %))
+               (s/join "\n"))]]
         [:div.fcr-bottom-buttons
          (submit-button "Save")
          [:a.fcr-btn.fcr-btn-right {:href "./"} "Back to the feed"]]]]]]))
 
-(defn save-settings [user-id feed-lines]
+(defn save-settings [user-id feed-lines style-lines]
   (let [feeds (s/split-lines feed-lines)
+        styles (map #(s/split % #"\s+")
+                    (s/split-lines style-lines))
         new-feeds (->> (feed/make-expressions feeds)
                        (map first)
                        (filter #(not (get @feed/feed-dir %))))]
     (doseq [url new-feeds]
       (feed/add-feed! url))
-    (feed/update-user-attrs! user-id assoc :feeds feeds)))
+    (feed/update-user-attrs! user-id assoc :feeds feeds :styles styles)))
 
 (defn build-login-options [extra-style]
   [:html

@@ -36,3 +36,28 @@ function UnselectAndClose(id) {
     req.open("DELETE", "/selected?id="+id);
     req.send();
 }
+
+function initAppearance() {
+    setAppearanceVisibility(
+        document.getElementById("styles").value ||
+        document.getElementsByName("extra-style")[0].value);
+}
+
+function toggleAppearance() {
+    setAppearanceVisibility(
+        document.getElementById('appearance').style.display == "none");
+}
+
+
+function setAppearanceVisibility(visible) {
+    let appearanceDiv = document.getElementById('appearance');
+    let appearanceHeader = document.getElementById('appearance-header');
+    if (visible) {
+        appearanceDiv.style.display = "initial";
+        appearanceHeader.innerText = appearanceHeader.innerText.replace(" ...", "");
+    }
+    else {
+        appearanceDiv.style.display = "none";
+        appearanceHeader.innerText += " ...";
+    }
+}

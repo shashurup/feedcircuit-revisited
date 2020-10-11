@@ -35,3 +35,9 @@
   (def _srv
     (run-jetty (handler/create)
                {:port 8080 :join? false})))
+
+(defn _restart-srv []
+  (.stop _srv)
+  (def _srv
+    (run-jetty (handler/create)
+               {:port 8080 :join? false})))

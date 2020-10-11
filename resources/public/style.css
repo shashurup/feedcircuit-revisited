@@ -125,8 +125,12 @@ input.fill-checked:checked + .fcr-news-item label.item-check svg .bookmark-icon 
     fill: inherit;
 }
 
-textarea.fcr-setting-input {
+textarea#feeds {
     height: 24em;
+}
+
+textarea#styles {
+    height: 12em;
 }
 
 .fcr-setting-input {
@@ -171,4 +175,10 @@ textarea.fcr-setting-input {
 
 .fcr-menu:hover .fcr-menu-items {
     display: block;
+}
+
+a#appearance-header {
+    color: inherit;
+    text-decoration: none;
+    font-weight: bold;
 }
