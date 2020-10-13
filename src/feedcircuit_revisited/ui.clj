@@ -44,16 +44,15 @@
 (defn news-item [url title summary footer]
   [:div.fcr-news-item
    [:div.fcr-news-header
-    [:a.fcr {:href url
-             :rel "opener"
-             :target "_blank"} title]]
+    [:a.fcr-link {:href url
+                  :rel "opener"
+                  :target "_blank"} [:h1 title]]]
    [:div.fcr-news-body summary footer]])
 
 (defn news-content [url title content footer]
   [:div.fcr-news-item
-   [:h1
-    [:a.fcr {:href url
-             :target "_blank"} title]]
+   [:a.fcr-link {:href url
+                 :target "_blank"} [:h1 title]]
    [:div.fcr-news-body content]
    [:div.fcr-item-footer footer]])
 
@@ -77,15 +76,15 @@
                   (if disabled {:disabled true} {}))]))
 
 (defn navbar [user-id feed selected]
-  [:div.fcr-nav-bar
-   (list (if feed [:span "Feed"] [:a.fcr {:href "/"} "Feed"]) " | "
-         (if selected [:span "Selected"] [:a.fcr {:href "/selected"} "Selected"]) " | ")
+  [:div.fcr-nav-bar.fcr-interface
+   (list (if feed [:span "Feed"] [:a {:href "/"} "Feed"]) " | "
+         (if selected [:span "Selected"] [:a {:href "/selected"} "Selected"]) " | ")
    [:div.fcr-menu
-    [:a.fcr {:href "/extra-links"} "..."]
+    [:a {:href "/extra-links"} "..."]
     [:div.fcr-menu-items
      [:div.fcr-menu-item "Logged in as:" [:br] user-id]
-     [:div.fcr-menu-item [:a.fcr {:href "/settings"} "Settings"]]
-     [:div.fcr-menu-item [:a.fcr {:href "/logout"} "Logout"]]]]])
+     [:div.fcr-menu-item [:a {:href "/settings"} "Settings"]]
+     [:div.fcr-menu-item [:a {:href "/logout"} "Logout"]]]]])
 
 (defn build-extra-links [user-id extra-style]
   [:html
@@ -118,7 +117,7 @@
                        (or summary content)
                        (list
                         " |&nbsp;"
-                        [:a.fcr-item-footer
+                        [:a.fcr-link.fcr-item-footer
                          {:href (str "feed?url=" (first iid))}
                          (get-feed-title iid)]
                         " "
@@ -144,10 +143,10 @@
      (head title extra-style)
      [:body
       (navbar user-id false false)
-      [:div#fcr-content (build-item-list items
-                                         "fill-checked"
-                                         (bookmark-icon-svg)
-                                         "fc")
+      [:div.fcr-column.fcr-interface
+       (build-item-list items
+                        "fill-checked"
+                        (bookmark-icon-svg) "fc")
        (if (> start-from 0)
          [:a.fcr-btn
           {:href (str "feed?from=" next-from "&count=" next-count "&url=" feed)}
@@ -161,7 +160,7 @@
      (head "Feedcircuit" extra-style)
      [:body
       (navbar user-id true false)
-      [:div#fcr-content
+      [:div.fcr-column.fcr-interface
        (build-item-list items
                         "fill-checked"
                         (bookmark-icon-svg)
@@ -180,7 +179,7 @@
      (head "Feedcircuit, selected items" extra-style)
      [:body
       (navbar user-id false true)
-      [:div#fcr-content
+      [:div.fcr-column.fcr-interface
        (build-item-list items
                         "gray-checked selected-item"
                         (backspace-svg)
@@ -225,7 +224,7 @@
            [:html
             (head title extra-style site-style)
             [:body
-             [:div#fcr-content
+             [:div.fcr-column
               (news-content link title content
                             (list
                              (if (not (empty? author))
@@ -246,8 +245,8 @@
     [:html
      (head "Feedcircuit settings" extra-style)
      [:body {:onLoad "initAppearance();"}
-      [:div#fcr-content
-       [:p [:b "Sources"]]
+      [:div.fcr-column.fcr-interface
+       [:p [:h1 "Sources"]]
        [:p
         "Each line in the list below defines a news source to constitute your feed. "
         "In the simplest case it is just an URL of RSS or Atom feed. "]
@@ -261,8 +260,8 @@
        [:form {:action "settings" :method "POST"}
         [:textarea#feeds {:class "fcr-setting-input" :name "feeds"}
          (s/join "\n" (:feeds user))]
-        [:a#appearance-header {:onClick "toggleAppearance();" :href "#"}
-         "Appearance settings"]
+        [:a.fcr-link {:onClick "toggleAppearance();" :href "#"}
+         [:h1#appearance-header "Appearance settings"]]
         [:div#appearance {:style "display: none"}
          [:p "External stylesheet url makes it possible to customize Feedcircuit appearance. "
           "The url is stored on per browser basis."]
@@ -301,7 +300,7 @@
       (for [{title :title
              icon :icon
              url :url} (auth/get-providers)]
-        [:p [:a.fcr {:href url}
+        [:p [:a {:href url}
              (when icon
                [:img {:src icon}])
              title]])]]]])
