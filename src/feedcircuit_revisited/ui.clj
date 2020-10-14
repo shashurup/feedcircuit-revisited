@@ -50,10 +50,10 @@
    [:div.fcr-news-body summary footer]])
 
 (defn news-content [url title content footer]
-  [:div.fcr-news-item
+  [:div.fcr-article
    [:a.fcr-link {:href url
                  :target "_blank"} [:h1 title]]
-   [:div.fcr-news-body content]
+   content
    [:div.fcr-item-footer footer]])
 
 (defn head [title & styles]
@@ -76,7 +76,7 @@
                   (if disabled {:disabled true} {}))]))
 
 (defn navbar [user-id feed selected]
-  [:div.fcr-nav-bar.fcr-interface
+  [:div.fcr-nav-bar
    (list (if feed [:span "Feed"] [:a {:href "/"} "Feed"]) " | "
          (if selected [:span "Selected"] [:a {:href "/selected"} "Selected"]) " | ")
    [:div.fcr-menu
@@ -143,7 +143,7 @@
      (head title extra-style)
      [:body
       (navbar user-id false false)
-      [:div.fcr-column.fcr-interface
+      [:div.fcr-wrapper.fcr-ui
        (build-item-list items
                         "fill-checked"
                         (bookmark-icon-svg) "fc")
@@ -160,7 +160,7 @@
      (head "Feedcircuit" extra-style)
      [:body
       (navbar user-id true false)
-      [:div.fcr-column.fcr-interface
+      [:div.fcr-wrapper.fcr-ui
        (build-item-list items
                         "fill-checked"
                         (bookmark-icon-svg)
@@ -179,7 +179,7 @@
      (head "Feedcircuit, selected items" extra-style)
      [:body
       (navbar user-id false true)
-      [:div.fcr-column.fcr-interface
+      [:div.fcr-wrapper.fcr-ui
        (build-item-list items
                         "gray-checked selected-item"
                         (backspace-svg)
@@ -224,7 +224,7 @@
            [:html
             (head title extra-style site-style)
             [:body
-             [:div.fcr-column
+             [:div.fcr-wrapper
               (news-content link title content
                             (list
                              (if (not (empty? author))
@@ -245,7 +245,7 @@
     [:html
      (head "Feedcircuit settings" extra-style)
      [:body {:onLoad "initAppearance();"}
-      [:div.fcr-column.fcr-interface
+      [:div.fcr-wrapper.fcr-ui
        [:p [:h1 "Sources"]]
        [:p
         "Each line in the list below defines a news source to constitute your feed. "

@@ -6,7 +6,7 @@ a {
     color: inherit;
 }
 
-.fcr-column {
+.fcr-wrapper {
     max-width: 36em;
     margin: auto;
     margin-top: 3em;
@@ -17,25 +17,9 @@ a.fcr-link {
     text-decoration: none;
 }
 
-.fcr-interface h1 {
+.fcr-ui h1 {
     font-size: 1.1rem;
     font-weight: bold;
-}
-
-.fcr-interface h2 {
-    font-size: 1.05rem;
-    font-weight: bold;
-}
-
-.fcr-interface h3 {
-    font-size: 1rem;
-    font-weight: bold;
-}
-
-.fcr-interface h4,h5,h6 {
-    font-size: 1rem;
-    font-weight: bold;
-    font-style: italic;
 }
 
 .fcr-btn {
@@ -62,6 +46,7 @@ input.disabled {
 .fcr-news-item {
     margin-bottom: 2em;
 }
+
 .fcr-news-item::after {
     content: "";
     clear: both;
@@ -84,6 +69,39 @@ input.disabled {
 
 .fcr-news-body > p:only-of-type {
     display: inline;
+}
+
+.fcr-news-body h1 {
+    font-size: 1.05rem;
+    font-weight: bold;
+}
+
+.fcr-new-body h2 {
+    font-size: 1.05rem;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.fcr-new-body h3 {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.fcr-new-body h4 {
+    font-size: 1rem;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.fcr-new-body h5 {
+    font-size: 0.95rem;
+    font-weight: bold;
+}
+
+.fcr-new-body h6 {
+    font-size: 0.95rem;
+    font-weight: bold;
+    font-style: italic;
 }
 
 .fcr-item-footer {
@@ -123,6 +141,22 @@ input.fill-checked + .fcr-news-item label.item-check svg .bookmark-icon {
 }
 input.fill-checked:checked + .fcr-news-item label.item-check svg .bookmark-icon {
     fill: inherit;
+}
+
+/* Article */
+
+.fcr-article {
+    margin-bottom: 2em;
+}
+
+.fcr-article img,video {
+    max-width: 100%;
+    height: auto;
+}
+
+.fcr-article iframe {
+    max-width: 100%;
+    height: 18em; /* Make videos 16:9 */
 }
 
 /* Settings */
