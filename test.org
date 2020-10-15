@@ -4,6 +4,7 @@
             [feedcircuit-revisited.feed :as f]
 	    [feedcircuit-revisited.content :as c]
 	    [feedcircuit-revisited.ui :as u]
+	    [feedcircuit-revisited.handler :as handler]
             [hiccup.core :as html]
             [clojure.zip :as zip]
 ))
@@ -14,13 +15,20 @@
 
 #+name: scratch
 #+begin_src clojure :results pp :wrap src clojure
-(f/add-feed2! "http://www.opennet.ru/opennews/opennews_all.rss")
+(u/head "blabla" "style-a")
 #+end_src
 
 #+RESULTS: scratch
-#+BEGIN_src clojure
-"/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.opennet.ru.opennews.opennews_all.rss"
-#+END_src
+#+begin_src clojure
+[:head
+ [:title "blabla"]
+ [:meta
+  {:name "viewport", :content "width=device-width, initial-scale=1.0"}]
+ [:script {:src "code.js"}]
+ [:link {:rel "stylesheet", :type "text/css", :href "style.css"}]
+ ([:link {:rel "stylesheet", :type "text/css", :href "style-a"}])
+ [:link {:rel "shortcut icon", :type "image/png", :href "favicon.png"}]]
+#+end_src
 
 #+begin_src clojure :results output
 (m/_run-srv)
@@ -28,30 +36,29 @@
 
 #+RESULTS:
 #+begin_example
-июн. 19, 2020 9:59:23 AM feedcircuit-revisited.feed invoke
+окт. 10, 2020 12:38:19 PM feedcircuit-revisited.feed invoke
 INFO: Starting sync by the timer
-июн. 19, 2020 9:59:23 AM feedcircuit-revisited.stat invoke
+окт. 10, 2020 12:38:19 PM feedcircuit-revisited.stat invoke
 INFO: Starting statistics collection
-июн. 19, 2020 9:59:23 AM feedcircuit-revisited.stat invoke
-INFO: Collecting statistics for  https://news.ycombinator.com/rss
-2020-06-19 09:59:23.447:INFO:oejs.Server:nREPL-session-a525c747-f5e3-4139-9dc4-3628d48e5092: jetty-9.4.22.v20191022; built: 2019-10-22T13:37:13.455Z; git: b1e6b55512e008f7fbdf1cbea4ff8a6446d1073b; jvm 11.0.7+10
-июн. 19, 2020 9:59:23 AM feedcircuit-revisited.feed invoke
-INFO: Getting news from https://news.ycombinator.com/rss
-2020-06-19 09:59:23.480:INFO:oejs.AbstractConnector:nREPL-session-a525c747-f5e3-4139-9dc4-3628d48e5092: Started ServerConnector@678ec307{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
-2020-06-19 09:59:23.480:INFO:oejs.Server:nREPL-session-a525c747-f5e3-4139-9dc4-3628d48e5092: Started @26782ms
+окт. 10, 2020 12:38:19 PM feedcircuit-revisited.stat invoke
+INFO: Collecting statistics for  http://sgolub.ru/feed/
+2020-10-10 12:38:19.584:INFO:oejs.Server:nREPL-session-88bac6bb-a57c-4f63-a4d4-aa7c092e07f1: jetty-9.4.22.v20191022; built: 2019-10-22T13:37:13.455Z; git: b1e6b55512e008f7fbdf1cbea4ff8a6446d1073b; jvm 11.0.8+10
+окт. 10, 2020 12:38:19 PM feedcircuit-revisited.feed invoke
+INFO: Getting news from http://sgolub.ru/feed/
+2020-10-10 12:38:19.623:INFO:oejs.AbstractConnector:nREPL-session-88bac6bb-a57c-4f63-a4d4-aa7c092e07f1: Started ServerConnector@2b1d8ffe{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+2020-10-10 12:38:19.623:INFO:oejs.Server:nREPL-session-88bac6bb-a57c-4f63-a4d4-aa7c092e07f1: Started @1550024ms
 #+end_example
 
 #+begin_src clojure :results pp
-(.stop m/_srv)
-(.start m/_srv)
+(m/_restart-srv)
 #+end_src
 
 #+RESULTS:
-: nil
-: 2020-06-25 09:46:14.006:INFO:oejs.AbstractConnector:nREPL-session-a525c747-f5e3-4139-9dc4-3628d48e5092: Stopped ServerConnector@678ec307{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
-: 2020-06-25 09:46:14.007:INFO:oejs.Server:nREPL-session-a525c747-f5e3-4139-9dc4-3628d48e5092: jetty-9.4.22.v20191022; built: 2019-10-22T13:37:13.455Z; git: b1e6b55512e008f7fbdf1cbea4ff8a6446d1073b; jvm 11.0.7+10
-: 2020-06-25 09:46:14.009:INFO:oejs.AbstractConnector:nREPL-session-a525c747-f5e3-4139-9dc4-3628d48e5092: Started ServerConnector@678ec307{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
-: 2020-06-25 09:46:14.009:INFO:oejs.Server:nREPL-session-a525c747-f5e3-4139-9dc4-3628d48e5092: Started @164602110ms
+: #'feedcircuit-revisited.main/_srv
+: 2020-10-10 15:54:02.952:INFO:oejs.AbstractConnector:nREPL-session-88bac6bb-a57c-4f63-a4d4-aa7c092e07f1: Stopped ServerConnector@43a4a014{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+: 2020-10-10 15:54:02.954:INFO:oejs.Server:nREPL-session-88bac6bb-a57c-4f63-a4d4-aa7c092e07f1: jetty-9.4.22.v20191022; built: 2019-10-22T13:37:13.455Z; git: b1e6b55512e008f7fbdf1cbea4ff8a6446d1073b; jvm 11.0.8+10
+: 2020-10-10 15:54:02.956:INFO:oejs.AbstractConnector:nREPL-session-88bac6bb-a57c-4f63-a4d4-aa7c092e07f1: Started ServerConnector@da12376{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+: 2020-10-10 15:54:02.956:INFO:oejs.Server:nREPL-session-88bac6bb-a57c-4f63-a4d4-aa7c092e07f1: Started @13293357ms
 
 #+begin_src clojure :results pp :wrap src clojure
 (f/sync!)
@@ -171,6 +178,8 @@ INFO: Got 1 item from http://static.feed.rbc.ru/rbc/logical/footer/news.rss
  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/comicfeeds.chrisbenard.net.view.dilbert.default",
  "https://www.zerohedge.com/fullrss2.xml"
  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.zerohedge.com.fullrss2.xml",
+ "https://lenta.ru/rss"
+ "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/lenta.ru.rss",
  "https://kiwibyrd.org/feed/"
  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/kiwibyrd.org.feed.",
  "http://static.feed.rbc.ru/rbc/logical/footer/news.rss"
@@ -178,280 +187,11 @@ INFO: Got 1 item from http://static.feed.rbc.ru/rbc/logical/footer/news.rss
 #+END_src
 
 #+begin_src clojure :results pp :wrap src clojure
-(c/detect (c/retrieve-and-parse "https://www.exler.ru/films/van-gogi.htm") "https://www.exler.ru" nil)
+(c/detect (c/retrieve-and-parse "https://bikepost.ru/blog/91216/Ocherednoj-raz-vokrug-Ladogi.html") "https://bikepost.ru" nil)
 #+end_src
 
 #+RESULTS:
 #+BEGIN_src clojure
-("\n            "
- [:p
-  {:align "left"}
-  [:a
-   {:class "fancybox",
-    :href "https://www.exler.ru/img/films/08-06-2020/big/1.jpg",
-    :rel "media"}
-   [:img
-    {:align "left",
-     :alt "",
-     :border "0",
-     :class "align-left",
-     :src "https://www.exler.ru/img/films/08-06-2020/1.jpg"}]]
-  "Марк Гинзбург (Алексей Серебряков) - неудачливый художник (точнее, даже не художник, а инсталлятор: он из разноцветных веревок плетет некие инсталляции), живущий в Израиле. Отец Марка - дирижер с мировым именем Виктор Гинзбург (Даниэль Ольбрыхский). Виктор живет в Риге, с сыном не виделся много лет. "]
- "\r\n\r\n"
- [:p
-  {:align "left"}
-  "Марка мучают ужасные мигрени, и он считает, все эти головные боли - от иглы, которая находится у него в голове. Иглу, как Марк рассказывает швейцарскому врачу, которого он просит об эвтаназии, ему в детстве в голову воткнула мать, которая хотела избавиться от ребенка. (Мать Марка ушла из семьи, когда ему было четыре года.) Но врач считает, что для эвтаназии нет никаких показаний: снимки показывают, что игла в голове не может быть источником каких-то проблем. "]
- "\r\n\r\n"
- [:p
-  {:align "left"}
-  [:a
-   {:class "fancybox",
-    :href "https://www.exler.ru/img/films/08-06-2020/big/11.jpg",
-    :rel "media"}
-   [:img
-    {:align "right",
-     :alt "",
-     :border "0",
-     :class "align-right",
-     :src "https://www.exler.ru/img/films/08-06-2020/11.jpg"}]]
-  "Внезапно Марку звонит отец и просит его прилететь. У дирижера недавно умерла его жена, с которой он прожил сорок лет, и он не может сам справиться с этой ситуацией. "]
- "\r\n\r\n"
- [:p
-  {:align "left"}
-  "Марк прилетает к отцу и видит, что, хотя Виктор продолжает репетировать и дирижировать на концертах, дела его плохи: у него все признаки болезни Паркинсона, что сам дирижер признавать отказывается. "]
- "\r\n\r\n"
- [:p
-  {:align "left"}
-  [:a
-   {:class "fancybox",
-    :href "https://www.exler.ru/img/films/08-06-2020/big/19.jpg",
-    :rel "media"}
-   [:img
-    {:align "left",
-     :alt "",
-     :border "0",
-     :class "align-left",
-     :src "https://www.exler.ru/img/films/08-06-2020/19.jpg"}]]
-  "Но домработница и экономка Виктора Ирина (Елена Коренева), которая с детства знает Марка, рассказывает, что по вечерам дирижер нередко падает в обмороки и его приходится тащить до кровати, после чего Марк все-таки уговаривает отца показаться врачу. "]
- "\r\n\r\n"
- [:p
-  {:align "left"}
-  "Болезнь будет быстро прогрессировать, Виктору осталось совсем немного, и сыну с отцом нужно успеть как-то разобраться в своих более чем сложных отношениях. "]
- "\r\n\r\n"
- [:p {} "***"]
- "\r\n\r\n"
- [:p
-  {:align "left"}
-  [:a
-   {:class "fancybox",
-    :href "https://www.exler.ru/img/films/08-06-2020/big/3.jpg",
-    :rel "media"}
-   [:img
-    {:align "right",
-     :alt "",
-     :border "0",
-     :class "align-right",
-     :src "https://www.exler.ru/img/films/08-06-2020/3.jpg"}]]
-  "Режиссер Сергей Ливнев - сценарист \"Ассы\" Сергея Соловьева. В начале девяностых он снял два фильма: \"Кикс\" и \"Серп и молот\", причем во втором фильме главную роль сыграл тридцатилетний Алексей Серебряков, после чего Серебряков с Ливневым подружились и дружат до сих пор. "]
- "\r\n\r\n"
- [:p
-  {:align "left"}
-  "После первых двух фильмов Ливнев 24 года ничего не снимал, а занимался продюсированием, причем если сначала это были такие фильмы, как \"Змеиный источник\" и \"Страна глухих\", то в двухтысячных он продюсировал уже комедии вроде \"Гитлер капут!\", \"Служебный роман. Наше время\" и \"Ржевский против Наполеона\" (я до сих пор не понимаю, как этому Марюсу Вайсбергу вообще разрешают что-то ставить). "]
- "\r\n\r\n"
- [:p
-  {:align "left"}
-  [:a
-   {:class "fancybox",
-    :href "https://www.exler.ru/img/films/08-06-2020/big/14.jpg",
-    :rel "media"}
-   [:img
-    {:align "left",
-     :alt "",
-     :border "0",
-     :class "align-left",
-     :src "https://www.exler.ru/img/films/08-06-2020/14.jpg"}]]
-  "Почему он вдруг решил поставить картину \"Ван Гоги\", которая, слава богу, совершенно не похожа на те фильмы, которые он продюсировал в последнее время? Это был такой чисто личный проект. Мама Ливнева - всемирно известный документалист Марина Голдовская. История с иглой в голове - из рассказа \"Мама\" бывшей жены Ливнева Жужи Добрашкус. Кстати, по этому рассказу режиссер Александр Меркюри снял короткометражный фильм \"Мама - святой Себастьян\", который "
-  [:a
-   {:href "https://youtu.be/KlmsXjgmj3c"}
-   "можно посмотреть в Youtube"]
-  ". "]
- "\r\n\r\n"
- [:p
-  {:align "left"}
-  [:a
-   {:class "fancybox",
-    :href "https://www.exler.ru/img/films/08-06-2020/big/24.jpg",
-    :rel "media"}
-   [:img
-    {:align "right",
-     :alt "",
-     :border "0",
-     :class "align-right",
-     :src "https://www.exler.ru/img/films/08-06-2020/24.jpg"}]]
-  "В сценарии первоначально шла речь о взаимоотношении матери, всемирно известного дирижера, с сыном. И к съемкам Сергей готовился, наметив кандидатуру актрисы на роль матери. (Марк в сценарии изначально писался специально под Алексея Серебрякова.) Однако взгляды режиссера и актрисы на трактовку этой роли кардинально не сошлись, причем это стало ясно буквально за десять дней до съемок, когда уже нашли ту самую дачу под Ригой, подходящую по внутреннему убранству настолько, что там даже не пришлось ничего менять.  И тогда Ливнев отправил сценарий как есть знаменитому польскому актеру Даниэлю Ольбрыхскому, сказав, что если актер заинтересуется, то он в сценарии поменяет мать на отца. "]
- "\r\n\r\n"
- [:p
-  {:align "left"}
-  [:a
-   {:class "fancybox",
-    :href "https://www.exler.ru/img/films/08-06-2020/big/35.jpg",
-    :rel "media"}
-   [:img
-    {:align "left",
-     :alt "",
-     :border "0",
-     :class "align-left",
-     :src "https://www.exler.ru/img/films/08-06-2020/35.jpg"}]]
-  "Ольбрыхский заинтересовался, Сергей за несколько дней переписал сценарий, ну и в результате был снят фильм о взаимоотношениях отца и сына. Кстати, на прямые вопросы - не вкладывал ли режиссер в эту картину свой опыт общения с матерью - Ливнев отвечал уклончиво, ничего, впрочем, не отрицая, а хорошо знающие режиссера и его семью люди утверждали, что там, конечно же, есть определенные автобиографичные моменты. "]
- "\r\n\r\n"
- [:p
-  {:align "left"}
-  "Снято это в несколько старомодном стиле, что, замечу, и хорошо: манера постановки, декорации, отношение к выстраиванию картинки в кадре (оператор - Юрий Клименко), да и игра актеров - более театральная по подаче, но опять-таки это только идет на пользу картине. "]
- "\r\n\r\n"
- [:p
-  {:align "left"}
-  [:a
-   {:class "fancybox",
-    :href "https://www.exler.ru/img/films/08-06-2020/big/40.jpg",
-    :rel "media"}
-   [:img
-    {:align "right",
-     :alt "",
-     :border "0",
-     :class "align-right",
-     :src "https://www.exler.ru/img/films/08-06-2020/40.jpg"}]]
-  "Фильм о том, насколько несносными в обычной жизни могут быть гении, как они третируют окружающих и в буквальном смысле слова ломают им жизни, какими страшными последствиями в течение всей жизни оборачиваются детские травмы, как найти в себе силы жить дальше, когда продолжать жить - нет ни малейшего желания, как близким людям в конце концов нужно понять друг друга и простить друг друга. И что каким бы ты ни был известным и знаменитым, в период старости и болезней с тобой останутся только самые близкие люди, даже если ты перед этими людьми в необъятном долгу. "]
- "\r\n\r\n"
- [:p
-  {:align "left"}
-  [:a
-   {:class "fancybox",
-    :href "https://www.exler.ru/img/films/08-06-2020/big/71.jpg",
-    :rel "media"}
-   [:img
-    {:align "left",
-     :alt "",
-     :border "0",
-     :class "align-left",
-     :src "https://www.exler.ru/img/films/08-06-2020/71.jpg"}]]
-  "Кроме того, в картине показана далеко не только история взаимоотношений отца с сыном: здесь немало флешбэков из прошлого, рассказывающих о некоторых этапах в жизни Марка, также перед Марком раскрывается несколько семейных тайн, о которых он не имел ни малейшего понятия. "]
- "\r\n\r\n"
- [:p
-  {:align "left"}
-  "Две главные роли - Алексея Серебрякова и Даниэля Ольбрыхского - совершенно потрясающие. Два обнаженных нерва, два совершенно различных человека: сильная и тираничная личность отца и слабая и страдающая личность сына. "]
- "\r\n\r\n"
- [:p
-  {:align "left"}
-  [:a
-   {:class "fancybox",
-    :href "https://www.exler.ru/img/films/08-06-2020/big/116.jpg",
-    :rel "media"}
-   [:img
-    {:align "right",
-     :alt "",
-     :border "0",
-     :class "align-right",
-     :src "https://www.exler.ru/img/films/08-06-2020/116.jpg"}]]
-  "Что интересно, два этих актера, как рассказывал сам режиссер в интервью, используют совершенно противоположные подходы к работе над ролью. Алексей Серебряков любит обсуждать своего персонажа с режиссером, выясняя его реакцию на те или иные события, манеру поведения, какие-то черты и так далее. А вот Даниэль Ольбрыхский, наоборот, не любил длительных предварительных обсуждений: он не хотел никаких подробностей и  предпочитал создавать своего персонажа непосредственно в кадре, на импровизации."]
- "\r\n\r\n"
- [:p
-  {:align "left"}
-  [:a
-   {:class "fancybox",
-    :href "https://www.exler.ru/img/films/08-06-2020/big/55.jpg",
-    :rel "media"}
-   [:img
-    {:align "left",
-     :alt "",
-     :border "0",
-     :class "align-left",
-     :src "https://www.exler.ru/img/films/08-06-2020/55.jpg"}]]
-  "Но и кроме Серебрякова с Ольбрыхским здесь немало и других чудесных актерских работ. Елена Коренева как-то очень спокойно,  но при этом очень трогательно, ярко и пронзительно сыграла Ирину: когда-то она была студенткой Виктора, потом стала его помощницей и любовницей, затем, когда у Виктора появилась новая пассия, была низведена до уровня экономки, а теперь она должна стать для умирающего дирижера сиделкой. Ирина отлично понимает, что она лишена была возможности создать семью и как-то самореализоваться в этой жизни, она это все отлично сознает, и если кто-то и может решить задачу \"Как не просрать свою жизнь рядом с гением\" (цитата из фильма), то это вовсе не она.  "]
- "\r\n\r\n"
- [:p
-  {:align "left"}
-  [:a
-   {:class "fancybox",
-    :href "https://www.exler.ru/img/films/08-06-2020/big/81.jpg",
-    :rel "media"}
-   [:img
-    {:align "right",
-     :alt "",
-     :border "0",
-     :class "align-right",
-     :src "https://www.exler.ru/img/films/08-06-2020/81.jpg"}]]
-  "Изумительно сделан эпизод визита Марка в дом сестры Виктора Томы, с дочерью которой, Таней, у него в юности был роман. Тому играет Светлана Немоляева - и насколько же прекрасной у нее получилась эта героиня! Ей под восемьдесят лет, она сохранила какую-то часть своей красоты, она восхищается своим братом и прощает ему то, что он с ней крайне редко виделся, и в Томе столько какого-то внутреннего света и благородства, что я этот эпизод пересмотрел раза три - он совершенно чудесный.  "]
- "\r\n\r\n"
- [:p
-  {:align "left"}
-  [:a
-   {:class "fancybox",
-    :href "https://www.exler.ru/img/films/08-06-2020/big/96.jpg",
-    :rel "media"}
-   [:img
-    {:align "left",
-     :alt "",
-     :border "0",
-     :class "align-left",
-     :src "https://www.exler.ru/img/films/08-06-2020/96.jpg"}]]
-  "Интересно, конечно, что в театре Светлана Немоляева часто играла очень сильных женщин, королев, герцогинь, а в кинематографе прежде всего вспоминается ролями несчастных, замученных жизнью женщин: Ольга Рыжова из \"Служебного романа\", жена Гуськова из \"Гаража\", Матильда Илл из \""
-  [:a
-   {:href "https://www.exler.ru/films/vizit-damy.htm"}
-   "Визита дамы"]
-  "\". "]
- "\r\n\r\n"
- [:p
-  {:align "left"}
-  "Машу, несостоявшуюся жену Марка из его израильского периода жизни, чудесно сыграла Полина Агуреева, также там очень трогательно сделан эпизод знакомства дружной еврейской семьи Маши с Марком: отца Маши сыграл Авангард Леонтьев, а деда - Сергей Дрейден: Лагутин из \"Фонтана\" и Чижов из \"Окна в Париж\". "]
- "\r\n\r\n"
- [:p
-  {:align "left"}
-  "На кинофестивале \"Ника\" 2019 года картина получила четыре награды: лучшая мужская роль (Алексей Серебряков), лучшая женская роль второго плана (Елена Коренева), лучшая работа оператора, лучшая музыка. "]
- "\r\n\r\n"
- [:p
-  {:align "left"}
-  [:a
-   {:class "fancybox",
-    :href "https://www.exler.ru/img/films/08-06-2020/big/102.jpg",
-    :rel "media"}
-   [:img
-    {:align "right",
-     :alt "",
-     :border "0",
-     :class "align-right",
-     :src "https://www.exler.ru/img/films/08-06-2020/102.jpg"}]]
-  "Что интересно, музыка здесь действительно чудесная, ее написал Леонид Десятников, однако она была написана вовсе не к этому фильму, как рассказал в интервью сам режиссер. Десятников, по словам Ливнева, был настолько загружен работой, что мог найти время для работы над музыкой для картины только в 2020 году. И тогда Ливнев, долго не думая, взял музыку, написанную Десятниковым для его старого фильма \"Серп и молот\", перемонтировал ее под новый фильм - и так это все и было выпущено. Но получилось, на мой взгляд, очень хорошо. "]
- "\r\n\r\n"
- [:p
-  {:align "left"}
-  [:a
-   {:class "fancybox",
-    :href "https://www.exler.ru/img/films/08-06-2020/big/130.jpg",
-    :rel "media"}
-   [:img
-    {:align "left",
-     :alt "",
-     :border "0",
-     :class "align-left",
-     :src "https://www.exler.ru/img/films/08-06-2020/130.jpg"}]]
-  "Почему у фильма такое странное название - \"Ван Гоги\" - и при чем тут вообще Ван Гог? По фильму в самом конце Марк находит свое призвание, обучая пожилых людей искусству вырезания картин по дереву. Обучает он их на основе автопортретов Ван Гога - когда-то такую доску ему показал дед Маши. Причем в основе этого сюжета - тоже реальная история - это социально-художественный проект \"Вангоги\" израильского художника Саши Галицкого. Но зачем режиссер из этого проекта сделал название картины, причем название вызывает недоумение почти у всех зрителей, мне непонятно.  "]
- "\r\n\r\n"
- [:p
-  {:align "left"}
-  [:a
-   {:class "fancybox",
-    :href "https://www.exler.ru/img/films/08-06-2020/big/120.jpg",
-    :rel "media"}
-   [:img
-    {:align "right",
-     :alt "",
-     :border "0",
-     :class "align-right",
-     :src "https://www.exler.ru/img/films/08-06-2020/120.jpg"}]]
-  "Но безотносительно к не очень, на мой взгляд, удачному названию фильм - отличный. Жизненная драма, поставленная с большим искусством, несколько эпизодов по уровню эмоций и каким-то тонким черточкам - почти шедевральные, актерские работы - прекрасные, причем включая и второстепенных персонажей, впечатляющая работа оператора и художника, очень хорошо подобранная музыка.  "]
- "\r\n\r\n"
- [:p
-  {:align "left"}
-  "Так что если вы любите хорошее серьезное кино - не пропустите данную картину, она этого более чем достойна. "]
- "\r\n        ")
+class java.net.MalformedURLExceptionclass java.lang.NullPointerExceptionExecution error (NullPointerException) at java.net.URL/<init> (URL.java:585).
+null
 #+END_src
