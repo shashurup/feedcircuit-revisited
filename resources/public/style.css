@@ -76,29 +76,29 @@ input.disabled {
     font-weight: bold;
 }
 
-.fcr-new-body h2 {
+.fcr-news-body h2 {
     font-size: 1.05rem;
     font-weight: bold;
     font-style: italic;
 }
 
-.fcr-new-body h3 {
+.fcr-news-body h3 {
     font-size: 1rem;
     font-weight: bold;
 }
 
-.fcr-new-body h4 {
+.fcr-news-body h4 {
     font-size: 1rem;
     font-weight: bold;
     font-style: italic;
 }
 
-.fcr-new-body h5 {
+.fcr-news-body h5 {
     font-size: 0.95rem;
     font-weight: bold;
 }
 
-.fcr-new-body h6 {
+.fcr-news-body h6 {
     font-size: 0.95rem;
     font-weight: bold;
     font-style: italic;
