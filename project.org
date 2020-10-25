@@ -10,6 +10,8 @@
 * DONE Improve content detection, tell article from comments
   CLOSED: [2020-05-04 Пн 14:04]
 * TODO Appearance settings (themes, font size etc.)
+  base16-ocean, base16-gruvbox-dark-soft, solarized-dark, base16-twilight,
+  base16-atlas, base16-flat, base16-gruvbox-light-soft
 * TODO Feeds discovery
 * DONE Choose new icon for marking items as read
   CLOSED: [2019-10-04 Пт 09:01]
