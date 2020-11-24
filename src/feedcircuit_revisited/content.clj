@@ -254,8 +254,7 @@
 
 (defmethod detect clojure.lang.PersistentVector [html base-url hint]
   (let [base (or (get-base html) base-url)
-        transform-rules (into [unwelcome-tags :delete
-                               element?       #(update-attrs % dissoc :style)]
+        transform-rules (into [unwelcome-tags :delete]
                               (rebase-rules base))]
     (if-let [content-root (find-content-element html hint)]
       (->> content-root
