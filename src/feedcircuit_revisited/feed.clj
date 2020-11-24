@@ -2,6 +2,7 @@
   (:require [clojure.xml :as xml]
             [clojure.set :as cset]
             [clojure.string :as cstr]
+            [clojure.edn :as edn]
             [java-time :as jt]
             [me.raynes.fs :as fs]
             [clojure.java.io :as io]
@@ -28,7 +29,7 @@
 (defn read-file [filename]
   (if (fs/exists? filename)
     (with-open [r (java.io.PushbackReader. (io/reader filename))]
-      (read r))))
+      (edn/read r))))
 
 (def get-data (memz/memo read-file))
 

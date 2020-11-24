@@ -9,7 +9,7 @@
 * TODO Support RSS 2 (and atom) enclosures
 * DONE Improve content detection, tell article from comments
   CLOSED: [2020-05-04 Пн 14:04]
-* TODO Appearance settings (themes, font size etc.)
+* DONE Appearance settings (themes, font size etc.)
   base16-ocean, base16-gruvbox-dark-soft, solarized-dark, base16-twilight,
   base16-atlas, base16-flat, base16-gruvbox-light-soft
 * TODO Feeds discovery
@@ -21,3 +21,6 @@
   [[file:~/devel/feedcircuit-revisited/src/feedcircuit_revisited/content.clj::defmulti summarize][Summarize fn]]
 * DONE Handle 404 upon opening the content
   CLOSED: [2019-10-03 Чт 19:26]
+* TODO Get rid of built-in cache
+* DONE Use edn/read
+* TODO Cache selected content
