@@ -31,11 +31,11 @@
     (with-open [r (java.io.PushbackReader. (io/reader filename))]
       (edn/read r))))
 
-(def get-data (memz/memo read-file))
+; a good place to add cache
+(def get-data read-file)
 
 (defn set-data [filename data]
   (write-file filename data)
-  (memz/memo-clear! get-data [filename])
   data)
 
 (defn get-block [dir block-num]

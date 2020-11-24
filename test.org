@@ -36,17 +36,17 @@
 
 #+RESULTS:
 #+begin_example
-окт. 10, 2020 12:38:19 PM feedcircuit-revisited.feed invoke
-INFO: Starting sync by the timer
-окт. 10, 2020 12:38:19 PM feedcircuit-revisited.stat invoke
+нояб. 24, 2020 6:46:22 PM feedcircuit-revisited.stat invoke
 INFO: Starting statistics collection
-окт. 10, 2020 12:38:19 PM feedcircuit-revisited.stat invoke
+нояб. 24, 2020 6:46:22 PM feedcircuit-revisited.feed invoke
+INFO: Starting sync by the timer
+нояб. 24, 2020 6:46:22 PM feedcircuit-revisited.stat invoke
 INFO: Collecting statistics for  http://sgolub.ru/feed/
-2020-10-10 12:38:19.584:INFO:oejs.Server:nREPL-session-88bac6bb-a57c-4f63-a4d4-aa7c092e07f1: jetty-9.4.22.v20191022; built: 2019-10-22T13:37:13.455Z; git: b1e6b55512e008f7fbdf1cbea4ff8a6446d1073b; jvm 11.0.8+10
-окт. 10, 2020 12:38:19 PM feedcircuit-revisited.feed invoke
+2020-11-24 18:46:22.990:INFO:oejs.Server:nREPL-session-9db53d66-b7e8-484c-bcf6-7b4aa9030059: jetty-9.4.22.v20191022; built: 2019-10-22T13:37:13.455Z; git: b1e6b55512e008f7fbdf1cbea4ff8a6446d1073b; jvm 11.0.8+10
+нояб. 24, 2020 6:46:22 PM feedcircuit-revisited.feed invoke
 INFO: Getting news from http://sgolub.ru/feed/
-2020-10-10 12:38:19.623:INFO:oejs.AbstractConnector:nREPL-session-88bac6bb-a57c-4f63-a4d4-aa7c092e07f1: Started ServerConnector@2b1d8ffe{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
-2020-10-10 12:38:19.623:INFO:oejs.Server:nREPL-session-88bac6bb-a57c-4f63-a4d4-aa7c092e07f1: Started @1550024ms
+2020-11-24 18:46:23.020:INFO:oejs.AbstractConnector:nREPL-session-9db53d66-b7e8-484c-bcf6-7b4aa9030059: Started ServerConnector@52bb0385{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+2020-11-24 18:46:23.020:INFO:oejs.Server:nREPL-session-9db53d66-b7e8-484c-bcf6-7b4aa9030059: Started @15808ms
 #+end_example
 
 #+begin_src clojure :results pp
