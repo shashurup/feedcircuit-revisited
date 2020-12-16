@@ -2,7 +2,7 @@
 * DONE Fix iframe size to usual video ratio
 * DONE Get rid of classes and styles
 * DONE Fix RSS items without id or guid
-* TODO Come up with better solution for iframe aspect ratio
+* DONE Come up with better solution for iframe aspect ratio
 * DONE Do not try to parse non HTML content
 * DONE Deal with auth failure upon pressing "Done"
   By now nothing happens
@@ -24,3 +24,5 @@
 * DONE Get rid of built-in cache
 * DONE Use edn/read
 * TODO Cache selected content
+* DONE connection-timeout and socket-timeout
+* DONE figure padding and margins

@@ -57,14 +57,29 @@ input.disabled {
     margin-bottom: 1em;
 }
 
+.fcr-news-body figure {
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+}
+
+.fcr-news-body figcaption {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    margin-left: 2em;
+    margin-right: 2em;
+    font-size: smaller;
+    text-align: center;
+}
+
 .fcr-news-body img,video {
     max-width: 100%;
     height: auto;
 }
 
 .fcr-news-body iframe {
-    max-width: 100%;
-    height: 18em; /* Make videos 16:9 */
+    /* Make videos 16:9 */
+    width: 100%;
+    height: 20.25em; 
 }
 
 .fcr-news-body > p:only-of-type {
