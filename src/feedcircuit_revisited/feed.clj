@@ -187,7 +187,8 @@
   "Fetches new items from the feed located at the url.
    The known-ids is a set of already fetched items."
   [url known-ids]
-  (let [reply (http/get url {:as :stream})
+  (let [reply (http/get url (merge {:as :stream}
+                                   content/http-timeouts))
         feed-xml (xml/parse (:body reply))
         attrs (parse-feed-details feed-xml)
         items (map parse-rss-item (extract-rss-items feed-xml))

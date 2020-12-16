@@ -7,8 +7,10 @@
             [hiccup.core :as html]
             [clojure.tools.logging :as log]))
 
-(defn http-get [url]
-  (:body (http/get url {:decode-body-headers true :as :auto})))
+(def ten-minutes (* 10 60 1000))
+
+(def http-timeouts {:socket-timeout ten-minutes
+                    :connection-timeout ten-minutes})
 
 (def minimal-summary-size 128)
 (def minimal-article-size 512)
@@ -243,7 +245,9 @@
    #{:form}                #(update-attrs % update :action absolute-url base)])
 
 (defn retrieve-and-parse [url]
-  (let [response (http/get url {:decode-body-headers true :as :auto})]
+  (let [response (http/get url (merge {:decode-body-headers true
+                                       :as :auto}
+                                      http-timeouts))]
     (if (= (:content-type response) :text/html)
       (jsoup/parse-string (:body response))
       (throw (new Exception "text/html is expected")))))
