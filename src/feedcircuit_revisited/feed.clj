@@ -7,123 +7,13 @@
             [me.raynes.fs :as fs]
             [clojure.java.io :as io]
             [clj-http.client :as http]
+            [feedcircuit-revisited.storage :as storage]
             [feedcircuit-revisited.content :as content]
             [feedcircuit-revisited.conf :as conf]
             [feedcircuit-revisited.rfc822 :as rfc822]
             [clojure.core.memoize :as memz]
             [clojure.string :as s]
             [clojure.tools.logging :as log]))
-
-(defn parse-int [s] (if s (Integer. s)))
-
-(def block-size "Number of items in each file" 100)
-
-; === item storage ===
-
-(defn write-file [filename data]
-  (let [tempfilename (str filename ".temp")]
-    (with-open [w (io/writer tempfilename)]
-      (binding [*out* w] (pr data)))
-    (fs/rename tempfilename filename)))
-
-(defn read-file [filename]
-  (if (fs/exists? filename)
-    (with-open [r (java.io.PushbackReader. (io/reader filename))]
-      (edn/read r))))
-
-; a good place to add cache
-(def get-data read-file)
-
-(defn set-data [filename data]
-  (write-file filename data)
-  data)
-
-(defn get-block [dir block-num]
-  (get-data (str dir "/" block-num)))
-
-(defn set-block [dir block-num data]
-  (set-data (str dir "/" block-num) data))
-
-(defn set-attrs [dir attrs]
-  (set-data (str dir "/attrs") attrs))
-
-(defn get-attrs [dir]
-  (get-data (str dir "/attrs")))
-
-(defonce dir-cache (atom {}))
-
-(defn load-dir [dir]
-  (let [block-list (->> (fs/list-dir dir)
-                        (map fs/base-name)
-                        (filter #(re-matches #"[0-9]+" %))
-                        (map parse-int)
-                        sort
-                        vec)]
-    {:item-count (if (empty? block-list)
-                   0
-                   (+ (* (dec (count block-list)) block-size)
-                      (count (get-block dir (last block-list)))))
-     :known-ids (->> block-list
-                     (map #(read-file (str dir "/" %))) ; avoid caching all blocks
-                     (apply concat)
-                     (map :id)
-                     (set))}))
-
-(defn get-dir-cache [dir key]
-  (let [entry (or (get @dir-cache dir)
-                  (let [entry (load-dir dir)]
-                    (swap! dir-cache assoc dir entry)
-                    entry))]
-    (get entry key)))
-
-(defn get-known-ids [dir]
-  (get-dir-cache dir :known-ids))
-
-(defn get-item-count [dir]
-  (or (get-dir-cache dir :item-count) 0))
-
-(defn get-last-block-num [dir]
-  (quot (get-item-count dir) block-size))
-
-(defn get-items 
-  "Returns lazy sequence of items in the directory dir
-   beginning from the start"
-  [dir start]
-  (let [last-block-num (get-last-block-num dir)
-        start-block (quot start block-size)
-        start-offset (rem start block-size)
-        items (apply concat (map #(get-block dir %)
-                                 (range start-block (inc last-block-num))))]
-    (nthrest items start-offset)))
-
-(defn get-numbered-items 
-  "Returns lazy numbered sequence of items
-   in the directory dir beginning from the start"
-  [dir start]
-  (map-indexed #(assoc %2 :num (+ start %1))
-               (get-items dir start)))
-
-(defn get-internal-id [item]
-  (if-let [num (:num item)]
-    [(:feed item) num]
-    (:link item)))
-
-(defn append-items!
-  "Appends items to the end of the list in the directory dir"
-  [dir items]
-  (let [last-block-num (get-last-block-num dir)
-        last-block (get-block dir last-block-num)
-        new-blocks (->> (concat last-block items)
-                        (partition-all block-size)
-                        (map vec))
-        known-ids (get-known-ids dir)
-        start (get-item-count dir)]
-    (doseq [[num block] (map-indexed vector new-blocks)]
-      (set-block dir (+ last-block-num num) block))
-    (swap! dir-cache assoc dir {:item-count (+ start (count items))
-                                :known-ids (cset/union known-ids
-                                                       (set (map #(:id %) items)))})
-    (range start (+ start (count items)))))
 
 ; === feed parsing ===
 
@@ -183,33 +73,60 @@
        (filter #(not (contains? #{:item :entry} (:tag %))))
        (reduce parse-rss-item-attribute {})))
 
-(defn fetch-new-items
-  "Fetches new items from the feed located at the url.
-   The known-ids is a set of already fetched items."
-  [url known-ids]
+(defn fetch-items
+  "Fetches new items from the feed located at the url."
+  [url]
   (let [reply (http/get url (merge {:as :stream}
                                    content/http-timeouts))
         feed-xml (xml/parse (:body reply))
         attrs (parse-feed-details feed-xml)
-        items (map parse-rss-item (extract-rss-items feed-xml))
-        new-items (->> items
-                       (filter #(not (contains? known-ids (:id %))))
-                       (sort-by :published))]
-     [attrs new-items]))
-
-(defn average [coll]
-  (quot (apply + coll) (count coll)))
+        items (map parse-rss-item (extract-rss-items feed-xml))]
+     [attrs items]))
 
 ; === feed handling ===
 
-(defonce feed-dir (atom {}))
+(defonce feed-index (agent {}
+                           :error-handler #(log/error % "Failed to update feed index")))
 
-(defn load-feed-dirs []
-  (->> (fs/list-dir (str (conf/param :data-dir) "/feeds"))
+(defn get-dir [feed]
+  (get-in @feed-index [feed :dir]))
+
+(defn get-internal-id [item]
+  (if-let [num (:num item)]
+    [(:feed item) num]
+    (:link item)))
+
+(defn get-numbered-items 
+  "Returns lazy numbered sequence of items
+   in the directory dir beginning from the start"
+  [feed start]
+  (let [dir (get-dir feed)]
+    (map-indexed #(assoc %2 :num (+ start %1))
+                 (storage/get-items dir start))))
+
+(defn init-feed-index! [_ data-dir]
+  (->> (fs/list-dir (str data-dir "/feeds"))
        (map fs/normalized)
        (filter fs/directory?)
-       (map #(vector (:url (get-attrs %)) (str %)))
+       (map #(vector (:url (storage/get-attrs %))
+                     {:dir (str %)}))
        (into {})))
+
+(defn load-feed! [index url]
+  (when-not (get-in index [url :item-count])
+    (let [items (storage/get-items (get-in index [url :dir]) 0)]
+      (update index url merge {:item-count (count items)
+                               :known-ids (set (map :id items))}))))
+
+(defn get-item-count [feed]
+  (if-let [result (get-in @feed-index [feed :item-count])]
+    result
+    (do
+      (send feed-index load-feed! feed)
+      (await feed-index)
+      (get-item-count feed))))
+
+;=============================
 
 (defn dir-name [url]
   (-> url
@@ -246,47 +163,55 @@
     (:summary item) (update :summary content/make-refs-absolute base-url)
     (:content item) (update :content content/make-refs-absolute base-url)))
 
-(defn preproces [items attrs]
-  (->> items
-       (map #(fix-refs % (:url attrs)))
-       (map fix-summary-and-content)))
+(defn append-items! [index url attrs items]
+  (let [cnt (get-in index [url :item-count])
+        known-ids (get-in index [url :known-ids])
+        dir (get-in index [url :dir])
+        new-item-count (count items)]
+    (storage/set-attrs dir (merge (storage/get-attrs dir)
+                                  attrs))
+    (storage/append-items! dir items)
+    (update index url merge {:item-count (+ cnt new-item-count)
+                             :last-sync-count new-item-count
+                             :known-ids (cset/union known-ids
+                                                    (set (map #(:id %) items)))})))
 
-(defonce pending-feeds (atom {}))
+(defn apply-items! [index url attrs items]
+  (let [known-ids (get-in index [url :known-ids])
+        new-items (->> items
+                       (remove #(known-ids (:id %)))
+                       (map #(fix-refs % url))
+                       (map fix-summary-and-content)
+                       (sort-by :published))]
+    (append-items! index url attrs new-items)))
 
-(defn do-add-feed! [url]
-  (let [dir (dir-path url)
-        [attrs new-items] (fetch-new-items url #{})]
-    (fs/mkdirs dir)
-    (set-attrs dir (assoc attrs :url url))
-    (append-items! dir (preproces new-items
-                                  (get-attrs dir)))
-    (swap! feed-dir assoc url dir)
-    dir))
+(defn new-feed! [index url attrs items]
+  (when-not (index url)
+    (let [dir (dir-path url)]
+      (fs/mkdirs dir)
+      (apply-items! (assoc index url {:dir dir
+                                      :item-count 0
+                                      :known-ids #{}})
+                    url
+                    (assoc attrs :url url)
+                    items))))
 
 (defn add-feed! [url]
-  (letfn [(push [pending url]
-            (if (pending url)
-              pending
-              (assoc pending url (delay (do-add-feed! url)))))]
-    ;; signal that feed is being added
-    (swap! pending-feeds push url))
-  ;; wait until feed addition is complete
-  (deref (@pending-feeds url)))
+  (let [[attrs items] (fetch-items url)]
+    (send feed-index new-feed! url attrs items)
+    (await feed-index)))
 
 (defn sync-feed! [url]
-  (let [dir (get @feed-dir url)
-        known-ids (get-known-ids dir)
-        [new-attrs new-items] (fetch-new-items url known-ids)]
-    (set-attrs dir (merge (get-attrs dir)
-                          new-attrs))
-    (append-items! dir (preproces new-items
-                                  (get-attrs dir)))))
+  (let [[attrs items] (fetch-items url)]
+    (send feed-index apply-items! url attrs items)
+    (await feed-index)
+    (get-in @feed-index [url :last-sync-count])))
 
 (defn sync-and-log-safe! [url]
-  (log/info "Getting news from" url)
+  (log/info "Fetching" url)
   (try
     (let [result (sync-feed! url)]
-      (log/info "Got" (count result) "item from" url)
+      (log/info ">>" result "items from" url)
       result)
     (catch Exception ex
       (log/error ex "Failed to get news from" url))))
@@ -295,8 +220,8 @@
   "Deduce next update time for the feed located at url.
    The algorithm takes into account how often the feed is updated."
   [url]
-  (let [dir (get @feed-dir url)
-        last-items (get-items dir (max 0 (- (get-item-count dir) 10)))
+  (let [last-items (storage/get-items (get-dir url)
+                                      (max 0 (- (get-item-count url) 10)))
         dates (->> last-items
                    (map :published)
                    (remove nil?)
@@ -313,13 +238,13 @@
                                         (count deltas))))))))
 
 (defn get-feed-attrs [feed]
-  (get-attrs (@feed-dir feed)))
+  (storage/get-attrs (get-dir feed)))
 
-(defn get-feed-item-count [feed]
-  (get-item-count (@feed-dir feed)))
+(defn set-feed-attrs [feed attrs]
+  (storage/set-attrs (get-dir feed) attrs))
 
 (defn get-feed-items [feed start]
-  (->> (get-numbered-items (@feed-dir feed) start)
+  (->> (get-numbered-items feed start)
        (map #(assoc % :iid [feed (:num %)]))))
 
 ; === user handling ===
@@ -366,9 +291,8 @@
          positions :positions} user]
     (->> (make-expressions feeds)
          (map (fn [[feed exprs]]
-                (let [dir (@feed-dir feed)
-                      pos (get positions feed (max 0 (- (get-item-count dir) 10)))]
-                  (->> (get-numbered-items dir pos)
+                (let [pos (get positions feed (max 0 (- (get-item-count feed) 10)))]
+                  (->> (get-numbered-items feed pos)
                        (filter #(item-matches % exprs))
                        (map #(assoc % :feed feed
                                       :iid [feed (:num %)]))))))
@@ -387,20 +311,18 @@
 (defonce attrs-updater (agent nil))
 
 (defn write-user-attrs [attrs]
-  (let [dir (user-dir (:id attrs))
-        attr-file (str dir "/attrs")]
+  (let [dir (user-dir (:id attrs))]
     (fs/mkdirs dir)
-    (write-file attr-file
-                (-> attrs
-                    (dissoc :id)
-                    (update :unread vec)))))
+    (storage/set-attrs dir
+                       (-> attrs
+                           (dissoc :id)
+                           (update :unread vec)))))
 
 (defn attr-update-watcher [_ _ _ attrs]
   (send attrs-updater (fn [_] (write-user-attrs attrs))))
 
 (defn read-user-attrs [user-id]
-  (-> (str (user-dir user-id) "/attrs")
-      read-file
+  (-> (storage/get-attrs (user-dir user-id))
       (assoc :id user-id)
       (update :unread #(apply sorted-set %))))
 
@@ -431,7 +353,7 @@
 (defn retrieve-item [id]
   (if (coll? id)
     (let [[feed pos] id]
-      (-> (get-numbered-items (@feed-dir feed) pos)
+      (-> (get-numbered-items feed pos)
           first
           (assoc :feed feed)))
     (let [html (content/retrieve-and-parse id)]
@@ -464,11 +386,11 @@
 
 (defn sync! []
   (let [active (active-feeds)]
-    (->> (keys @feed-dir)
+    (->> (keys @feed-index)
          (filter active)
          (filter #(jt/before? (next-update-time %)
                               (jt/instant)))
-         (map #(vector % (count (sync-and-log-safe! %)))))))
+         (map #(vector % (sync-and-log-safe! %))))))
 
 (defn init-auto-sync []
   (future
@@ -481,5 +403,6 @@
                   (java.lang.Thread/sleep (* 30 60 1000))))))
 
 (defn init! []
-  (reset! feed-dir (load-feed-dirs))
+  (send feed-index init-feed-index! (conf/param :data-dir))
+  (await feed-index)
   (def auto-sync (init-auto-sync)))

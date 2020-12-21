@@ -5,8 +5,11 @@
 	    [feedcircuit-revisited.content :as c]
 	    [feedcircuit-revisited.ui :as u]
 	    [feedcircuit-revisited.handler :as handler]
+	    [feedcircuit-revisited.storage :as storage]
+            [feedcircuit-revisited.conf :as conf]
             [hiccup.core :as html]
             [clojure.zip :as zip]
+            [me.raynes.fs :as fs]
 ))
 #+end_src
 
@@ -15,20 +18,306 @@
 
 #+name: scratch
 #+begin_src clojure :results pp :wrap src clojure
-(u/head "blabla" "style-a")
+;(storage/get "fc-data/test" 42)
+;(storage/append! "fc-data/test" (range 256))
+;(f/init-feed-index "fc-data")
+;(send f/feed-index f/init-feed-index "fc-data")
+;(f/get-item-count2 "http://sgolub.ru/feed/")
+;@f/feed-index
+;(send f/feed-index f/load-feed "https://clojure.org/feed.xml")
+;(send f/feed-index f/load-feed "http://sgolub.ru/feed/")
+;(send f/feed-index f/load-feed "https://kiwibyrd.org/feed/")
+;(f/get-item-count2 "https://kiwibyrd.org/feed/")
+;(f/get-item-count2 "http://sgolub.ru/feed/")
+(f/get-item-count2 "https://clojure.org/feed.xml")
 #+end_src
 
 #+RESULTS: scratch
 #+begin_src clojure
-[:head
- [:title "blabla"]
- [:meta
-  {:name "viewport", :content "width=device-width, initial-scale=1.0"}]
- [:script {:src "code.js"}]
- [:link {:rel "stylesheet", :type "text/css", :href "style.css"}]
- ([:link {:rel "stylesheet", :type "text/css", :href "style-a"}])
- [:link {:rel "shortcut icon", :type "image/png", :href "favicon.png"}]]
+25
 #+end_src
+
+
+#+begin_src clojure :results pp :wrap src clojure
+(send f/feed-index f/init-feed-index "fc-data")
+#+end_src
+
+#+RESULTS:
+#+begin_src clojure
+#<Agent@775609e6: 
+  {"http://sgolub.ru/feed/"
+   {:dir
+    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/sgolub.ru.feed.",
+    :item-count 26,
+    :known-ids
+    #{"http://sgolub.ru/?p=13463" "http://sgolub.ru/?p=13611"
+      "http://sgolub.ru/?p=13654" "http://sgolub.ru/?p=13520"
+      "http://sgolub.ru/?p=13558" "http://sgolub.ru/?p=13684"
+      "http://sgolub.ru/?p=13551" "http://sgolub.ru/?p=13458"
+      "http://sgolub.ru/?p=13505" "http://sgolub.ru/?p=13511"
+      "http://sgolub.ru/?p=13564" "http://sgolub.ru/?p=13584"
+      "http://sgolub.ru/?p=13546" "http://sgolub.ru/?p=13580"
+      "http://sgolub.ru/?p=13515" "http://sgolub.ru/?p=13473"
+      "http://sgolub.ru/?p=13526" "http://sgolub.ru/?p=13538"
+      "http://sgolub.ru/?p=13477" "http://sgolub.ru/?p=13643"
+      "http://sgolub.ru/?p=13530" "http://sgolub.ru/?p=13571"
+      "http://sgolub.ru/?p=13576" "http://sgolub.ru/?p=13595"
+      "http://sgolub.ru/?p=13602" "http://sgolub.ru/?p=13534"}},
+   "https://news.ycombinator.com/rss"
+   {:dir
+    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/news.ycombinator.com.rss"},
+   "http://www.opennet.ru/opennews/opennews_all.rss"
+   {:dir
+    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.opennet.ru.opennews.opennews_all.rss"},
+   "https://www.kommersant.ru/RSS/section-politics.xml"
+   {:dir
+    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.section-politics.xml"},
+   "http://4pda.ru/feed/"
+   {:dir
+    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/4pda.ru.feed."},
+   "https://clojure.org/feed.xml"
+   {:dir
+    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/clojure.org.feed.xml",
+    :item-count 25,
+    :known-ids
+    #{"news/2011/07/22/introducing-clojurescript"
+      "news/2014/08/06/transducers-are-coming"
+      "news/2012/05/08/reducers" "news/2012/02/17/clojure-governance"
+      "news/2016/01/19/clojure18"
+      "news/2018/03/19/state-of-clojure-2018"
+      "news/2013/06/28/clojure-clore-async-channels"
+      "news/2019/02/04/state-of-clojure-2019"
+      "news/2012/05/15/anatomy-of-reducer"
+      "news/2020/01/07/clojure-2020-survey" "news/2018/01/05/git-deps"
+      "news/2019/06/06/clojure1-10-1"
+      "news/2019/01/07/clojure-2019-survey"
+      "news/2015/06/30/clojure-17"
+      "news/2016/01/28/state-of-clojure-2015"
+      "news/2016/05/23/introducing-clojure-spec"
+      "news/2019/07/25/clojure-forum"
+      "news/2020/07/23/cognitect-joins-nubank"
+      "news/2017/12/08/clojure19" "news/2019/05/16/jira-migration"
+      "news/2020/02/28/clojure-tap"
+      "news/2020/02/20/state-of-clojure-2020"
+      "news/2017/01/31/state-of-clojure-2016"
+      "news/2018/12/17/clojure110"
+      "news/2016/01/14/clojure-org-live"}},
+   "https://www.archlinux.org/feeds/news/"
+   {:dir
+    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.archlinux.org.feeds.news."},
+   "https://www.anandtech.com/rss/"
+   {:dir
+    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.anandtech.com.rss."},
+   "https://www.kommersant.ru/RSS/section-hitech.xml"
+   {:dir
+    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.section-hitech.xml"},
+   "http://blog.cleancoder.com/atom.xml"
+   {:dir
+    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/blog.cleancoder.com.atom.xml"},
+   "https://www.kommersant.ru/RSS/Autopilot_on.xml"
+   {:dir
+    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.Autopilot_on.xml"},
+   "https://bikepost.ru/rss/index/"
+   {:dir
+    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/bikepost.ru.rss.index."},
+   "http://rss.slashdot.org/Slashdot/slashdotMain"
+   {:dir
+    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/rss.slashdot.org.Slashdot.slashdotMain"},
+   "http://feeds.arstechnica.com/arstechnica/index/"
+   {:dir
+    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/feeds.arstechnica.com.arstechnica.index."},
+   "https://www.computerra.ru/feed/"
+   {:dir
+    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.computerra.ru.feed."},
+   "https://exler.ru/films/rss.xml"
+   {:dir
+    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/exler.ru.films.rss.xml"},
+   "https://xkcd.com/atom.xml"
+   {:dir
+    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/xkcd.com.atom.xml"},
+   "https://content.novayagazeta.ru/rss/all.xml"
+   {:dir
+    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/content.novayagazeta.ru.rss.all.xml"},
+   "https://www.kommersant.ru/RSS/section-world.xml"
+   {:dir
+    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.section-world.xml"},
+   "https://www.archlinux.org/feeds/packages/"
+   {:dir
+    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.archlinux.org.feeds.packages."},
+   "https://habr.com/ru/rss/best/daily/"
+   {:dir
+    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/habr.com.ru.rss.best.daily."},
+   "http://comicfeeds.chrisbenard.net/view/dilbert/default"
+   {:dir
+    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/comicfeeds.chrisbenard.net.view.dilbert.default"},
+   "https://www.zerohedge.com/fullrss2.xml"
+   {:dir
+    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.zerohedge.com.fullrss2.xml"},
+   "https://lenta.ru/rss"
+   {:dir
+    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/lenta.ru.rss"},
+   "https://kiwibyrd.org/feed/"
+   {:dir
+    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/kiwibyrd.org.feed.",
+    :item-count 27,
+    :known-ids
+    #{"http://kiwibyrd.org/?p=3987" "http://kiwibyrd.org/?p=4020"
+      "http://kiwibyrd.org/?p=4075" "http://kiwibyrd.org/?p=4102"
+      "http://kiwibyrd.org/?p=4081" "http://kiwibyrd.org/?p=4093"
+      "http://kiwibyrd.org/?p=4068" "http://kiwibyrd.org/?p=3994"
+      "http://kiwibyrd.org/?p=4175" "http://kiwibyrd.org/?p=4041"
+      "http://kiwibyrd.org/?p=4152" "http://kiwibyrd.org/?p=4165"
+      "http://kiwibyrd.org/?p=3989" "http://kiwibyrd.org/?p=4181"
+      "http://kiwibyrd.org/?p=3964" "http://kiwibyrd.org/?p=3977"
+      "http://kiwibyrd.org/?p=4003" "http://kiwibyrd.org/?p=4233"
+      "http://kiwibyrd.org/?p=4144" "http://kiwibyrd.org/?p=4210"
+      "http://kiwibyrd.org/?p=4028" "http://kiwibyrd.org/?p=4136"
+      "http://kiwibyrd.org/?p=4113" "http://kiwibyrd.org/?p=4222"
+      "http://kiwibyrd.org/?p=4050" "http://kiwibyrd.org/?p=4056"
+      "http://kiwibyrd.org/?p=3970"}},
+   "http://static.feed.rbc.ru/rbc/logical/footer/news.rss"
+   {:dir
+    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/static.feed.rbc.ru.rbc.logical.footer.news.rss"}}>
+#+end_src
+
+#+begin_src clojure :results pp :wrap src clojure
+@f/feed-index
+#+end_src
+
+#+RESULTS:
+#+begin_src clojure
+{"http://sgolub.ru/feed/"
+ {:dir
+  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/sgolub.ru.feed.",
+  :item-count 26,
+  :known-ids
+  #{"http://sgolub.ru/?p=13463" "http://sgolub.ru/?p=13611"
+    "http://sgolub.ru/?p=13654" "http://sgolub.ru/?p=13520"
+    "http://sgolub.ru/?p=13558" "http://sgolub.ru/?p=13684"
+    "http://sgolub.ru/?p=13551" "http://sgolub.ru/?p=13458"
+    "http://sgolub.ru/?p=13505" "http://sgolub.ru/?p=13511"
+    "http://sgolub.ru/?p=13564" "http://sgolub.ru/?p=13584"
+    "http://sgolub.ru/?p=13546" "http://sgolub.ru/?p=13580"
+    "http://sgolub.ru/?p=13515" "http://sgolub.ru/?p=13473"
+    "http://sgolub.ru/?p=13526" "http://sgolub.ru/?p=13538"
+    "http://sgolub.ru/?p=13477" "http://sgolub.ru/?p=13643"
+    "http://sgolub.ru/?p=13530" "http://sgolub.ru/?p=13571"
+    "http://sgolub.ru/?p=13576" "http://sgolub.ru/?p=13595"
+    "http://sgolub.ru/?p=13602" "http://sgolub.ru/?p=13534"}},
+ "https://news.ycombinator.com/rss"
+ {:dir
+  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/news.ycombinator.com.rss"},
+ "http://www.opennet.ru/opennews/opennews_all.rss"
+ {:dir
+  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.opennet.ru.opennews.opennews_all.rss"},
+ "https://www.kommersant.ru/RSS/section-politics.xml"
+ {:dir
+  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.section-politics.xml"},
+ "http://4pda.ru/feed/"
+ {:dir
+  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/4pda.ru.feed."},
+ "https://clojure.org/feed.xml"
+ {:dir
+  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/clojure.org.feed.xml",
+  :item-count 25,
+  :known-ids
+  #{"news/2011/07/22/introducing-clojurescript"
+    "news/2014/08/06/transducers-are-coming" "news/2012/05/08/reducers"
+    "news/2012/02/17/clojure-governance" "news/2016/01/19/clojure18"
+    "news/2018/03/19/state-of-clojure-2018"
+    "news/2013/06/28/clojure-clore-async-channels"
+    "news/2019/02/04/state-of-clojure-2019"
+    "news/2012/05/15/anatomy-of-reducer"
+    "news/2020/01/07/clojure-2020-survey" "news/2018/01/05/git-deps"
+    "news/2019/06/06/clojure1-10-1"
+    "news/2019/01/07/clojure-2019-survey" "news/2015/06/30/clojure-17"
+    "news/2016/01/28/state-of-clojure-2015"
+    "news/2016/05/23/introducing-clojure-spec"
+    "news/2019/07/25/clojure-forum"
+    "news/2020/07/23/cognitect-joins-nubank"
+    "news/2017/12/08/clojure19" "news/2019/05/16/jira-migration"
+    "news/2020/02/28/clojure-tap"
+    "news/2020/02/20/state-of-clojure-2020"
+    "news/2017/01/31/state-of-clojure-2016"
+    "news/2018/12/17/clojure110" "news/2016/01/14/clojure-org-live"}},
+ "https://www.archlinux.org/feeds/news/"
+ {:dir
+  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.archlinux.org.feeds.news."},
+ "https://www.anandtech.com/rss/"
+ {:dir
+  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.anandtech.com.rss."},
+ "https://www.kommersant.ru/RSS/section-hitech.xml"
+ {:dir
+  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.section-hitech.xml"},
+ "http://blog.cleancoder.com/atom.xml"
+ {:dir
+  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/blog.cleancoder.com.atom.xml"},
+ "https://www.kommersant.ru/RSS/Autopilot_on.xml"
+ {:dir
+  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.Autopilot_on.xml"},
+ "https://bikepost.ru/rss/index/"
+ {:dir
+  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/bikepost.ru.rss.index."},
+ "http://rss.slashdot.org/Slashdot/slashdotMain"
+ {:dir
+  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/rss.slashdot.org.Slashdot.slashdotMain"},
+ "http://feeds.arstechnica.com/arstechnica/index/"
+ {:dir
+  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/feeds.arstechnica.com.arstechnica.index."},
+ "https://www.computerra.ru/feed/"
+ {:dir
+  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.computerra.ru.feed."},
+ "https://exler.ru/films/rss.xml"
+ {:dir
+  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/exler.ru.films.rss.xml"},
+ "https://xkcd.com/atom.xml"
+ {:dir
+  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/xkcd.com.atom.xml"},
+ "https://content.novayagazeta.ru/rss/all.xml"
+ {:dir
+  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/content.novayagazeta.ru.rss.all.xml"},
+ "https://www.kommersant.ru/RSS/section-world.xml"
+ {:dir
+  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.section-world.xml"},
+ "https://www.archlinux.org/feeds/packages/"
+ {:dir
+  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.archlinux.org.feeds.packages."},
+ "https://habr.com/ru/rss/best/daily/"
+ {:dir
+  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/habr.com.ru.rss.best.daily."},
+ "http://comicfeeds.chrisbenard.net/view/dilbert/default"
+ {:dir
+  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/comicfeeds.chrisbenard.net.view.dilbert.default"},
+ "https://www.zerohedge.com/fullrss2.xml"
+ {:dir
+  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.zerohedge.com.fullrss2.xml"},
+ "https://lenta.ru/rss"
+ {:dir
+  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/lenta.ru.rss"},
+ "https://kiwibyrd.org/feed/"
+ {:dir
+  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/kiwibyrd.org.feed.",
+  :item-count 27,
+  :known-ids
+  #{"http://kiwibyrd.org/?p=3987" "http://kiwibyrd.org/?p=4020"
+    "http://kiwibyrd.org/?p=4075" "http://kiwibyrd.org/?p=4102"
+    "http://kiwibyrd.org/?p=4081" "http://kiwibyrd.org/?p=4093"
+    "http://kiwibyrd.org/?p=4068" "http://kiwibyrd.org/?p=3994"
+    "http://kiwibyrd.org/?p=4175" "http://kiwibyrd.org/?p=4041"
+    "http://kiwibyrd.org/?p=4152" "http://kiwibyrd.org/?p=4165"
+    "http://kiwibyrd.org/?p=3989" "http://kiwibyrd.org/?p=4181"
+    "http://kiwibyrd.org/?p=3964" "http://kiwibyrd.org/?p=3977"
+    "http://kiwibyrd.org/?p=4003" "http://kiwibyrd.org/?p=4233"
+    "http://kiwibyrd.org/?p=4144" "http://kiwibyrd.org/?p=4210"
+    "http://kiwibyrd.org/?p=4028" "http://kiwibyrd.org/?p=4136"
+    "http://kiwibyrd.org/?p=4113" "http://kiwibyrd.org/?p=4222"
+    "http://kiwibyrd.org/?p=4050" "http://kiwibyrd.org/?p=4056"
+    "http://kiwibyrd.org/?p=3970"}},
+ "http://static.feed.rbc.ru/rbc/logical/footer/news.rss"
+ {:dir
+  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/static.feed.rbc.ru.rbc.logical.footer.news.rss"}}
+#+end_src
+
 
 #+begin_src clojure :results output
 (m/_run-srv)

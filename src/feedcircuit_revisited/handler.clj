@@ -112,7 +112,7 @@
 
   (GET "/subscribe" {user-id :user
                      {url :url} :params}
-       (if-not (@feed/feed-dir url)
+       (if-not (@feed/feed-index url)
          (feed/add-feed! url))
        (feed/update-user-attrs! user-id update :feeds conj url)
        {:status 303 :headers {"Location" "/"}})

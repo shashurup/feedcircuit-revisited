@@ -24,10 +24,6 @@
 (defn _stop-auto-sync []
   (future-cancel feed/auto-sync))
 
-(defn _drop-cache []
-  (reset! feed/dir-cache {})
-  (memz/memo-clear! feed/get-data))
-
 (defn _run-srv []
   (conf/load-from-file "config")
   (feed/init!)

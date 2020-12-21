@@ -3,6 +3,7 @@
             [clojure.zip :as zip]
             [feedcircuit-revisited.content :as content]
             [feedcircuit-revisited.feed :as feed]
+            [feedcircuit-revisited.storage :as storage]
             [feedcircuit-revisited.jsoup :as jsoup]))
 
 (defn unique? [ident html]
@@ -23,7 +24,7 @@
 (defn value [x] x)
 
 (defn compute [url]
-  (let [[_ items] (feed/fetch-new-items url #{})]
+  (let [[_ items] (feed/fetch-items url)]
     (->> items
          (map :link)
          (map get-content-identifier)
@@ -32,12 +33,17 @@
          (apply max-key second)
          (first))))
 
+(defn write-content-ident [index url ident]
+  (let [dir (get-in index [url :dir])]
+    (storage/set-attrs dir
+                       (assoc (storage/get-attrs dir)
+                              :content-ident ident)))
+  index)
+
 (defn collect-feed! [url]
-  (let [feed-dir (@feed/feed-dir url)
-        attrs (feed/get-attrs feed-dir)]
-    (log/info "Collecting statistics for " url)
-    (feed/set-attrs feed-dir
-                    (assoc attrs :content-ident (compute url)))))
+  (let [ident (compute url)]
+    (send feed/feed-index write-content-ident url ident)
+    ident))
 
 (defn collect! []
   (map collect-feed! (feed/active-feeds)))

@@ -126,7 +126,7 @@
                         ))))))
 
 (defn build-feed [user-id feed from item-count extra-style]
-  (let [total-count (feed/get-feed-item-count feed)
+  (let [total-count (feed/get-item-count feed)
         item-count (or item-count page-size)
         start-from (or from (if (> total-count item-count)
                               (- total-count item-count)
@@ -206,10 +206,7 @@
                      (content/get-title html)
                      (:title item))
              content-ident (when (not-empty feed)
-                             (->> (@feed/feed-dir feed)
-                                  feed/get-attrs
-                                  :content-ident)
-                             )
+                             (:content-ident (feed/get-feed-attrs feed)))
              content (or
                       (:content item)
                       (content/detect html link content-ident))
@@ -285,7 +282,7 @@
                     (s/split-lines style-lines))
         new-feeds (->> (feed/make-expressions feeds)
                        (map first)
-                       (filter #(not (get @feed/feed-dir %))))]
+                       (remove @feed/feed-index))]
     (doseq [url new-feeds]
       (feed/add-feed! url))
     (feed/update-user-attrs! user-id assoc :feeds feeds :styles styles)))
