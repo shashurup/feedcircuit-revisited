@@ -390,7 +390,8 @@
          (filter active)
          (filter #(jt/before? (next-update-time %)
                               (jt/instant)))
-         (map #(vector % (sync-and-log-safe! %))))))
+         (map #(future (vector % (sync-and-log-safe! %))))
+         (map deref))))
 
 (defn init-auto-sync []
   (future
