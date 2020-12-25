@@ -27,7 +27,8 @@
   (let [[_ items] (feed/fetch-items url)]
     (->> items
          (map :link)
-         (map get-content-identifier)
+         (map #(future (get-content-identifier %)))
+         (map deref)
          (group-by value)
          (map (fn [[k v]] [k (count v)]))
          (apply max-key second)
@@ -45,17 +46,23 @@
     (send feed/feed-index write-content-ident url ident)
     ident))
 
+(defn collect-and-log-safe! [url]
+  (try
+    (log/info "Collecting statistics for" url)
+    (let [ident (collect-feed! url)]
+      (log/info "Content identifier for" url "is" ident)
+      ident)
+    (catch Exception ex
+      (log/error ex "Failed to collect statistics for" url))))
+
 (defn collect! []
-  (map collect-feed! (feed/active-feeds)))
+  (map collect-and-log-safe! (feed/active-feeds)))
 
 (defn init-collector []
   (future
     (while 42 (do (log/info "Starting statistics collection")
-                  (try
-                    (doall (collect!))
-                    (log/info "Statistics collection is complete")
-                    (catch Exception ex
-                      (log/error ex "Statistics collection failed")))
+                  (doall (collect!))
+                  (log/info "Statistics collection is complete")
                   (java.lang.Thread/sleep (* 12 60 60 1000))))))
 
 (defn init! []
