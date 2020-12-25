@@ -17,7 +17,8 @@
     (feed/init!)
     (stat/init!)
     (log/info "Running Jetty with " jetty-params)
-    (run-jetty handler jetty-params)))
+    (run-jetty handler jetty-params)
+    (shutdown-agents)))
 
 ; === Debugging convenience functions ===
 
