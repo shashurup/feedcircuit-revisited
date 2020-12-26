@@ -361,8 +361,17 @@
        :title (content/get-title html)
        :summary (content/summarize html)})))
 
+(defn cache-item-content [item]
+  (when-not (:content item)
+    (let [feed (:feed item)
+          content-ident (when feed
+                          (:content-ident (get-feed-attrs feed)))]
+      (future (content/cache-content! (:link item)
+                                      content-ident)))))
+
 (defn selected-add! [user-id ids]
   (let [items (map retrieve-item ids)]
+    (doall (map cache-item-content items))
     (update-user-attrs! user-id update :selected into items)))
 
 (defn selected-remove! [user-id ids]

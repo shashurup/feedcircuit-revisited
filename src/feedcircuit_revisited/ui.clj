@@ -197,26 +197,21 @@
 (defn build-content [feed ord-num url source extra-style user-id]
   (let [item (when (not-empty feed)
                (first (feed/get-feed-items feed ord-num)))
-        link (or (get-item-link item) url)]
+        link (or (get-item-link item) url)
+        content-ident (when (not-empty feed)
+                        (:content-ident (feed/get-feed-attrs feed)))
+        site-style (find-style user-id link)]
     (or
      (try
-       (let [html (when (empty? (:content item))
-                    (content/retrieve-and-parse link))
-             title (if html
-                     (content/get-title html)
-                     (:title item))
-             content-ident (when (not-empty feed)
-                             (:content-ident (feed/get-feed-attrs feed)))
-             content (or
-                      (:content item)
-                      (content/detect html link content-ident))
-             author (:author item)
-             category (:category item)
-             iid (or (:iid item) url)
+       (let [{title :title
+              content :content
+              author :author
+              category :category
+              iid :iid} (content/augment item content-ident)
+             iid (or iid url)
              done-action (if (= source "selected")
                            (str "UnselectAndClose('" (iid-to-str iid) "');")
-                           "window.close();")
-             site-style (find-style user-id link)]
+                           "window.close();")]
          (if content
            [:html
             (head title extra-style site-style)

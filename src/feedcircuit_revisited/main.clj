@@ -1,6 +1,7 @@
 (ns feedcircuit-revisited.main
   (:gen-class)
   (:require [feedcircuit-revisited.conf :as conf]
+            [feedcircuit-revisited.content :as content]
             [feedcircuit-revisited.handler :as handler]
             [feedcircuit-revisited.feed :as feed]
             [feedcircuit-revisited.stat :as stat]
@@ -16,6 +17,7 @@
         handler (handler/create)]
     (feed/init!)
     (stat/init!)
+    (content/init-cache!)
     (log/info "Running Jetty with " jetty-params)
     (run-jetty handler jetty-params)
     (shutdown-agents)))
@@ -29,6 +31,7 @@
   (conf/load-from-file "config")
   (feed/init!)
   (stat/init!)
+  (content/init-cache!)
   (def _srv
     (run-jetty (handler/create)
                {:port 8080 :join? false})))
