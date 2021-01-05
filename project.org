@@ -7,6 +7,7 @@
 * DONE Deal with auth failure upon pressing "Done"
   By now nothing happens
 * TODO Support RSS 2 (and atom) enclosures
+* DONE Support "comments" RSS tag
 * DONE Improve content detection, tell article from comments
   CLOSED: [2020-05-04 Пн 14:04]
 * DONE Appearance settings (themes, font size etc.)
@@ -23,6 +24,6 @@
   CLOSED: [2019-10-03 Чт 19:26]
 * DONE Get rid of built-in cache
 * DONE Use edn/read
-* TODO Cache selected content
+* DONE Cache selected content
 * DONE connection-timeout and socket-timeout
 * DONE figure padding and margins

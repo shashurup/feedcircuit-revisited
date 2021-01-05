@@ -35,7 +35,17 @@
 (defn from-rfc1123-datetime [attr]
   (rfc822/parse-datetime (content-str attr)))
 
-(def attr-convert {:pubDate from-rfc1123-datetime
+(defn try-parse-something-else [subj]
+  ;; TODO make parsing more robust including other datetime formats
+  )
+
+(defn parse-rss-datetime [attr]
+  (let [dt (cstr/trim (content-str attr))]
+    (try
+      (rfc822/parse-datetime dt)
+      (catch Exception _ (try-parse-something-else dt)))))
+
+(def attr-convert {:pubDate parse-rss-datetime
                    :link get-link-url})
 
 (defn parse-rss-item-attribute [item attr]

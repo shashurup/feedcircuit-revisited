@@ -188,6 +188,8 @@
   "WST" "+0800"
   "YAKT" "+0900"
   "YEKT" "+0500"
+
+  "UTC" "+0000"
 })
 
 (def tz-pattern #"[A-Z][A-Z][A-Z]?[A-Z]?[A-Z]?")

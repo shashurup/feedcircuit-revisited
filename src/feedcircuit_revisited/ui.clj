@@ -207,6 +207,7 @@
               content :content
               author :author
               category :category
+              comments :comments
               iid :iid} (content/augment item content-ident)
              iid (or iid url)
              done-action (if (= source "selected")
@@ -222,7 +223,9 @@
                              (if (not (empty? author))
                                [:p (str "Author: " (s/join ", " author))])
                              (if (not (empty? category))
-                               [:p (str "Category: " (s/join ", " category))])))
+                               [:p (str "Category: " (s/join ", " category))])
+                             (if comments
+                               [:p [:a {:href comments :target "_blank"} "Comments"]])))
               (if source [:button.fcr-btn {:onclick done-action} "Done"])]]]))
        (catch Exception ex
          (log/error "Failed to make content for" link)))
