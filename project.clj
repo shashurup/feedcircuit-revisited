@@ -9,6 +9,7 @@
                  [clj-http "3.10.0"]
                  [clojure.java-time "0.3.2"]
                  [me.raynes/fs "1.4.6"]
+                 [nrepl "0.8.3"]
                  [org.clojure/core.memoize "0.8.2"]
                  [hiccup "1.0.5"]
                  [org.clojure/tools.logging "0.5.0"]
