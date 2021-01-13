@@ -37,7 +37,7 @@
        (cons 0)  ; in case there are no blocks yet
        (apply max)))
 
-(def block-size "Number of items in each file" 100)
+(def ^:dynamic block-size "Number of items in each file" 100)
 
 (defn get-items
   "Returns lazy sequence of items in the directory dir

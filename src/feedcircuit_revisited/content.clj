@@ -306,8 +306,9 @@
     (if (:content item)
       item
       (if-let [idx (@content-index url)]
-        (let [[_ title content] (first (storage/get-items (content-dir) idx))]
-          (assoc item :title title :content content))
+        (binding [storage/block-size 8]
+          (let [[_ title content] (first (storage/get-items (content-dir) idx))]
+            (assoc item :title title :content content)))
         (let [html (retrieve-and-parse url)]
           (assoc item :title (get-title html)
                  :content (detect html url content-ident)))))))
@@ -320,7 +321,8 @@
 (defn append-content! [index dir url title content]
   (when-not (index url)
     (fs/mkdirs dir)
-    (assoc index url (last (storage/append-items! dir [[url title content]])))))
+    (binding [storage/block-size 8]
+      (assoc index url (last (storage/append-items! dir [[url title content]]))))))
 
 (defn cache-content! [url content-ident]
   (when-not (@content-index url)
