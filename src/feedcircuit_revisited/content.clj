@@ -227,7 +227,7 @@
 
 ; === main interface function ===
 
-(def unwelcome-tags #{:aside})
+(def unwelcome-tags #{:aside :style})
 
 (def tags-with-href #{:a :area})
 (def tags-with-src #{:img :script :iframe :embed
