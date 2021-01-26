@@ -147,24 +147,26 @@
 (defn dir-path [url]
   (str (fs/normalized (str (conf/param :data-dir) "/feeds/" (dir-name url)))))
 
+(defn self-containing-feed? [dir]
+  (when-let [ratio (:content-to-summary-ratio (storage/get-attrs dir))]
+    (< (max (- 1 ratio) (- ratio 1)) 0.2)))
+
 (defn fix-summary-and-content
   "Summary may be absent from item, in this case
    it is deduced from content. Summary may be too long,
    in this case it is made shorter. At the same time
    content may be absent, in this case summary takes its place."
-  [item]
+  [item self-containing]
   (let [summary (:summary item)
         content (:content item)]
-    (cond
-      (and (empty? summary) (not (empty? content)))
-        (assoc item :summary (content/summarize content))
-      (and summary (> (content/calculate-size summary) 1024))
-        (let [new-summary (content/summarize summary)]
-          (if (> (- (count summary) (count new-summary)) 512)
-            (assoc item :summary new-summary
-                        :content (or content summary))
-            item))
-      :else item)))
+    (update (if (empty? summary)
+              (assoc item :summary (or content ""))
+              (if (and (empty? content) self-containing)
+                (assoc item :content summary)
+                item))
+            :summary #(if (> (content/calculate-size %) 1024)
+                        (content/summarize %)
+                        %))))
 
 (defn fix-refs
   "Make all references in content and summary absolute"
@@ -188,10 +190,12 @@
 
 (defn apply-items! [index url attrs items]
   (let [known-ids (get-in index [url :known-ids])
+        self-containing (self-containing-feed?
+                          (get-in index [url :dir]))
         new-items (->> items
                        (remove #(known-ids (:id %)))
                        (map #(fix-refs % url))
-                       (map fix-summary-and-content)
+                       (map #(fix-summary-and-content % self-containing))
                        (sort-by :published))]
     (append-items! index url attrs new-items)))
 
