@@ -261,8 +261,8 @@
   (->> (get-numbered-items feed start)
        (map #(assoc % :iid [feed (:num %)]))))
 
-(defn get-selected-for-feed [user-id feed]
-  (let [selected (:selected (get-user-attrs user-id))]
+(defn get-selected-for-feed [user feed]
+  (let [selected (:selected user)]
     (->> selected
          (filter #(= (:feed %) feed))
          (map get-internal-id)

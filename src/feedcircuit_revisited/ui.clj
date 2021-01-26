@@ -144,7 +144,7 @@
                      start-from)
         title (:title (feed/get-feed-attrs feed))
         items (reverse (take item-count (feed/get-feed-items feed start-from)))
-        checked (feed/get-selected-for-feed user-id feed)]
+        checked (feed/get-selected-for-feed (feed/get-user-attrs user-id) feed)]
     [:html
      (head title extra-style)
      [:body
