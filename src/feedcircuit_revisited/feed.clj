@@ -261,6 +261,13 @@
   (->> (get-numbered-items feed start)
        (map #(assoc % :iid [feed (:num %)]))))
 
+(defn get-selected-for-feed [user-id feed]
+  (let [selected (:selected (get-user-attrs user-id))]
+    (->> selected
+         (filter #(= (:feed %) feed))
+         (map get-internal-id)
+         set)))
+
 ; === user handling ===
 
 (defn parse-feed-expression
@@ -311,6 +318,15 @@
                        (map #(assoc % :feed feed
                                       :iid [feed (:num %)]))))))
          (apply concat))))
+
+(defn get-selected-among-unread [user]
+  (let [{selected :selected
+         positions :positions} user]
+    (->> selected
+         (filter :feed)
+         (remove #(< (:num %) (get positions (:feed %))))
+         (map get-internal-id)
+         set)))
 
 (defn all-users []
   (->> (str (conf/param :data-dir) "/users")

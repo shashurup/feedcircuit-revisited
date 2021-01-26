@@ -33,13 +33,14 @@
 
 (defn ch-id [idx] (str "ch" idx))
 
-(defn item-checkbox [idx class onchange value]
-  [:input {:type "checkbox"
-           :id (ch-id idx)
-           :class (str "item-check " class)
-           :name "selected-item"
-           :onchange (or onchange "")
-           :value value}])
+(defn item-checkbox [idx class onchange value checked]
+  (let [attrs {:type "checkbox"
+               :id (ch-id idx)
+               :class (str "item-check " class)
+               :name "selected-item"
+               :onchange (or onchange "")
+               :value value}]
+    [:input (merge attrs (when checked {:checked "yes"}))]))
 
 (defn news-item [url title summary footer]
   [:div.fcr-news-item
@@ -104,14 +105,18 @@
     (str (second iid) "," (first iid))
     iid))
 
-(defn build-item-list [items class icon source]
+(defn build-item-list [items class icon source checked]
   (if (empty? items)
     [:p.fcr-no-more-items "No more items"]
     (for [[idx {title :title
                 summary :summary
                 content :content
                 iid :iid}] (map-indexed vector items)]
-      (list (item-checkbox idx class "toggleItem(this);" (iid-to-str iid))
+      (list (item-checkbox idx
+                           class
+                           "toggleItem(this);"
+                           (iid-to-str iid)
+                           (checked iid))
             (news-item (str "plain?source=" source "&url=" (iid-to-str iid))
                        title
                        (or summary content)
@@ -138,7 +143,8 @@
                      item-count
                      start-from)
         title (:title (feed/get-feed-attrs feed))
-        items (reverse (take item-count (feed/get-feed-items feed start-from)))]
+        items (reverse (take item-count (feed/get-feed-items feed start-from)))
+        checked (feed/get-selected-for-feed user-id feed)]
     [:html
      (head title extra-style)
      [:body
@@ -146,7 +152,9 @@
       [:div.fcr-wrapper.fcr-ui
        (build-item-list items
                         "fill-checked"
-                        (bookmark-icon-svg) "fc")
+                        (bookmark-icon-svg)
+                        "fc"
+                        checked)
        (if (> start-from 0)
          [:a.fcr-btn
           {:href (str "feed?from=" next-from "&count=" next-count "&url=" feed)}
@@ -155,7 +163,8 @@
 (defn build-unread [user-id item-count extra-style]
   (let [user (feed/get-user-attrs user-id)
         items (take item-count (feed/get-unread-items user))
-        next-positions (get-next-positions items)]
+        next-positions (get-next-positions items)
+        checked (feed/get-selected-among-unread user)]
     [:html
      (head "Feedcircuit" extra-style)
      [:body
@@ -164,7 +173,8 @@
        (build-item-list items
                         "fill-checked"
                         (bookmark-icon-svg)
-                        "fc")
+                        "fc"
+                        checked)
        [:form {:action "/positions" :method "POST"}
         (for [[feed pos] next-positions]
           [:input {:type "hidden"
@@ -183,7 +193,8 @@
        (build-item-list items
                         "gray-checked selected-item"
                         (backspace-svg)
-                        "selected")]]]))
+                        "selected"
+                        #{})]]]))
 
 (defn get-item-link [item]
   (let [link (:link item)]
