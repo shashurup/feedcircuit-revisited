@@ -270,6 +270,7 @@
          [:h1#appearance-header "Appearance settings"]]
         [:div#appearance {:style "display: none"}
          [:p "External stylesheet url makes it possible to customize Feedcircuit appearance. "
+          "There are two builtin color schemes olive.css and blued-charcoal.css. "
           "The url is stored on per browser basis."]
          [:input.fcr-setting-input {:name "extra-style" :value extra-style}]
          [:p "Each source peculiarities can also be taken into account "
