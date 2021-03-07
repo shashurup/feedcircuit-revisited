@@ -20,7 +20,8 @@
 (def attr-map {:guid :id
                :pubDate :published
                :updated :published
-               :description :summary})
+               :description :summary
+               :logo :image})
 
 (def array-attrs #{:author :category :contributor})
 
@@ -45,8 +46,16 @@
       (rfc822/parse-datetime dt)
       (catch Exception _ (try-parse-something-else dt)))))
 
+(defn parse-image [subj]
+  (->> subj
+       :content
+       (filter #(= :url (:tag %)))
+       first
+       content-str))
+
 (def attr-convert {:pubDate parse-rss-datetime
-                   :link get-link-url})
+                   :link get-link-url
+                   :image parse-image})
 
 (defn parse-rss-item-attribute [item attr]
   (let [tag (:tag attr)
