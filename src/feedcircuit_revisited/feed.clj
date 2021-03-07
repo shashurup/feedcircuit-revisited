@@ -192,12 +192,13 @@
   (let [known-ids (get-in index [url :known-ids])
         self-containing (self-containing-feed?
                           (get-in index [url :dir]))
+        new-attrs (assoc attrs :last-sync (str (jt/instant)))
         new-items (->> items
                        (remove #(known-ids (:id %)))
                        (map #(fix-refs % url))
                        (map #(fix-summary-and-content % self-containing))
                        (sort-by :published))]
-    (append-items! index url attrs new-items)))
+    (append-items! index url new-attrs new-items)))
 
 (defn new-feed! [index url attrs items]
   (when-not (index url)

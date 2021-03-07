@@ -97,6 +97,10 @@
                                  (as-int count)
                                  extra-style)))
 
+  (GET "/sources" {user-id :user
+                   {{extra-style :value} "extra-style"} :cookies}
+       (html/html (ui/build-sources user-id extra-style)))
+
   (GET "/settings" {user-id :user
                     {{extra-style :value} "extra-style"} :cookies}
        (html/html (ui/build-settings user-id extra-style)))

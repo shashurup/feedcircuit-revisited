@@ -84,6 +84,7 @@
     [:a {:href "/extra-links"} "..."]
     [:div.fcr-menu-items
      [:div.fcr-menu-item "Logged in as:" [:br] user-id]
+     [:div.fcr-menu-item [:a {:href "/sources"} "Sources"]]
      [:div.fcr-menu-item [:a {:href "/settings"} "Settings"]]
      [:div.fcr-menu-item [:a {:href "/logout"} "Logout"]]]]])
 
@@ -92,6 +93,7 @@
    (head "Feedcircuit" extra-style)
    [:body
     [:p "Logged in as " user-id]
+    [:p [:a {:href "/sources"} "Sources"]]
     [:p [:a {:href "/settings"} "Settings"]]
     [:p [:a {:href "/logout"} "Logout"]]]])
 
@@ -245,6 +247,28 @@
 (defn mark-read [user-id to-positions]
   (let [pos-map (into {} to-positions)]
     (feed/update-user-attrs! user-id update :positions merge pos-map)))
+
+(defn build-sources [user-id extra-style]
+  [:html
+   (head "Feedcircuit, news sources" extra-style)
+   [:body
+    (navbar user-id false false)
+    [:div.fcr-wrapper.fcr-ui
+     (let [user (feed/get-user-attrs user-id)
+           feed-urls (map first (feed/make-expressions (:feeds user)))
+           feeds (map feed/get-feed-attrs feed-urls)]
+       (for [feed feeds]
+         [:div.fcr-news-item 
+          [:a.fcr-link {:href (str "feed?url=" (:url feed))}
+           [:h1 (:title feed)]]
+          (if-let [summary (not-empty (:summary feed))]
+            [:p summary])
+          [:p.fcr-item-footer
+           [:a.fcr-link {:href (:url feed)} (:url feed)]
+           (if-let [last-sync (:last-sync feed)]
+             [:span ", updated at "
+              [:script (format "document.write(new Date(\"%s\").toLocaleString());" last-sync)]
+              [:noscript last-sync]])]]))]]])
 
 (defn build-settings [user-id extra-style]
   (let [user (feed/get-user-attrs user-id)]
