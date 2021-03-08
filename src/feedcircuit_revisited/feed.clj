@@ -46,16 +46,23 @@
       (rfc822/parse-datetime dt)
       (catch Exception _ (try-parse-something-else dt)))))
 
-(defn parse-image [subj]
+(defn nested-tag-content [tag subj]
   (->> subj
        :content
-       (filter #(= :url (:tag %)))
+       (filter #(= tag (:tag %)))
        first
        content-str))
 
+(defn parse-author [subj]
+  (if (string? (first (:content subj)))
+    (content-str subj)
+    (nested-tag-content :name subj)))
+
 (def attr-convert {:pubDate parse-rss-datetime
                    :link get-link-url
-                   :image parse-image})
+                   :author parse-author
+                   :image #(nested-tag-content :url %)
+                   :contributor #(nested-tag-content :name %)})
 
 (defn parse-rss-item-attribute [item attr]
   (let [tag (:tag attr)
