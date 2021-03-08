@@ -76,16 +76,22 @@
                    :value caption}
                   (if disabled {:disabled true} {}))]))
 
-(defn navbar [user-id feed selected]
+(defn nav-entry [entry href selected]
+  (let [title (s/capitalize (s/replace-first (str entry) ":" ""))]
+    (if (= entry selected)
+      [:span title]
+      [:a {:href href} title])))
+
+(defn navbar [user-id selected]
   [:div.fcr-nav-bar
-   (list (if feed [:span "Feed"] [:a {:href "/"} "Feed"]) " | "
-         (if selected [:span "Selected"] [:a {:href "/selected"} "Selected"]) " | ")
+   (nav-entry :feed "./" selected) " | "
+   (nav-entry :selected "selected" selected) " | "
    [:div.fcr-menu
     [:a {:href "/extra-links"} "..."]
     [:div.fcr-menu-items
      [:div.fcr-menu-item "Logged in as:" [:br] user-id]
-     [:div.fcr-menu-item [:a {:href "/sources"} "Sources"]]
-     [:div.fcr-menu-item [:a {:href "/settings"} "Settings"]]
+     [:div.fcr-menu-item (nav-entry :sources "sources" selected)]
+     [:div.fcr-menu-item (nav-entry :settings "settings" selected)]
      [:div.fcr-menu-item [:a {:href "/logout"} "Logout"]]]]])
 
 (defn build-extra-links [user-id extra-style]
@@ -150,7 +156,7 @@
     [:html
      (head title extra-style)
      [:body
-      (navbar user-id false false)
+      (navbar user-id :a-feed)
       [:div.fcr-wrapper.fcr-ui
        (build-item-list items
                         "fill-checked"
@@ -170,7 +176,7 @@
     [:html
      (head "Feedcircuit" extra-style)
      [:body
-      (navbar user-id true false)
+      (navbar user-id :feed)
       [:div.fcr-wrapper.fcr-ui
        (build-item-list items
                         "fill-checked"
@@ -190,7 +196,7 @@
     [:html
      (head "Feedcircuit, selected items" extra-style)
      [:body
-      (navbar user-id false true)
+      (navbar user-id :selected)
       [:div.fcr-wrapper.fcr-ui
        (build-item-list items
                         "gray-checked selected-item"
@@ -261,7 +267,7 @@
   [:html
    (head "Feedcircuit, news sources" extra-style)
    [:body
-    (navbar user-id false false)
+    (navbar user-id :sources)
     [:div.fcr-wrapper.fcr-ui
      (let [user (feed/get-user-attrs user-id)
            feed-urls (map first (feed/make-expressions (:feeds user)))
@@ -287,6 +293,7 @@
     [:html
      (head "Feedcircuit settings" extra-style)
      [:body {:onLoad "initAppearance();"}
+      (navbar user-id :settings)
       [:div.fcr-wrapper.fcr-ui
        [:p [:h1 "Sources"]]
        [:p
@@ -319,8 +326,7 @@
                (map #(s/join " " %))
                (s/join "\n"))]]
         [:div.fcr-bottom-buttons
-         (submit-button "Save")
-         [:a.fcr-btn.fcr-btn-right {:href "./"} "Back to the feed"]]]]]]))
+         (submit-button "Save")]]]]]))
 
 (defn save-settings [user-id feed-lines style-lines]
   (let [feeds (s/split-lines feed-lines)
