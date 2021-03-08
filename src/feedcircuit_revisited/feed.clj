@@ -21,9 +21,10 @@
                :pubDate :published
                :updated :published
                :description :summary
-               :logo :image})
+               :logo :image
+               :dc:creator :author})
 
-(def array-attrs #{:author :category :contributor})
+(def array-attrs #{:author :dc:creator :category :contributor})
 
 (defn content-str [attr] (apply str (:content attr)))
 
@@ -70,7 +71,7 @@
         upd-fn (if (contains? array-attrs tag) (fn [old new] (conj (or old []) new))
                                                (fn [old new] new))]
     (if-let [attr-val (conv attr)]
-      (update-in item [(get attr-map tag tag)] upd-fn attr-val)
+      (update item (get attr-map tag tag) upd-fn attr-val)
       item)))
 
 (defn ensure-item-id [item]
