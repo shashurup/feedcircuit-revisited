@@ -248,6 +248,15 @@
   (let [pos-map (into {} to-positions)]
     (feed/update-user-attrs! user-id update :positions merge pos-map)))
 
+(defn feed-logo []
+  [:svg.fcr-feed-logo {:viewBox "0 0 50 50"
+                       :fill    "none"}
+   [:circle {:cx 10 :cy 40 :r 5 :style "stroke-width:6"}]
+   [:path {:d "M 30 40 a 30 30 0 0 0 -20 -20"
+           :style "stroke-width:8;stroke-linecap:round"}]
+   [:path {:d "M 45 40 a 45 45 0 0 0 -35 -35"
+           :style "stroke-width:8;stroke-linecap:round"}]])
+
 (defn build-sources [user-id extra-style]
   [:html
    (head "Feedcircuit, news sources" extra-style)
@@ -261,12 +270,15 @@
          [:div.fcr-news-item 
           [:a.fcr-link {:href (str "feed?url=" (:url feed))}
            [:h1 (:title feed)]]
+          (if-let [image-url (not-empty (:image feed))]
+            [:img.fcr-feed-logo {:src image-url}]
+            (feed-logo))
           (if-let [summary (not-empty (:summary feed))]
             [:p summary])
           [:p.fcr-item-footer
            [:a.fcr-link {:href (:url feed)} (:url feed)]
            (if-let [last-sync (:last-sync feed)]
-             [:span ", updated at "
+             [:span ", updated&nbsp;at&nbsp;"
               [:script (format "document.write(new Date(\"%s\").toLocaleString());" last-sync)]
               [:noscript last-sync]])]]))]]])
 

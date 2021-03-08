@@ -67,6 +67,17 @@ input.disabled {
     cursor: not-allowed;
 }
 
+.fcr-feed-logo {
+    float: left;
+    width: 3em;
+    margin-right: 1em;
+}
+
+svg.fcr-feed-logo {
+    stroke: currentcolor;
+    stroke-opacity: 33%;
+}
+
 /* News item */
 
 .fcr-news-item {
