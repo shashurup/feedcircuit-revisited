@@ -10,6 +10,7 @@
             [hiccup.core :as html]
             [clojure.zip :as zip]
             [me.raynes.fs :as fs]
+            [clojure.xml :as xml]
 ))
 #+end_src
 
@@ -18,23 +19,24 @@
 
 #+name: scratch
 #+begin_src clojure :results pp :wrap src clojure
-;(storage/get "fc-data/test" 42)
-;(storage/append! "fc-data/test" (range 256))
-;(f/init-feed-index "fc-data")
-;(send f/feed-index f/init-feed-index "fc-data")
-;(f/get-item-count2 "http://sgolub.ru/feed/")
-;@f/feed-index
-;(send f/feed-index f/load-feed "https://clojure.org/feed.xml")
-;(send f/feed-index f/load-feed "http://sgolub.ru/feed/")
-;(send f/feed-index f/load-feed "https://kiwibyrd.org/feed/")
-;(f/get-item-count2 "https://kiwibyrd.org/feed/")
-;(f/get-item-count2 "http://sgolub.ru/feed/")
-(f/get-item-count2 "https://clojure.org/feed.xml")
+(letfn [(safe-parse [xml]
+         (try
+           (xml/parse xml)
+           (catch Exception e nil)))]
+  (->> (fs/list-dir (fs/expand-home "~/devel/fc-stat/rss"))
+       (take 1024)
+       (map #(do (println (str %)) %))
+       (map safe-parse)
+       (filter some?)
+       ;(map f/extract-rss-items)
+       ;(map #(map f/parse-rss-item %))
+       count
+))
 #+end_src
 
 #+RESULTS: scratch
 #+begin_src clojure
-25
+13
 #+end_src
 
 
@@ -484,3 +486,25 @@ INFO: Got 1 item from http://static.feed.rbc.ru/rbc/logical/footer/news.rss
 class java.net.MalformedURLExceptionclass java.lang.NullPointerExceptionExecution error (NullPointerException) at java.net.URL/<init> (URL.java:585).
 null
 #+END_src
+
+#+begin_src restclient
+POST http://localhost:8080/selected
+Cookie: sessionid=bqn1psy1rdw0lt2ky1gj25b246j4pmaf; ring-session=6nzW7ugyC7mtjrvf0cEPl8p0YuPdp2v5TrpOkGH0ktuoLFZ5vLYjE3OPKBlUthOcpE9qs%2B8IrAhrwI5rCVH7RoGnj3WCKvbSr81U0jtQvw5TD8XAXXVvw2tPdxzIN79D--UbgPoufD0NaRHjlahfABuco0LfEV31LEkJWGLjOyCl8%3D
+Content-Type: application/x-www-form-urlencoded
+
+id=https://www.bfm.ru/news/473155
+#+end_src
+
+#+RESULTS:
+#+BEGIN_SRC js
+// POST http://localhost:8080/selected
+// HTTP/1.1 200 OK
+// Date: Sat, 29 May 2021 11:25:24 GMT
+// Content-Type: application/octet-stream
+// X-XSS-Protection: 1; mode=block
+// X-Frame-Options: SAMEORIGIN
+// X-Content-Type-Options: nosniff
+// Content-Length: 0
+// Server: Jetty(9.4.22.v20191022)
+// Request duration: 0.654561s
+#+END_SRC

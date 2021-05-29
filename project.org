@@ -27,3 +27,5 @@
 * DONE Cache selected content
 * DONE connection-timeout and socket-timeout
 * DONE figure padding and margins
+* TODO Support CORS for /selected
+* TODO Figure why cookie with theme get expired on my phone and iPad

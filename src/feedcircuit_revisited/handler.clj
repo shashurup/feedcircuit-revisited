@@ -112,7 +112,8 @@
         (ui/save-settings user-id feeds styles)
         {:status 303
          :headers {"Location" "/"}
-         :cookies {"extra-style" {:value extra-style}}})
+         :cookies {"extra-style" {:value extra-style
+                                  :expires "Wed, 11 Nov 2111 11:11:11 GMT"}}})
 
   (GET "/subscribe" {user-id :user
                      {url :url} :params}
