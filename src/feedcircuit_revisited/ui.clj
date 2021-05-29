@@ -214,9 +214,10 @@
             (if (s/includes? url pattern) style)) styles)))
 
 (defn build-content [feed ord-num url source extra-style user-id]
-  (let [item (when (not-empty feed)
-               (first (feed/get-feed-items feed ord-num)))
-        link (or (get-item-link item) url)
+  (let [item (if (not-empty feed)
+               (first (feed/get-feed-items feed ord-num))
+               {:link url})
+        link (get-item-link item)
         content-ident (when (not-empty feed)
                         (:content-ident (feed/get-feed-attrs feed)))
         site-style (find-style user-id link)]
