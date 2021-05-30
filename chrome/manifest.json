@@ -1,0 +1,31 @@
+{
+    "name": "Feedcircuit",
+    "description": "Saves current page to Feedcircuit for later reading",
+    "version": "0.1",
+    "manifest_version": 3,
+    "permissions": ["tabs"],
+    "host_permissions": ["https://feedcircuit.kibardin.name/"],
+    "action": {
+        "default_popup": "popup.html",
+        "default_title": "Press to add current page to Feedcircuit reading list",
+        "default_icon": {
+            "16": "fc16.png",
+            "32": "fc32.png",
+            "48": "fc48.png",
+            "128": "fc128.png"
+        }
+    },
+    "commands": {
+        "_execute_browser_action": {
+            "suggested_key": {
+                "default": "Ctrl+Comma"
+            }
+        }
+    },
+    "icons": {
+        "16": "fc16.png",
+        "32": "fc32.png",
+        "48": "fc48.png",
+        "128": "fc128.png"
+    }
+}
