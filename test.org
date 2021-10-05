@@ -492,19 +492,19 @@ POST http://localhost:8080/selected
 Cookie: sessionid=bqn1psy1rdw0lt2ky1gj25b246j4pmaf; ring-session=6nzW7ugyC7mtjrvf0cEPl8p0YuPdp2v5TrpOkGH0ktuoLFZ5vLYjE3OPKBlUthOcpE9qs%2B8IrAhrwI5rCVH7RoGnj3WCKvbSr81U0jtQvw5TD8XAXXVvw2tPdxzIN79D--UbgPoufD0NaRHjlahfABuco0LfEV31LEkJWGLjOyCl8%3D
 Content-Type: application/x-www-form-urlencoded
 
-id=https://www.bfm.ru/news/473155
+id=https://www.exler.ru/films/vampiry-srednej-polosy.htm
 #+end_src
 
 #+RESULTS:
 #+BEGIN_SRC js
 // POST http://localhost:8080/selected
 // HTTP/1.1 200 OK
-// Date: Sat, 29 May 2021 11:25:24 GMT
+// Date: Sat, 29 May 2021 17:18:47 GMT
 // Content-Type: application/octet-stream
 // X-XSS-Protection: 1; mode=block
 // X-Frame-Options: SAMEORIGIN
 // X-Content-Type-Options: nosniff
 // Content-Length: 0
 // Server: Jetty(9.4.22.v20191022)
-// Request duration: 0.654561s
+// Request duration: 1.246895s
 #+END_SRC

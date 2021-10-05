@@ -7,7 +7,7 @@
     "host_permissions": ["https://feedcircuit.kibardin.name/"],
     "action": {
         "default_popup": "popup.html",
-        "default_title": "Press to add current page to Feedcircuit reading list",
+        "default_title": "Add current page to Feedcircuit reading list",
         "default_icon": {
             "16": "fc16.png",
             "32": "fc32.png",

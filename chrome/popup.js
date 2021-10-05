@@ -8,7 +8,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
     req.onreadystatechange = function() {
         if (req.readyState === XMLHttpRequest.DONE) {
             if (req.status === 0 || (req.status >= 200 && req.status < 400)) {
-                document.write("done");
+                document.write("<strong>done</strong>");
             }
         }
     }
