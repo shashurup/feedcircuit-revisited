@@ -22,21 +22,6 @@ function toggleItem(item) {
         removeFromSelected(item.value);
 }
 
-function UnselectAndClose(id) {
-    req = new XMLHttpRequest();
-    req.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            try {
-                window.opener.location.reload();
-            } finally {
-                window.close();
-            }
-        }
-    };
-    req.open("DELETE", "/selected?id="+id);
-    req.send();
-}
-
 function initAppearance() {
     setAppearanceVisibility(
         document.getElementById("styles").value ||

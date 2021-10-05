@@ -86,6 +86,10 @@
           (ui/mark-read user-id positions)
           {:status 303 :headers {"Location" "/"}}))
 
+  (POST "/complete-selected" {user-id :user {id "id"} :form-params}
+        (feed/selected-remove! user-id [(parse-item-id id)])
+        {:status 303 :headers {"Location" "selected"}})
+
   (GET "/feed" {user-id :user
                 {url :url
                  from :from
@@ -138,7 +142,12 @@
        (let [iid (parse-item-id url)
              [feed ord-num] (when (coll? iid) iid)
              url (when (string? iid) iid)
-             result (ui/build-content feed ord-num url source extra-style user-id)]
+             result (ui/build-content feed
+                                      ord-num
+                                      url
+                                      (= source "selected")
+                                      extra-style
+                                      user-id)]
          (if (string? result)
            {:status 302 :headers {"Location" result}}
            (html/html result))))

@@ -46,14 +46,12 @@
   [:div.fcr-news-item
    [:div.fcr-news-header
     [:a.fcr-link {:href url
-                  :rel "opener"
-                  :target "_blank"} [:h1 title]]]
+                  :rel "opener"} [:h1 title]]]
    [:div.fcr-news-body summary footer]])
 
 (defn news-content [url title content footer]
   [:div.fcr-article
-   [:a.fcr-link {:href url
-                 :target "_blank"} [:h1 title]]
+   [:a.fcr-link {:href url} [:h1 title]]
    content
    [:div.fcr-item-footer footer]])
 
@@ -213,7 +211,7 @@
     (some (fn [[pattern style]]
             (if (s/includes? url pattern) style)) styles)))
 
-(defn build-content [feed ord-num url source extra-style user-id]
+(defn build-content [feed ord-num url show-done extra-style user-id]
   (let [item (if (not-empty feed)
                (first (feed/get-feed-items feed ord-num))
                {:link url})
@@ -229,10 +227,7 @@
               category :category
               comments :comments
               iid :iid} (content/augment item content-ident)
-             iid (or iid url)
-             done-action (if (= source "selected")
-                           (str "UnselectAndClose('" (iid-to-str iid) "');")
-                           "window.close();")]
+             iid (or iid url)]
          (if content
            [:html
             (head title extra-style site-style)
@@ -245,8 +240,11 @@
                              (if (not (empty? category))
                                [:p (str "Category: " (s/join ", " category))])
                              (if comments
-                               [:p [:a {:href comments :target "_blank"} "Comments"]])))
-              (if source [:button.fcr-btn {:onclick done-action} "Done"])]]]))
+                               [:p [:a {:href comments} "Comments"]])))
+              (if show-done
+                [:form {:action "complete-selected" :method "POST"}
+                 [:input {:type "hidden" :name "id" :value (iid-to-str iid)}]
+                 (submit-button "Done")])]]]))
        (catch Exception ex
          (log/error "Failed to make content for" link)))
      link)))
