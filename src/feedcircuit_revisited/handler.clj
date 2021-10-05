@@ -81,13 +81,18 @@
                                    (or (as-int count) ui/page-size)
                                    extra-style)))
 
-  (POST "/positions" {user-id :user {np "next-position"} :form-params}
-        (let [positions (map parse-item-id (ensure-coll np))]
+  (POST "/next" {user-id :user {np "next-position"
+                                selected "selected-item"} :form-params}
+        (let [positions (map parse-item-id (ensure-coll np))
+              items     (map parse-item-id (ensure-coll selected))]
+          (feed/selected-add! user-id items)
           (ui/mark-read user-id positions)
           {:status 303 :headers {"Location" "/"}}))
 
-  (POST "/complete-selected" {user-id :user {id "id"} :form-params}
-        (feed/selected-remove! user-id [(parse-item-id id)])
+  (POST "/complete-selected" {user-id :user
+                              {selected "selected-item"} :form-params}
+        (feed/selected-remove! user-id
+                               (map parse-item-id (ensure-coll selected)))
         {:status 303 :headers {"Location" "selected"}})
 
   (GET "/feed" {user-id :user

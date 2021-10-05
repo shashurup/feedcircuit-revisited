@@ -46,3 +46,8 @@ function setAppearanceVisibility(visible) {
         appearanceHeader.innerText += " ...";
     }
 }
+
+function renameForm() {
+    var form = document.getElementById("main");
+    form.id = "main-js-enabled";
+}

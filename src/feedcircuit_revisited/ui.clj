@@ -38,6 +38,7 @@
                :id (ch-id idx)
                :class (str "item-check " class)
                :name "selected-item"
+               :form "main"
                :onchange (or onchange "")
                :value value}]
     [:input (merge attrs (when checked {:checked "yes"}))]))
@@ -173,7 +174,7 @@
         checked (feed/get-selected-among-unread user)]
     [:html
      (head "Feedcircuit" extra-style)
-     [:body
+     [:body {:onload "renameForm()"}
       (navbar user-id :feed)
       [:div.fcr-wrapper.fcr-ui
        (build-item-list items
@@ -181,7 +182,7 @@
                         (bookmark-icon-svg)
                         "fc"
                         checked)
-       [:form {:action "/positions" :method "POST"}
+       [:form {:id "main" :action "next" :method "POST"}
         (for [[feed pos] next-positions]
           [:input {:type "hidden"
                    :name "next-position"
@@ -200,7 +201,10 @@
                         "gray-checked selected-item"
                         (backspace-svg)
                         "selected"
-                        #{})]]]))
+                        #{})
+       [:noscript
+        [:form {:id "main" :action "complete-selected" :method "POST"}
+         (submit-button "Done")]]]]]))
 
 (defn get-item-link [item]
   (let [link (:link item)]
@@ -243,7 +247,7 @@
                                [:p [:a {:href comments} "Comments"]])))
               (if show-done
                 [:form {:action "complete-selected" :method "POST"}
-                 [:input {:type "hidden" :name "id" :value (iid-to-str iid)}]
+                 [:input {:type "hidden" :name "selected-item" :value (iid-to-str iid)}]
                  (submit-button "Done")])]]]))
        (catch Exception ex
          (log/error "Failed to make content for" link)))
