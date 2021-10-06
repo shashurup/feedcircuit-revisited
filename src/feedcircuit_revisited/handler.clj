@@ -4,12 +4,15 @@
             [compojure.route :as route]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.middleware.session.cookie :refer [cookie-store]]
-            [hiccup.core :as html]
+            [hiccup core page]
             [java-time :as jt]
             [feedcircuit-revisited.ui :as ui]
             [feedcircuit-revisited.feed :as feed]
             [feedcircuit-revisited.conf :as conf]
             [feedcircuit-revisited.auth :as auth]))
+
+(defn html5 [subject]
+  (hiccup.core/html (hiccup.page/doctype :html5) subject))
 
 (defn parse-item-id [item-id]
   (if item-id
@@ -61,7 +64,7 @@
 (defroutes non-interactive-routes
   (GET "/selected" {user-id :user
                     {{extra-style :value} "extra-style"} :cookies}
-       (html/html (ui/build-selected user-id extra-style)))
+       (html5 (ui/build-selected user-id extra-style)))
 
   (POST "/selected" {user-id :user {id "id"} :form-params}
         (->> (ensure-coll id)
@@ -77,7 +80,7 @@
   (GET "/" {user-id :user
             {count :count} :params
             {{extra-style :value} "extra-style"} :cookies}
-       (html/html (ui/build-unread user-id
+       (html5 (ui/build-unread user-id
                                    (or (as-int count) ui/page-size)
                                    extra-style)))
 
@@ -100,7 +103,7 @@
                  from :from
                  count :count} :params
                 {{extra-style :value} "extra-style"} :cookies}
-       (html/html (ui/build-feed user-id
+       (html5 (ui/build-feed user-id
                                  url
                                  (as-int from)
                                  (as-int count)
@@ -108,11 +111,11 @@
 
   (GET "/sources" {user-id :user
                    {{extra-style :value} "extra-style"} :cookies}
-       (html/html (ui/build-sources user-id extra-style)))
+       (html5 (ui/build-sources user-id extra-style)))
 
   (GET "/settings" {user-id :user
                     {{extra-style :value} "extra-style"} :cookies}
-       (html/html (ui/build-settings user-id extra-style)))
+       (html5 (ui/build-settings user-id extra-style)))
 
   (POST "/settings" {user-id :user
                      {feeds "feeds"
@@ -135,11 +138,11 @@
 
   (GET "/extra-links" {user-id :user
                        {{extra-style :value} "extra-style"} :cookies}
-       (html/html (ui/build-extra-links user-id extra-style))))
+       (html5 (ui/build-extra-links user-id extra-style))))
 
 (defroutes public-routes
   (GET "/login-options" {{{extra-style :value} "extra-style"} :cookies}
-       (html/html (ui/build-login-options extra-style)))
+       (html5 (ui/build-login-options extra-style)))
 
   (GET "/plain" {user-id :user
                  {url :url source :source} :params
@@ -155,7 +158,7 @@
                                       user-id)]
          (if (string? result)
            {:status 302 :headers {"Location" result}}
-           (html/html result))))
+           (html5 result))))
 
   (GET "/authenticate/:via" {{via :via code :code} :params}
        (if-let [user-id (auth/get-email via code)]

@@ -7,7 +7,6 @@
             [clojure.zip :as zip]
             [clojure.string :as s]
             [clj-http.client :as http]
-            [hiccup.core :as html]
             [clojure.tools.logging :as log]))
 
 (def ten-minutes (* 10 60 1000))
