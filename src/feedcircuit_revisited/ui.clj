@@ -56,8 +56,11 @@
    content
    [:div.fcr-item-footer footer]])
 
+(defn get-url-path [url]
+  (.getPath (new java.net.URL (new java.net.URL "file:") url)))
+
 (defn style-or-script [url]
-  (if (s/ends-with? (.getPath (new java.net.URL url))
+  (if (s/ends-with? (get-url-path url)
                     ".js")
     [:script {:src url}]
     [:link {:rel "stylesheet" :type "text/css" :href url}]))
