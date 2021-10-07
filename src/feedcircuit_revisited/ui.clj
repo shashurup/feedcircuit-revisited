@@ -56,6 +56,12 @@
    content
    [:div.fcr-item-footer footer]])
 
+(defn style-or-script [url]
+  (if (s/ends-with? (.getPath (new java.net.URL url))
+                    ".js")
+    [:script {:src url}]
+    [:link {:rel "stylesheet" :type "text/css" :href url}]))
+
 (defn head [title & styles]
   [:head
    [:title title]
@@ -63,7 +69,7 @@
    [:script {:src "code.js"}]
    [:link {:rel "stylesheet" :type "text/css" :href "style.css"}]
    (for [style styles :when (seq style)]
-     [:link {:rel "stylesheet" :type "text/css" :href style}])
+     (style-or-script style))
    [:link {:rel "shortcut icon" :type "image/png" :href "favicon.png"}]])
 
 (defn submit-button
@@ -210,10 +216,10 @@
   (let [link (:link item)]
     (if (coll? link) (first link) link)))
 
-(defn find-style [user-id url]
+(defn find-styles [user-id url]
   (let [styles (:styles (feed/get-user-attrs user-id))]
-    (some (fn [[pattern style]]
-            (if (s/includes? url pattern) style)) styles)))
+    (map second (filter (fn [[pattern style]]
+                          (s/includes? url pattern)) styles))))
 
 (defn build-content [feed ord-num url show-done extra-style user-id]
   (let [item (if (not-empty feed)
@@ -222,7 +228,7 @@
         link (get-item-link item)
         content-ident (when (not-empty feed)
                         (:content-ident (feed/get-feed-attrs feed)))
-        site-style (find-style user-id link)]
+        site-styles (find-styles user-id link)]
     (or
      (try
        (let [{title :title
@@ -234,7 +240,7 @@
              iid (or iid url)]
          (if content
            [:html
-            (head title extra-style site-style)
+            (apply head title extra-style site-styles)
             [:body
              [:div.fcr-wrapper
               (news-content link title content
