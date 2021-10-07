@@ -174,7 +174,7 @@
         checked (feed/get-selected-among-unread user)]
     [:html
      (head "Feedcircuit" extra-style)
-     [:body {:onload "renameForm()"}
+     [:body
       (navbar user-id :feed)
       [:div.fcr-wrapper.fcr-ui
        (build-item-list items

@@ -49,5 +49,9 @@ function setAppearanceVisibility(visible) {
 
 function renameForm() {
     var form = document.getElementById("main");
-    form.id = "main-js-enabled";
+    if (form) {
+        form.id = "main-js-enabled";
+    }
 }
+
+document.addEventListener('DOMContentLoaded', renameForm);
