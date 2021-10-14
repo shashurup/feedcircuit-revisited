@@ -14,7 +14,8 @@
 (def http-timeouts {:socket-timeout ten-minutes
                     :connection-timeout ten-minutes})
 
-(def minimal-summary-size 128)
+(def summary-soft-limit 1024)
+(def summary-hard-limit 4096) ; induced by datomic dev-local
 (def minimal-article-size 512)
 
 (def tag first)
@@ -178,26 +179,27 @@
 
 ; === figure content summary ===
 
-(defn expectation [coll]
-  (quot (apply + coll) (count coll)))
+(defn delete-below [node]
+  (let [next-node (zip/next node)]
+    (if-not (zip/end? next-node)
+      (delete-below (zip/remove next-node))
+      node)))
 
-(defn variance [coll expectation]
-  (let [sum (->> coll
-                 (map #(- expectation %))
-                 (map #(* % %))
-                 (apply + ))]
-    (-> (quot sum (count coll))
-        Math/sqrt
-        Math/round)))
+(defn protuberant-node [limit root]
+  (->> root
+       node-seq
+       (filter #(string? (zip/node %)))
+       (map #(vector (count (zip/node %)) %))
+       (reduce (fn [[total last] [len node]]
+                 (if (> total limit)
+                   [total last]
+                   [(+ total len) node])))
+       second))
 
-(defn minimal-size [coll]
-  (let [expectation (expectation coll)
-        variance (variance coll expectation)]
-    (max (- expectation variance) minimal-summary-size)))
-
-(defn accumulate-content-size [result [size element]]
-  (let [current-size (or (second (last result)) 0)]
-    (conj result [size (+ size current-size) element])))
+(defn fit-raw-limit [limit node]
+  (if (> (count (hiccup/html (zip/root node))) limit)
+    (fit-raw-limit limit (zip/remove node))
+    node))
 
 (defmulti summarize
   "Makes a summary from an article. The size of the summary
@@ -205,21 +207,16 @@
   class)
 
 (defmethod summarize clojure.lang.PersistentVector [html]
-  (when-let [content-element (find-content-element html)]
-    (let [paragraphs (->> content-element
-                          zip/node
-                          remove-h1
-                          children
-                          (map #(vector (text-size-recursively %) %))
-                          (reduce accumulate-content-size []))
-          sizes (->> paragraphs
-                     (map first)
-                     (filter #(> % 0)))
-          min-size (minimal-size sizes)]
-      (->> paragraphs
-           (take-while #(< (-(second %) (first %)) min-size))
-           (map #(nth % 2))
-           hiccup/html))))
+  (->> html
+       find-body
+       remove-h1
+       html-zipper
+       (protuberant-node summary-soft-limit)
+       delete-below
+       (fit-raw-limit summary-hard-limit)
+       zip/root
+       children
+       hiccup/html))
 
 (defmethod summarize String [raw-html]
   (summarize (jsoup/parse-string raw-html)))

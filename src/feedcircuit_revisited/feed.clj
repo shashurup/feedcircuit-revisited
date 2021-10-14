@@ -181,7 +181,7 @@
               (if (and (empty? content) self-containing)
                 (assoc item :content summary)
                 item))
-            :summary #(if (> (content/calculate-size %) 1024)
+            :summary #(if (> (count %) content/summary-soft-limit)
                         (content/summarize %)
                         %))))
 

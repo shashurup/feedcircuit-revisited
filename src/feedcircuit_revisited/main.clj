@@ -30,17 +30,17 @@
 (defn _stop-auto-sync []
   (future-cancel feed/auto-sync))
 
-(defn _run-srv []
+(defn _start-server []
+  (def _srv (run-jetty (handler/create)
+                       {:port 8080 :join? false})))
+
+(defn _run []
   (conf/load-from-file "config")
   (feed/init!)
   (stat/init!)
   (content/init-cache!)
-  (def _srv
-    (run-jetty (handler/create)
-               {:port 8080 :join? false})))
+  (_start-server))
 
-(defn _restart-srv []
+(defn _restart-server []
   (.stop _srv)
-  (def _srv
-    (run-jetty (handler/create)
-               {:port 8080 :join? false})))
+  (_start-server))
