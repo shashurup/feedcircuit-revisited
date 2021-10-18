@@ -1,5 +1,6 @@
 (ns feedcircuit-revisited.schema
   (:require [clojure.set :as set]
+            [clojure.string :as string]
             [feedcircuit-revisited.feed :as feed]
             [feedcircuit-revisited.content :as content]
             [datomic.client.api :as d]))
@@ -64,6 +65,7 @@
               :db/cardinality :db.cardinality/one
               :db/doc "The feed this items belongs to"}
 
+
              {:db/ident :feed/url
               :db/unique :db.unique/identity
               :db/valueType :db.type/string
@@ -89,6 +91,54 @@
               :db/valueType :db.type/string
               :db/cardinality :db.cardinality/one
               :db/doc "Feed icon"}
+
+
+             {:db/ident :user/id
+              :db/unique :db.unique/identity
+              :db/valueType :db.type/string
+              :db/cardinality :db.cardinality/one
+              :db/doc "User's id, usually e-mail"}
+
+             {:db/ident :user/selected
+              :db/valueType :db.type/ref
+              :db/cardinality :db.cardinality/many
+              :db/doc "User's selected items"}
+
+             {:db/ident :user/styles
+              :db/valueType :db.type/string
+              :db/cardinality :db.cardinality/many
+              :db/doc "User's styles and scripts"}
+
+
+             {:db/ident :source/user
+              :db/valueType :db.type/ref
+              :db/cardinality :db.cardinality/one
+              :db/doc "User reference"}
+
+             {:db/ident :source/feed
+              :db/valueType :db.type/ref
+              :db/cardinality :db.cardinality/one
+              :db/doc "Feed reference"}
+
+             {:db/ident :source/num
+              :db/valueType :db.type/long
+              :db/cardinality :db.cardinality/one
+              :db/doc "Source order number"}
+
+             {:db/ident :source/active
+              :db/valueType :db.type/boolean
+              :db/cardinality :db.cardinality/one
+              :db/doc "Used to mark a source as inactive"}
+
+             {:db/ident :source/position
+              :db/valueType :db.type/long
+              :db/cardinality :db.cardinality/one
+              :db/doc "User's position in a source"}
+
+             {:db/ident :source/filters
+              :db/valueType :db.type/string
+              :db/cardinality :db.cardinality/one
+              :db/doc "Source filters"}
              ])
 
 (def feed-key-mappings {:url :feed/url
@@ -128,22 +178,50 @@
 (defn convert-feed [feed]
   (convert-keys feed feed-key-mappings))
 
-(defn prepare-feed-tx-data [feed items]
-  (let [feed (convert-feed feed)
-        items (map convert-item items)]
-    (apply concat
-           (map #(into [:db/add "feed"] %) feed)
-           (for [item items
-                 :let [tmpid (->> item
-                                  (filter #(= (first %) :item/num))
-                                  first
-                                  second
-                                  str)]]
-             (into (list [:db/add tmpid :item/feed "feed"])
-                   (map #(into [:db/add tmpid] %) item))))))
+(defn prepare-feed-tx-data [feed]
+  (map #(into [:db/add "feed"] %) (convert-feed feed)))
+
+(defn prepare-items-tx-data [feed-url items]
+  (->> 
+   (for [item items
+         :let [tmpid (str (:num item))]]
+     (into (list [:db/add tmpid :item/feed [:feed/url feed-url]])
+           (map #(into [:db/add tmpid] %) (convert-item item))))
+   (partition-all 1024)
+   (map #(apply concat %))))
 
 (defn import-feed [db-conn feed-url]
   (let [feed  (feed/get-feed-attrs feed-url)
         items (map #(feed/fix-summary-and-content % nil) ; apply hard summary limit - 4096
                    (feed/get-numbered-items feed-url 0))]
-    (d/transact db-conn {:tx-data (prepare-feed-tx-data feed items)})))
+    (concat 
+     (d/transact db-conn {:tx-data (prepare-feed-tx-data feed)})
+     (for [data (prepare-items-tx-data feed-url items)]
+       (d/transact db-conn {:tx-data data})))))
+
+(defn parse-feed-expr [expr]
+  (let [active (not= (first expr) \#)
+        [feed filters] (string/split expr #"\s+" 2)]
+    [active
+     (if active feed (subs feed 1))
+     filters]))
+
+(defn prepare-user-tx-data [user-attrs]
+  (concat
+         (list [:db/add "user" :user/id (:id user-attrs)])
+         (for [[k v] (:styles user-attrs)]
+           [:db/add "user" :user/styles (str k " " v)])
+         (for [[num feed] (map-indexed #(vector %1 %2) (:feeds user-attrs))]
+           (let [[active feed filters] (parse-feed-expr feed)
+                 pos ((:positions user-attrs) feed)]
+             (merge 
+              {:source/user "user"
+               :source/feed [:feed/url feed]
+               :source/num num
+               :source/active active}
+              (if filters {:source/filters filters} {})
+              (if pos {:source/position pos} {}))
+             ))))
+
+(defn import-user [db-conn e-mail]
+  (d/transact db-conn {:tx-data (prepare-user-tx-data (feed/get-user-attrs e-mail))}))

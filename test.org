@@ -7,6 +7,8 @@
 	    [feedcircuit-revisited.handler :as handler]
 	    [feedcircuit-revisited.storage :as storage]
             [feedcircuit-revisited.conf :as conf]
+            [feedcircuit-revisited.schema :as s]
+            [datomic.client.api :as d]
             [hiccup.core :as html]
             [clojure.zip :as zip]
             [me.raynes.fs :as fs]
@@ -15,7 +17,434 @@
 #+end_src
 
 #+RESULTS:
-: nil
+: 
+: 
+
+#+begin_src clojure :results pp
+(->> (d/index-pull (d/db s/db-conn)
+                   {:index :avet
+                    :selector '[*]
+                    :start '[:item/num 42]})
+     (filter #(= (get-in % [:item/feed :db/id]) 74766790694841))               
+     (take 16))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+({:item/link
+  "https://habr.com/ru/post/523298/?utm_source=habrahabr&utm_medium=rss&utm_campaign=523298",
+  :item/id "https://habr.com/ru/post/523298/",
+  :item/category
+  ["TSO"
+   "store buffering"
+   "weak memory models"
+   "Блог компании Образовательные проекты JetBrains"
+   "буферизация"
+   "модели памяти"
+   "слабые модели памяти"],
+  :item/summary
+  "<h3>Об авторе</h3><br /><br />\n <a href=\"http://podkopaev.net\" rel=\"nofollow\">Антон Подкопаев</a> является постдоком в <a href=\"https://www.mpi-sws.org/\" rel=\"nofollow\">MPI-SWS</a>, руководителем группы слабых моделей памяти в <a href=\"https://research.jetbrains.org/ru/groups/plt_lab\" rel=\"nofollow\">лаборатории языковых инструментов</a> JetBrains Research и преподавателем Computer Science Center.<br /><br />\n<br /><br />\nЕще в 1979 году Лесли Лампорт в статье «<i>How to make a multiprocessor computer that correctly executes multiprocess programs</i>» ввел, как следует из названия, идеализированную семантику многопоточности — <i>модель последовательной консистентности</i> (sequential consistency, SC). Согласно данной модели, любой результат исполнения многопоточной программы может быть получен как последовательное исполнение некоторого чередования инструкций потоков этой программы. (Предполагается, что чередование сохраняет порядок между инструкциями, относящимися к одному потоку.)<br /><br />\n<br /><br />\nРассмотрим следующую программу <b>SB</b>:<br /><br />\n<br /><br />\n<img src=\"https://habrastorage.org/webt/ba/ro/ic/baroicr9ewudtfzev2kpa19zyqe.png\" width=\"500\" /><br /><br />\n<br /><br />\nВ этой программе два потока, в каждом из которых первая инструкция — инструкция записи в разделяемую локацию (x или y), а вторая — инструкция чтения из другой разделяемой локации. Для этой программы существует шесть чередований инструкций потоков:",
+  :item/published "2020-10-14T16:54:00Z",
+  :item/num 42,
+  :db/id 74766790694884,
+  :item/feed #:db{:id 74766790694841},
+  :item/title "Слабые модели памяти: буферизации записи на x86"}
+ {:item/link
+  "https://habr.com/ru/post/523500/?utm_source=habrahabr&utm_medium=rss&utm_campaign=523500",
+  :item/id "https://habr.com/ru/post/523500/",
+  :item/category
+  ["ipfs"
+   "libgen"
+   "library"
+   "open access"
+   "sci-hub"
+   "Будущее здесь"
+   "Научно-популярное"
+   "Хранение данных"
+   "Читальный зал"
+   "свобода информации"],
+  :item/summary
+  "<p>Library Genesis  - настоящий бриллиант Интернета. Онлайн-библиотека, предоставляющая свободный доступ более чем к 2.7 миллионам книг, на этой неделе сделала долгожданный шаг. Одно из веб-зеркал библиотеки теперь дает возможность скачать файлы через <abbr title=\"InterPlanetary File System\">IPFS</abbr> - распределенную файловую систему.</p><p>За этим скрывается очевидный факт - коллекция книг Library Genesis загружена в IPFS, запинена и соединена с поиском. А это значит, что теперь лишить людей доступа к нашему общему культурному и научному наследию стало немного тяжелей.</p> <a href=\"https://habr.com/ru/post/523500/?utm_source=habrahabr&amp;utm_medium=rss&amp;utm_campaign=523500#habracut\">Подробнее</a>",
+  :item/published "2020-10-14T19:04:11Z",
+  :item/num 43,
+  :db/id 74766790694885,
+  :item/feed #:db{:id 74766790694841},
+  :item/title
+  "Крупнейшая свободная электронная библиотека выходит в межпланетное пространство"}
+ {:item/link
+  "https://habr.com/ru/post/523402/?utm_source=habrahabr&utm_medium=rss&utm_campaign=523402",
+  :item/id "https://habr.com/ru/post/523402/",
+  :item/category
+  ["demhack"
+   "privacy"
+   "Блог компании РосКомСвобода"
+   "Законодательство в IT"
+   "Программирование"
+   "Развитие стартапа"
+   "Хакатоны"
+   "интернет-активизм"
+   "роскомсвобода"
+   "свобода информации"
+   "хакатон"
+   "цифровое гражданство"
+   "цифровые права"],
+  :item/summary
+  "<img src=\"https://habrastorage.org/webt/q1/s9/7v/q1s97vs8b3t1d-msnqnrga8-gl4.jpeg\" /><br />\n<br />\nКоманды должны ещё поработать над проектами, но перспективы у них есть.<br />\n<br />\nС 5 по 10 октября в Москве прошёл буткемп <b><a href=\"https://demhack.ru/\" rel=\"nofollow\">Demhack</a></b>. Ранее <a href=\"https://habr.com/ru/company/roskomsvoboda/blog/521632/\">вышедшие в финал</a> шесть участников сентябрьского хакатона представили на суд жюри улучшенные проекты. 10 октября эксперты определили победителей. Ими стали:<br />\n<br />\n<b><ul>\n<li>VPN123;</li>\n<li>Cryptocar;</li>\n<li>Common data. </li>\n</ul></b> <a href=\"https://habr.com/ru/post/523402/?utm_source=habrahabr&amp;utm_medium=rss&amp;utm_campaign=523402#habracut\">Читать дальше →</a>",
+  :item/published "2020-10-14T10:08:39Z",
+  :item/num 44,
+  :db/id 74766790694886,
+  :item/feed #:db{:id 74766790694841},
+  :item/title "На DemHack назвали победителей"}
+ {:item/link
+  "https://habr.com/ru/post/523378/?utm_source=habrahabr&utm_medium=rss&utm_campaign=523378",
+  :item/id "https://habr.com/ru/post/523378/",
+  :item/category
+  ["Big Data"
+   "ClickHouse"
+   "Kubernetes"
+   "SQL"
+   "Высокая производительность"
+   "Системное администрирование"
+   "Хранилища данных"],
+  :item/summary
+  "<p><img src=\"https://habrastorage.org/webt/it/ys/pv/ityspvi76og2c9qkafb76pvkvxi.jpeg\" /></p><br />\n<p>Доклад посвящен практическим вопросам разработки оператора в Kubernetes, проектированию его архитектуры и основных принципов функционирования.</p><br />\n<p>В первой части доклада рассмотрим:</p><br />\n<ul>\n<li>что такое оператор в Kubernetes и зачем он нужен;</li>\n<li>как именно оператор упрощает управление сложными системами;</li>\n<li>что оператор может, а что оператор не может.</li>\n</ul><br />\n<p>Далее, перейдём к обсуждению внутреннего устройства оператора. Рассмотрим архитектуру и функционирование оператора по шагам. Подробно разберём:</p><br />\n<ul>\n<li>взаимодействие между оператором и Kubernetes;</li>\n<li>какие функции оператор берет на себя, а что делегирует в Kubernetes.</li>\n</ul><br />\n<p>Рассмотрим управление шардами и репликами БД в Kubernetes.<br />\nДалее, обсудим вопросы хранения данных:</p><br />\n<ul>\n<li>как работать с Persistent Storage с точки зрения оператора;</li>\n<li>подводные камни использования Local Storage.</li>\n</ul><br />\n<p>В заключительной части доклада рассмотрим практические примеры применения <a href=\"https://github.com/Altinity/clickhouse-operator\" rel=\"nofollow\">clickhouse-operator</a> с Amazon или Google Cloud Service. Доклад строится на примере разработки и опыта эксплуатации оператора для ClickHouse.</p> <a href=\"https://habr.com/ru/post/523378/?utm_source=habrahabr&amp;utm_medium=rss&amp;utm_campaign=523378#habracut\">Читать дальше →</a>",
+  :item/published "2020-10-14T07:14:34Z",
+  :item/num 45,
+  :db/id 74766790694887,
+  :item/feed #:db{:id 74766790694841},
+  :item/title
+  "Оператор в Kubernetes для управления кластерами БД. Владислав Клименко (Altinity, 2019)"}
+ {:item/link
+  "https://habr.com/ru/post/523358/?utm_source=habrahabr&utm_medium=rss&utm_campaign=523358",
+  :item/id "https://habr.com/ru/post/523358/",
+  :item/category
+  ["DevOps"
+   "Kubernetes"
+   "cloud computing"
+   "containers"
+   "development"
+   "devops"
+   "docker"
+   "Блог компании Southbridge"
+   "Серверное администрирование"
+   "Системное администрирование"
+   "автоматизация"
+   "разработка"],
+  :item/summary
+  "<p><img src=\"https://habrastorage.org/webt/yn/kc/gd/ynkcgdtxt4hfnxbrb6uzt8ad06e.jpeg\" /></p><br />\n<p>Далеко не все серверные платформы, даже самые мощные и масштабируемые, удовлетворяют все потребности, как есть. Хотя Kubernetes и работает отлично сам по себе, ему может не хватить нужных частей для полноты. Вы всегда найдете частный случай, который игнорирует вашу нужду, или при котором Kubernetes не будет работать при установке по умолчанию — например, поддержка баз данных или работа CD.</p><br />\n<p>Здесь и появляются дополнения, расширения и прочие ништяки для этого оркестратора контейнеров, поддерживаемые широчайшим сообществом. В этой статье будет 11 лучших вещей, найденных нами. Нам самим в <a href=\"https://southbridge.io/?utm_source=habr&amp;utm_medium=post&amp;utm_campaign=post&amp;utm_content=post_14-10-2020&amp;utm_term=dzygovbrodskiy\" rel=\"nofollow\">Southbridge</a> они очень даже интересны, и мы планируем разобраться с ними практически — на винтики и гаечки разобрать и посмотреть, что внутри. Часть из них прекрасно дополнит любой кластер Kubernetes, другие же помогут решить частные задачи, не реализованные в типовой поставке Kubernetes.</p> <a href=\"https://habr.com/ru/post/523358/?utm_source=habrahabr&amp;utm_medium=rss&amp;utm_campaign=523358#habracut\">Читать дальше →</a>",
+  :item/published "2020-10-14T15:49:28Z",
+  :item/num 46,
+  :db/id 74766790694888,
+  :item/feed #:db{:id 74766790694841},
+  :item/title "[Перевод] 11 инструментов, делающих Kubernetes лучше"}
+ {:item/link
+  "https://habr.com/ru/post/462137/?utm_source=habrahabr&utm_medium=rss&utm_campaign=462137",
+  :item/id "https://habr.com/ru/post/462137/",
+  :item/category
+  ["3d graphics"
+   "C++"
+   "CGI (графика)"
+   "c++"
+   "gamedev"
+   "glfw"
+   "tutorial"
+   "vulkan"
+   "Программирование"
+   "Работа с 3D-графикой"
+   "Разработка игр"],
+  :item/summary
+  "<img align=\"left\" src=\"https://habrastorage.org/webt/ca/lr/jr/calrjr3ezjhsaczng3blj6c4c2q.png\" /> <br />\n<p>В связи с тем, что у меня не так много времени для ресерча каких-то новых штук и написания статей о них, я решил перевести серию уроков по Vulkan. Надеюсь, что мои переводы будут кому-то полезны и не очень плохого качества. Для начала обучения — прошу под кат. </p><br />\n<p>Автор оригинала дал свое согласие на перевод. Так же, когда я доперевожу все статьи и у меня будет время отформатировать их для github, он добавит русский перевод на свой сайт.</p> <a href=\"https://habr.com/ru/post/462137/?utm_source=habrahabr&amp;utm_medium=rss&amp;utm_campaign=462137#habracut\">Читать дальше →</a>",
+  :item/published "2020-10-14T16:34:19Z",
+  :item/num 47,
+  :db/id 74766790694889,
+  :item/feed #:db{:id 74766790694841},
+  :item/title "[Перевод] Vulkan-tutorial. Урок 1.1 — Вступление"}
+ {:item/link
+  "https://habr.com/ru/post/523488/?utm_source=habrahabr&utm_medium=rss&utm_campaign=523488",
+  :item/id "https://habr.com/ru/post/523488/",
+  :item/category ["Космонавтика" "горючее" "ракеты" "топливо"],
+  :item/summary
+  "<div style=\"text-align:center;\"><img alt=\"image\" src=\"https://habrastorage.org/getpro/habr/post_images/da3/829/463/da3829463ff81a145e7e0dbfd48ad3b5.jpg\" /></div><br />\n<i>Запуск ракеты «Протон» в 2010 не удался не потому, что ей не хватило топлива, а потому, что его было слишком много</i><br />\n<br />\n<i>Автор статьи – Уэйн Элиазер, проработал в ВВС США 25 лет, был менеджером программы «Тор», директором испытаний ракет семейства «Атлас», главой отдела космических запусков в управлении по снабжению ВВС секретариата Пентагона.</i>",
+  :item/published "2020-10-14T16:39:37Z",
+  :item/num 48,
+  :db/id 74766790694890,
+  :item/feed #:db{:id 74766790694841},
+  :item/title
+  "[Перевод] Аварии космических ракет, связанные с топливом: заправлять до полного?"}
+ {:item/link
+  "https://habr.com/ru/post/523434/?utm_source=habrahabr&utm_medium=rss&utm_campaign=523434",
+  :item/id "https://habr.com/ru/post/523434/",
+  :item/category
+  ["D" "D vs C vs Rust vs Go vs C#" "Высокая производительность"],
+  :item/summary
+  "<p>Простой фреймворк для тестирования HTTP-серверов, вдохновленный <a href=\"https://github.com/nuald/simple-web-benchmark\" rel=\"nofollow\">Simple Web Benchmark</a> (<em>Прим.пер.Там есть график для многих других языков</em>), но сфокусированный на <a href=\"https://dlang.org/\" rel=\"nofollow\">dlang</a> фреймворках и библиотеках.</p><br />\n<p>Он измеряет достижимый RPS (запросы в секунду) в сценарии простого текстового ответа (plaintext).</p><br />\n<p>Тесты были собраны или изменены из различных мест (в том числе <a href=\"https://github.com/TechEmpower/FrameworkBenchmarks\" rel=\"nofollow\">TechEmpower</a>).</p><br />\n<p>Он использует <a href=\"https://www.docker.com/\" rel=\"nofollow\">докер</a>-контейнер для построения и размещения сервисов и может работать локально или использовать нагрузочный тестер с удаленного хоста.</p><br />\n<p>В качестве генератора нагрузки используется по умолчанию <a href=\"https://github.com/wg/wrk\" rel=\"nofollow\">wrk</a> и запрашивает статистику у коллектора, но <a href=\"https://github.com/rakyll/hey\" rel=\"nofollow\">hey</a> тоже поддерживается (просто используйте ключ --tool).</p><br />\n<p>Тесты можно запускать и без докера, достаточно лишь установить компиляторы для протестированных языков и генератор загрузки <a href=\"https://github.com/wg/wrk\" rel=\"nofollow\">wrk</a>/<a href=\"https://github.com/rakyll/hey\" rel=\"nofollow\">hey</a> (но протестировано только на linux).</p> <a href=\"https://habr.com/ru/post/523434/?utm_source=habrahabr&amp;utm_medium=rss&amp;utm_campaign=523434#habracut\">Читать дальше →</a>",
+  :item/published "2020-10-14T13:06:14Z",
+  :item/num 49,
+  :db/id 74766790694891,
+  :item/feed #:db{:id 74766790694841},
+  :item/title
+  "[Перевод] Независимый HttpBench для D, или врут ли тесты TechEmpower?"}
+ {:item/link
+  "https://habr.com/ru/post/522900/?utm_source=habrahabr&utm_medium=rss&utm_campaign=522900",
+  :item/id "https://habr.com/ru/post/522900/",
+  :item/category
+  ["C++"
+   "catboost"
+   "Блог компании Яндекс"
+   "Высокая производительность"
+   "Процессоры"
+   "Серверная оптимизация"
+   "компиляторы"
+   "профилирование"
+   "управление паматью c++"
+   "управление памятью"
+   "ускорение кода"],
+  :item/summary
+  "Что влияет на скорость работы программ на C++ и как её добиться при высоком уровне кода? Ведущий разработчик библиотеки CatBoost Евгений Петров ответил на эти вопросы на примерах и иллюстрациях из опыта работы над CatBoost для x86_64.<br />\n<br />\n<div class=\"spoiler\" role=\"button\" tabindex=\"0\">\n                        <b class=\"spoiler_title\">Видео доклада</b>\n                        <div class=\"spoiler_text\"><div class=\"oembed\"><div><div style=\"left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%;\"><iframe allow=\"encrypted-media; accelerometer; gyroscope; picture-in-picture\" allowfullscreen=\"\" scrolling=\"no\" src=\"https://www.youtube.com/embed/QY6aLjvKRNM?rel=0&amp;showinfo=1&amp;hl=en-US\" style=\"border: 0; top: 0; left: 0; width: 100%; height: 100%; position: absolute;\"></iframe></div></div></div></div>\n                    </div><br />\n— Всем привет. Я занимаюсь оптимизацией для CPU библиотеки машинного обучения CatBoost. Основная часть нашей библиотеки написана на C++. Сегодня расскажу, какими простыми способами мы добиваемся скорости.<br />\n<br />\n<img src=\"https://habrastorage.org/webt/rn/6u/p0/rn6up0kct5ck6ps9v9w3xypi9bq.jpeg\" /><br /> <a href=\"https://habr.com/ru/post/522900/?utm_source=habrahabr&amp;utm_medium=rss&amp;utm_campaign=522900#habracut\">Читать дальше →</a>",
+  :item/published "2020-10-15T07:16:48Z",
+  :item/num 50,
+  :db/id 74766790694892,
+  :item/feed #:db{:id 74766790694841},
+  :item/title
+  "Оптимизация C++: совмещаем скорость и высокий уровень. Доклад Яндекса"}
+ {:item/link
+  "https://habr.com/ru/post/523356/?utm_source=habrahabr&utm_medium=rss&utm_campaign=523356",
+  :item/id "https://habr.com/ru/post/523356/",
+  :item/category
+  ["Kingston"
+   "Kingston A2000"
+   "Kingston КС2000"
+   "Kingston КС2500"
+   "NVMe"
+   "NVMe-накопители"
+   "SSD NVMe"
+   "SSD нагрев"
+   "ssd-накопители"
+   "Блог компании Kingston Technology"
+   "Компьютерное железо"
+   "Накопители"
+   "Настольные компьютеры"
+   "Хранение данных"
+   "допустимый нагрев NVMe"
+   "накопители"
+   "радиаторы для NVMe"
+   "скоростной накопитель"
+   "хранение данных"],
+  :item/summary
+  "<img src=\"https://habrastorage.org/webt/3l/9n/qj/3l9nqjdd6aa18ekxkchkisnljua.jpeg\" /><br />\n<br />\nЗа последние несколько лет стоимость 2,5-дюймовых твердотельных накопителей снизилась практически до уровня жестких дисков. Теперь на смену SATA-решениям приходят NVMe-накопители, работающие по шине PCI Express. За период 2019-2020 года мы также наблюдаем снижение стоимости на эти устройства, так что на текущий момент они незначительно дороже своих SATA-собратьев. ",
+  :item/published "2020-10-15T05:00:01Z",
+  :item/num 51,
+  :db/id 74766790694893,
+  :item/feed #:db{:id 74766790694841},
+  :item/title "Нужно ли устанавливать радиаторы на NVMe-накопители?"}
+ {:item/link
+  "https://habr.com/ru/post/523430/?utm_source=habrahabr&utm_medium=rss&utm_campaign=523430",
+  :item/id "https://habr.com/ru/post/523430/",
+  :item/category
+  ["Acronis" "Cyber summit" "Блог компании Acronis" "Конференции"],
+  :item/summary
+  "<p>Уже в понедельник, 19 октября стартует одно из самых масштабных событий в области киберзащиты — Acronis Global Cyber Summit. В этом году наш саммит пройдет в режиме онлайн, и будет доступен для всех желающих абсолютно бесплатно! Мы решили использовать площадку-конструктор Bizzabo, так что каждый участник сможет выстроить свой “план посещения” онлайн-мероприятий саммита - сессий, мастер-классов и панельных дискуссий. С 19 по 21 октября ведущие эксперты будут обсуждать самые актуальные вопросы безопасности, и вы сможете получить максимум полезной информации, пройти сертификацию по решениям Acronis или узнать о новых возможностях для вашего бизнеса. Подробности о саммите и ссылка на регистрацию — под катом.</p> <a href=\"https://habr.com/ru/post/523430/?utm_source=habrahabr&amp;utm_medium=rss&amp;utm_campaign=523430#habracut\">Читать далее</a>",
+  :item/published "2020-10-15T06:42:48Z",
+  :item/num 52,
+  :db/id 74766790694894,
+  :item/feed #:db{:id 74766790694841},
+  :item/title
+  "Acronis Global Cyber Summit 2020: лучшая площадка для обсуждения вопросов киберзащиты"}
+ {:item/link
+  "https://habr.com/ru/post/521458/?utm_source=habrahabr&utm_medium=rss&utm_campaign=521458",
+  :item/id "https://habr.com/ru/post/521458/",
+  :item/category
+  ["circuit breaker"
+   "istio"
+   "kubernetes"
+   "retry"
+   "spring boot"
+   "Блог компании ДомКлик"],
+  :item/summary
+  "<p>Каждому service mesh-фреймворку абсолютно необходимо уметь обрабатывать сбои в межсервисном взаимодействии. К ним также относятся таймауты и HTTP-коды ошибок. Я покажу, как с помощью Istio настроить механизмы <em>retries</em> (повторных попыток) и <em>circuit breaker</em> (автоматического выключения). Мы проанализируем взаимодействие между двумя простыми Spring Boot-сервисами, развёрнутыми в Kubernetes. Но вместо основ рассмотрим более сложные вопросы.</p><br />\n<p><img src=\"https://habrastorage.org/webt/hl/wf/gi/hlwfgil31beofnresiow50gou6w.jpeg\" /></p> <a href=\"https://habr.com/ru/post/521458/?utm_source=habrahabr&amp;utm_medium=rss&amp;utm_campaign=521458#habracut\">Читать дальше →</a>",
+  :item/published "2020-10-15T08:09:16Z",
+  :item/num 53,
+  :db/id 74766790694895,
+  :item/feed #:db{:id 74766790694841},
+  :item/title
+  "[Перевод] Retry и Circuit Breaker в Kubernetes с помощью Istio и Spring Boot"}
+ {:item/link
+  "https://habr.com/ru/post/523054/?utm_source=habrahabr&utm_medium=rss&utm_campaign=523054",
+  :item/id "https://habr.com/ru/post/523054/",
+  :item/category
+  ["jtag"
+   "sata"
+   "Информационная безопасность"
+   "Компьютерное железо"
+   "Накопители"
+   "Реверс-инжиниринг"
+   "взлом жесткого диска"
+   "жесткие диски"
+   "обратная разработка"
+   "перехват данных"
+   "прошивки"],
+  :item/summary
+  "<div style=\"text-align:center;\"><img src=\"https://habrastorage.org/getpro/habr/post_images/a49/983/982/a499839829eae13c2cedd9e211a741bd.jpg\" /></div><br />\nЖёсткие диски: если вы читаете эту статью, то с большой вероятностью у вас есть одно или несколько таких устройств. Они довольно просты и, по сути, представляют собой набор 512-байтных секторов, пронумерованных возрастающими адресами, также называемыми LBA (Logical Block Address). Компьютер, к которому подключен жёсткий диск (hard drive, HD), может считывать и записывать данные в эти сектора. Обычно используется файловая система, абстрагирующая все эти сектора до файлов и папок.",
+  :item/published "2020-10-15T07:52:43Z",
+  :item/num 54,
+  :db/id 74766790694896,
+  :item/feed #:db{:id 74766790694841},
+  :item/title "[Перевод] Аппаратный взлом жёсткого диска"}
+ {:item/link
+  "https://habr.com/ru/post/523510/?utm_source=habrahabr&utm_medium=rss&utm_campaign=523510",
+  :item/id "https://habr.com/ru/post/523510/",
+  :item/category
+  ["CDC"
+   "Debezium"
+   "Kafka"
+   "MongoDB"
+   "PostgreSQL"
+   "Администрирование баз данных"
+   "Блог компании Флант"
+   "Системное администрирование"
+   "Системы обмена сообщениями"],
+  :item/summary
+  "<img src=\"https://habrastorage.org/webt/zo/tq/nx/zotqnxpllrtxxzrzyw9amuhjsfi.png\" /><br />\n<br />\nВ своей работе я часто сталкиваюсь с новыми техническими решениями/программными продуктами, информации о которых в русскоязычном интернете довольно мало. Этой статьей постараюсь восполнить один такой пробел примером из своей недавней практики, когда потребовалось настроить отправку CDC-событий из двух популярных СУБД (PostgreSQL и MongoDB) в кластер Kafka при помощи Debezium. Надеюсь, эта обзорная статья, появившаяся по итогам проделанной работы, окажется полезной и другим.<br />\n<br />\n<h3>Что за Debezium и вообще CDC?</h3><br />\n<a href=\"https://debezium.io/\" rel=\"nofollow\">Debezium</a> — представитель категории программного обеспечения CDC (<a href=\"https://ru.wikipedia.org/wiki/%D0%97%D0%B0%D1%85%D0%B2%D0%B0%D1%82_%D0%B8%D0%B7%D0%BC%D0%B5%D0%BD%D0%B5%D0%BD%D0%B8%D1%8F_%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85\" rel=\"nofollow\">Capture Data Change</a>), а если точнее — это набор коннекторов для различных СУБД, совместимых с фреймворком Apache Kafka Connect. <a href=\"https://habr.com/ru/post/523510/?utm_source=habrahabr&amp;utm_medium=rss&amp;utm_campaign=523510#habracut\">Читать дальше →</a>",
+  :item/published "2020-10-15T08:37:53Z",
+  :item/num 55,
+  :db/id 74766790694897,
+  :item/feed #:db{:id 74766790694841},
+  :item/title "Знакомство с Debezium — CDC для Apache Kafka"}
+ {:item/link
+  "https://habr.com/ru/post/523570/?utm_source=habrahabr&utm_medium=rss&utm_campaign=523570",
+  :item/id "https://habr.com/ru/post/523570/",
+  :item/category
+  ["DRP"
+   "Блог компании RUVDS.com"
+   "Информационная безопасность"
+   "Системное администрирование"],
+  :item/summary
+  "<a href=\"https://habr.com/ru/company/ruvds/blog/523004/\"><img src=\"https://habrastorage.org/webt/-b/wq/v5/-bwqv5d7r6nyhxspdgton6yepw8.jpeg\" /></a><br />\n<b><font color=\"#999999\">Даже во время катастрофы всегда есть время на чашку чая</font></b><br />\n<br />\n<b>DRP </b>(disaster recovery plan) — это штука, которая в идеале никогда не понадобится. Но если вдруг мигрирующие в брачный период бобры перегрызут магистральное оптоволокно или джуниор-админ дропнет продуктивную базу, вы точно хотите быть уверены, что у вас будет заранее составленный план, что с этим всем безобразием делать.<br />\n<br />\nПока клиенты в панике начинают обрывать телефоны техподдержки, джуниор ищет цианиды, вы с мудрым видом вскрываете красный конверт и начинаете приводить все в порядок.<br />\n<br />\nВ этом посте я хочу поделиться рекомендациями, как надо писать DRP и что он должен содержать. А еще мы рассмотрим следующие штуки:<br />\n<ol>\n<li>Научимся думать как злодей.</li>\n<li>Разберем пользу чашки чая во время апокалипсиса.</li>\n<li>Продумаем удобную структуру DRP</li>\n<li>Посмотрим, как нужно его тестировать</li>\n</ol><br /> <a href=\"https://habr.com/ru/post/523570/?utm_source=habrahabr&amp;utm_medium=rss&amp;utm_campaign=523570#habracut\">Читать дальше →</a>",
+  :item/published "2020-10-15T09:15:06Z",
+  :item/num 56,
+  :db/id 74766790694898,
+  :item/feed #:db{:id 74766790694841},
+  :item/title "План по ликвидации последствий катастрофы"}
+ {:item/link
+  "https://habr.com/ru/post/523448/?utm_source=habrahabr&utm_medium=rss&utm_campaign=523448",
+  :item/id "https://habr.com/ru/post/523448/",
+  :item/category
+  ["Блог компании Leader-ID"
+   "Искусственный интеллект"
+   "Машинное обучение"
+   "Управление продуктом"
+   "анализ данных"
+   "большие данные"
+   "искусственный интеллект"
+   "машинное обучение."
+   "нейронная сеть"],
+  :item/summary
+  "<p>Пару лет назад выдвигались опасения, что искусственный интеллект очень быстро достигнет уровня, когда его развитие станет неподконтрольным человеку и вдобавок пойдет по экспоненте. С одной стороны, это праздные страхи сторонних наблюдателей. С другой — возникает логичный вопрос: возможно ли это вообще и в какие сроки? Что такое сильный ИИ и в чем его проблема? Почему Европа проигрывает США и Китаю в области ИИ?</p><p>Всю эту пачку вопросов мне удалось задать Игорю Пивоварову — генеральному директору и руководителю программного комитета конференции OpenTalks.AI. Это тот случай, когда человек, который глубоко в теме, может на пальцах объяснить, что сейчас происходит в индустрии, и сделать ряд прогнозов (всё как мы любим).</p> <a href=\"https://habr.com/ru/post/523448/?utm_source=habrahabr&amp;utm_medium=rss&amp;utm_campaign=523448#habracut\">Читать далее</a>",
+  :item/published "2020-10-15T08:02:15Z",
+  :item/num 57,
+  :db/id 74766790694899,
+  :item/feed #:db{:id 74766790694841},
+  :item/title
+  "Через 10 лет ИИ будет решать большинство задач лучше человека: интервью с организатором конференции OpenTalks.AI"})
+
+#+end_example
+
+#+begin_src clojure :results pp
+(map first
+     (d/q '[:find (pull ?u [:user/id :user/styles {:user-feed/_user [:user-feed/num :user-feed/position :user-feed/feed]}])
+            :where [?u :user/id "georgy@kibardin.name"]]
+           (d/db s/db-conn)))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+({:user/id "georgy@kibardin.name",
+  :user/styles
+  ["arstechnica.com https://shashurup.github.io/feedcircuit-styles/arstechnica.css"
+   "habr.com https://shashurup.github.io/feedcircuit-styles/img-data-src.js"],
+  :user-feed/_user
+  [#:user-feed{:num 0, :position 1667, :feed #:db{:id 87960930229918}}
+   #:user-feed{:num 1, :position 968, :feed #:db{:id 118747255827908}}
+   #:user-feed{:num 2, :position 1286, :feed #:db{:id 87960930222170}}
+   #:user-feed{:num 3, :position 633, :feed #:db{:id 87960930238275}}
+   #:user-feed{:num 4, :position 146, :feed #:db{:id 109951162796815}}
+   #:user-feed{:num 5, :position 294, :feed #:db{:id 109951162805333}}
+   #:user-feed{:num 6, :position 157, :feed #:db{:id 79164837205744}}
+   #:user-feed{:num 7, :position 21, :feed #:db{:id 114349209318408}}
+   #:user-feed{:num 8, :position 28, :feed #:db{:id 79164837209635}}
+   #:user-feed{:num 9, :position 1640, :feed #:db{:id 96757023248185}}
+   #:user-feed{:num 10, :position 286, :feed #:db{:id 87960930231922}}
+   #:user-feed{:num 11, :position 537, :feed #:db{:id 74766790694841}}
+   #:user-feed{:num 12, :feed #:db{:id 101155069770420}}
+   #:user-feed{:num 13, :position 886, :feed #:db{:id 83562883729147}}
+   #:user-feed{:num 14, :position 103, :feed #:db{:id 83562883726782}}
+   #:user-feed{:num 15, :position 184, :feed #:db{:id 105553116282468}}
+   #:user-feed{:num 16, :position 921, :feed #:db{:id 87960930241478}}
+   #:user-feed{:num 17,
+               :position 4088,
+               :feed #:db{:id 114349209309819}}
+   #:user-feed{:num 18, :position 147, :feed #:db{:id 96757023254211}}
+   #:user-feed{:num 19, :position 32, :feed #:db{:id 101155069771327}}
+   #:user-feed{:num 20, :position 50, :feed #:db{:id 101155069781213}}
+   #:user-feed{:num 21, :position 34, :feed #:db{:id 83562883725963}}
+   #:user-feed{:num 22, :position 26, :feed #:db{:id 105553116281433}}
+   #:user-feed{:num 23, :position 563, :feed #:db{:id 83562883726035}}
+   #:user-feed{:num 24, :position 710, :feed #:db{:id 105553116283341}}
+   #:user-feed{:num 25, :position 25, :feed #:db{:id 79164837209663}}]})
+
+#+end_example
+
+#+begin_src clojure :results pp
+(->>
+ (d/qseq '[:find (pull ?i [*])
+           :where
+           [?i :item/num ?num]
+           [(>= ?num 100)]
+           [?i :item/feed ?f]
+           [?f :feed/url "http://static.feed.rbc.ru/rbc/logical/footer/news.rss"]]
+         (d/db s/db-conn))
+ (map first)
+ (take 3)
+ )
+#+end_src
+
+#+RESULTS:
+#+begin_example
+({:db/id 92358976767050,
+  :item/id "5cdd66949a79470db63fdfa4",
+  :item/num 4096,
+  :item/link "https://www.rbc.ru/rbcfreenews/5cdd66949a79470db63fdfa4",
+  :item/title
+  "В Омске второй раз за два дня загорелся мусорный полигон",
+  :item/summary "",
+  :item/published "2019-05-16T13:40:22Z",
+  :item/feed #:db{:id 96757023274057}}
+ {:item/link
+  "https://www.rbc.ru/politics/16/05/2019/5cdd55339a7947044e933820",
+  :item/id "5cdd55339a7947044e933820",
+  :item/summary
+  "Европол заявил о разоблачении деятельности преступной группировки, похитившей порядка $100 млн у компаний из ЕС и США. В числе подозреваемых оказались пять граждан России, которые, по данным следствия, находятся в бегах",
+  :item/published "2019-05-16T13:45:16Z",
+  :item/num 4097,
+  :db/id 92358976767051,
+  :item/feed #:db{:id 96757023274057},
+  :item/title
+  "ФБР назвало россиян причастными к крупной преступной кибергруппировке",
+  :item/author ["Евгений Пудовкин"]}
+ {:item/link
+  "https://www.rbc.ru/society/16/05/2019/5cdd67b79a79470db4c26293",
+  :item/id "5cdd67b79a79470db4c26293",
+  :item/summary
+  "Открытие железнодорожного сообщения по мосту поможет исправить ситуацию с ценами на продукты в Крыму, надеется президент",
+  :item/published "2019-05-16T13:48:26Z",
+  :item/num 4098,
+  :db/id 92358976767052,
+  :item/feed #:db{:id 96757023274057},
+  :item/title
+  "Путин сообщил об опережении графика по железной дороге на Крымском мосту",
+  :item/author ["Андрей Гатинский"]})
+
+#+end_example
 
 #+name: scratch
 #+begin_src clojure :results pp :wrap src clojure
