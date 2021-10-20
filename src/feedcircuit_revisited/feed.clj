@@ -118,10 +118,26 @@
 (defn get-dir [feed]
   (get-in @feed-index [feed :dir]))
 
-(defn get-internal-id [item]
+(defn get-unique-id [item]
   (if-let [num (:num item)]
-    [(:feed item) num]
+    (str num "," (:feed item))
     (:link item)))
+
+(defn as-int [subj]
+  (try
+    (Long/parseLong subj)
+    (catch NumberFormatException _ nil)))
+
+(defn parse-unique-id [uid]
+  (if uid
+    (if-let [[_ ord-num feed] (re-matches #"([0-9]+),(.*)" uid)]
+      [feed (as-int ord-num)]
+      uid)))
+
+(defn add-uid-and-feed-title [item]
+  (assoc item
+         :uid (get-unique-id item)
+         :feed-title (:title (get-feed-attrs (:feed item)))))
 
 (defn get-numbered-items 
   "Returns lazy numbered sequence of items
@@ -277,13 +293,19 @@
 
 (defn get-feed-items [feed start]
   (->> (get-numbered-items feed start)
-       (map #(assoc % :iid [feed (:num %)]))))
+       (map #(add-uid-and-feed-title (assoc % :feed feed)))))
+
+(defn get-item [uid]
+  (let [feed-pos (parse-unique-id uid)]
+    (if (coll? feed-pos)
+      (let [[feed pos] feed-pos]
+        (first (get-feed-items feed pos))))))
 
 (defn get-selected-for-feed [user feed]
   (let [selected (:selected user)]
     (->> selected
          (filter #(= (:feed %) feed))
-         (map get-internal-id)
+         (map get-unique-id)
          set)))
 
 ; === user handling ===
@@ -333,8 +355,7 @@
                 (let [pos (get positions feed (max 0 (- (get-item-count feed) 10)))]
                   (->> (get-numbered-items feed pos)
                        (filter #(item-matches % exprs))
-                       (map #(assoc % :feed feed
-                                      :iid [feed (:num %)]))))))
+                       (map #(add-uid-and-feed-title (assoc % :feed feed)))))))
          (apply concat))))
 
 (defn get-selected-among-unread [user]
@@ -343,7 +364,7 @@
     (->> selected
          (filter :feed)
          (remove #(< (:num %) (get positions (:feed %))))
-         (map get-internal-id)
+         (map get-unique-id)
          set)))
 
 (defn all-users []
@@ -396,18 +417,14 @@
         items (:selected user [])]
     (sort-by #(vector (.indexOf feed-urls (:feed %))
                       (:num %))
-             (map #(assoc % :iid (get-internal-id %)) items))))
+             (map add-uid-and-feed-title items))))
 
-(defn retrieve-item [id]
-  (if (coll? id)
-    (let [[feed pos] id]
-      (-> (get-numbered-items feed pos)
-          first
-          (assoc :feed feed)))
-    (let [html (content/retrieve-and-parse id)]
-      {:link id
-       :title (content/get-title html)
-       :summary (content/summarize html)})))
+(defn retrieve-item [uid]
+  (or (get-item uid)
+      (let [html (content/retrieve-and-parse uid)]
+        {:link uid
+         :title (content/get-title html)
+         :summary (content/summarize html)})))
 
 (defn cache-item-content [item]
   (when-not (:content item)
@@ -424,7 +441,7 @@
 
 (defn selected-remove! [user-id ids]
   (letfn [(in-ids? [item]
-            (let [id (get-internal-id item)]
+            (let [id (get-unique-id item)]
               (some #(= id %) ids)))]
     (update-user-attrs! user-id update :selected #(remove in-ids? %))))
 

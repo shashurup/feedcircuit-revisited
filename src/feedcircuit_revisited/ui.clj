@@ -111,36 +111,28 @@
     [:p [:a {:href "/settings"} "Settings"]]
     [:p [:a {:href "/logout"} "Logout"]]]])
 
-(defn get-feed-title [iid]
-  (if (coll? iid)
-    (:title (feed/get-feed-attrs (first iid)))
-    (.getHost (new java.net.URL iid))))
-
-(defn iid-to-str [iid]
-  (if (coll? iid)
-    (str (second iid) "," (first iid))
-    iid))
-
 (defn build-item-list [items class icon source checked]
   (if (empty? items)
     [:p.fcr-no-more-items "No more items"]
     (for [[idx {title :title
                 summary :summary
                 content :content
-                iid :iid}] (map-indexed vector items)]
+                uid :uid
+                feed :feed
+                feed-title :feed-title}] (map-indexed vector items)]
       (list (item-checkbox idx
                            class
                            "toggleItem(this);"
-                           (iid-to-str iid)
-                           (checked iid))
-            (news-item (str "plain?source=" source "&url=" (iid-to-str iid))
+                           uid
+                           (checked uid))
+            (news-item (str "plain?source=" source "&url=" uid)
                        title
                        (or summary content)
                        (list
                         " |&nbsp;"
                         [:a.fcr-link.fcr-item-footer
-                         {:href (str "feed?url=" (first iid))}
-                         (get-feed-title iid)]
+                         {:href (str "feed?url=" feed)}
+                         feed-title]
                         " "
                         [:label {:class "item-check"
                                  :for (ch-id idx)} icon]
@@ -224,12 +216,11 @@
     (map second (filter (fn [[pattern style]]
                           (s/includes? url pattern)) styles))))
 
-(defn build-content [feed ord-num url show-done extra-style user-id]
-  (let [item (if (not-empty feed)
-               (first (feed/get-feed-items feed ord-num))
-               {:link url})
+(defn build-content [uid show-done extra-style user-id]
+  (let [item (or (feed/get-item uid)
+                 {:link uid})
         link (get-item-link item)
-        content-ident (when (not-empty feed)
+        content-ident (when-let [feed (:feed item)]
                         (:content-ident (feed/get-feed-attrs feed)))
         site-styles (find-styles user-id link)]
     (or
@@ -239,8 +230,7 @@
               author :author
               category :category
               comments :comments
-              iid :iid} (content/augment item content-ident)
-             iid (or iid url)]
+              uid :uid} (content/augment item content-ident)]
          (if content
            [:html
             (apply head title extra-style site-styles)
@@ -256,7 +246,7 @@
                                [:p [:a {:href comments} "Comments"]])))
               (if show-done
                 [:form {:action "complete-selected" :method "POST"}
-                 [:input {:type "hidden" :name "selected-item" :value (iid-to-str iid)}]
+                 [:input {:type "hidden" :name "selected-item" :value uid}]
                  (submit-button "Done")])]]]))
        (catch Exception ex
          (log/error "Failed to make content for" link)))

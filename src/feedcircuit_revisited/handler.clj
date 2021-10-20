@@ -14,11 +14,11 @@
 (defn html5 [subject]
   (hiccup.core/html (hiccup.page/doctype :html5) subject))
 
-(defn parse-item-id [item-id]
-  (if item-id
-    (if-let [[_ ord-num feed] (re-matches #"([0-9]+),(.*)" item-id)]
+(defn parse-feed-postion [feed-pos]
+  (if feed-pos
+    (if-let [[_ ord-num feed] (re-matches #"([0-9]+),(.*)" feed-pos)]
       [feed (as-int ord-num)]
-      item-id)))
+      feed-pos)))
 
 (defn ensure-coll [x]
   (cond
@@ -68,12 +68,10 @@
 
   (POST "/selected" {user-id :user {id "id"} :form-params}
         (->> (ensure-coll id)
-             (map parse-item-id)
              (feed/selected-add! user-id)))
 
   (DELETE "/selected" {user-id :user {id :id} :params}
           (->> (ensure-coll id)
-               (map parse-item-id)
                (feed/selected-remove! user-id))))
 
 (defroutes protected-routes
@@ -86,16 +84,15 @@
 
   (POST "/next" {user-id :user {np "next-position"
                                 selected "selected-item"} :form-params}
-        (let [positions (map parse-item-id (ensure-coll np))
-              items     (map parse-item-id (ensure-coll selected))]
+        (let [positions (map parse-feed-postion (ensure-coll np))
+              items     (ensure-coll selected)]
           (feed/selected-add! user-id items)
           (ui/mark-read user-id positions)
           {:status 303 :headers {"Location" "/"}}))
 
   (POST "/complete-selected" {user-id :user
                               {selected "selected-item"} :form-params}
-        (feed/selected-remove! user-id
-                               (map parse-item-id (ensure-coll selected)))
+        (feed/selected-remove! user-id (ensure-coll selected))
         {:status 303 :headers {"Location" "selected"}})
 
   (GET "/feed" {user-id :user
@@ -147,12 +144,7 @@
   (GET "/plain" {user-id :user
                  {url :url source :source} :params
                  {{extra-style :value} "extra-style"} :cookies}
-       (let [iid (parse-item-id url)
-             [feed ord-num] (when (coll? iid) iid)
-             url (when (string? iid) iid)
-             result (ui/build-content feed
-                                      ord-num
-                                      url
+       (let [result (ui/build-content url
                                       (= source "selected")
                                       extra-style
                                       user-id)]
