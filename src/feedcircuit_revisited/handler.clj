@@ -6,9 +6,10 @@
             [ring.middleware.session.cookie :refer [cookie-store]]
             [hiccup core page]
             [java-time :as jt]
-            [feedcircuit-revisited.ui :as ui]
-            [feedcircuit-revisited.feed :as feed]
+            [feedcircuit-revisited.backend :as backend]
             [feedcircuit-revisited.conf :as conf]
+            [feedcircuit-revisited.feed :as feed]
+            [feedcircuit-revisited.ui :as ui]
             [feedcircuit-revisited.auth :as auth]))
 
 (defn html5 [subject]
@@ -68,11 +69,11 @@
 
   (POST "/selected" {user-id :user {id "id"} :form-params}
         (->> (ensure-coll id)
-             (feed/selected-add! user-id)))
+             (backend/selected-add! user-id)))
 
   (DELETE "/selected" {user-id :user {id :id} :params}
           (->> (ensure-coll id)
-               (feed/selected-remove! user-id))))
+               (backend/selected-remove! user-id))))
 
 (defroutes protected-routes
   (GET "/" {user-id :user
@@ -86,13 +87,13 @@
                                 selected "selected-item"} :form-params}
         (let [positions (map parse-feed-postion (ensure-coll np))
               items     (ensure-coll selected)]
-          (feed/selected-add! user-id items)
+          (backend/selected-add! user-id items)
           (ui/mark-read user-id positions)
           {:status 303 :headers {"Location" "/"}}))
 
   (POST "/complete-selected" {user-id :user
                               {selected "selected-item"} :form-params}
-        (feed/selected-remove! user-id (ensure-coll selected))
+        (backend/selected-remove! user-id (ensure-coll selected))
         {:status 303 :headers {"Location" "selected"}})
 
   (GET "/feed" {user-id :user
@@ -126,9 +127,9 @@
 
   (GET "/subscribe" {user-id :user
                      {url :url} :params}
-       (if-not (@feed/feed-index url)
+       (if-not ((backend/all-feeds) url)
          (feed/add-feed! url))
-       (feed/update-user-attrs! user-id update :feeds conj url)
+       (backend/update-user-attrs! user-id update :feeds conj url)
        {:status 303 :headers {"Location" "/"}})
 
   (GET "/debug" request (str request))

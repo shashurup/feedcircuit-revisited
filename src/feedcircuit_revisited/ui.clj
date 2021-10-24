@@ -1,5 +1,6 @@
 (ns feedcircuit-revisited.ui
   (:require [clojure.string :as s]
+            [feedcircuit-revisited.backend :as backend]
             [feedcircuit-revisited.feed :as feed]
             [feedcircuit-revisited.content :as content]
             [feedcircuit-revisited.auth :as auth]
@@ -139,7 +140,7 @@
                         ))))))
 
 (defn build-feed [user-id feed from item-count extra-style]
-  (let [total-count (feed/get-item-count feed)
+  (let [total-count (backend/get-item-count feed)
         item-count (or item-count page-size)
         start-from (or from (if (> total-count item-count)
                               (- total-count item-count)
@@ -150,9 +151,9 @@
         next-count (if (> start-from item-count)
                      item-count
                      start-from)
-        title (:title (feed/get-feed-attrs feed))
-        items (reverse (take item-count (feed/get-feed-items feed start-from)))
-        checked (feed/get-selected-for-feed (feed/get-user-attrs user-id) feed)]
+        title (:title (backend/get-feed-attrs feed))
+        items (reverse (take item-count (backend/get-feed-items feed start-from)))
+        checked (backend/get-selected-for-feed (backend/get-user-attrs user-id) feed)]
     [:html
      (head title extra-style)
      [:body
@@ -169,10 +170,10 @@
           (str "<< Previous " next-count)])]]]))
 
 (defn build-unread [user-id item-count extra-style]
-  (let [user (feed/get-user-attrs user-id)
-        items (take item-count (feed/get-unread-items user))
+  (let [user (backend/get-user-attrs user-id)
+        items (take item-count (backend/get-unread-items user))
         next-positions (get-next-positions items)
-        checked (feed/get-selected-among-unread user)]
+        checked (backend/get-selected-among-unread user)]
     [:html
      (head "Feedcircuit" extra-style)
      [:body
@@ -192,7 +193,7 @@
           (submit-button (str "Next " page-size " >>")))]]]]))
 
 (defn build-selected [user-id extra-style]
-  (let [items (feed/get-selected-items user-id)]
+  (let [items (backend/get-selected-items user-id)]
     [:html
      (head "Feedcircuit, selected items" extra-style)
      [:body
@@ -212,16 +213,16 @@
     (if (coll? link) (first link) link)))
 
 (defn find-styles [user-id url]
-  (let [styles (:styles (feed/get-user-attrs user-id))]
+  (let [styles (:styles (backend/get-user-attrs user-id))]
     (map second (filter (fn [[pattern style]]
                           (s/includes? url pattern)) styles))))
 
 (defn build-content [uid show-done extra-style user-id]
-  (let [item (or (feed/get-item uid)
+  (let [item (or (backend/get-item uid)
                  {:link uid})
         link (get-item-link item)
         content-ident (when-let [feed (:feed item)]
-                        (:content-ident (feed/get-feed-attrs feed)))
+                        (:content-ident (backend/get-feed-attrs feed)))
         site-styles (find-styles user-id link)]
     (or
      (try
@@ -254,7 +255,7 @@
 
 (defn mark-read [user-id to-positions]
   (let [pos-map (into {} to-positions)]
-    (feed/update-user-attrs! user-id update :positions merge pos-map)))
+    (backend/update-user-attrs! user-id update :positions merge pos-map)))
 
 (defn feed-logo []
   [:svg.fcr-feed-logo {:viewBox "0 0 50 50"
@@ -271,9 +272,9 @@
    [:body
     (navbar user-id :sources)
     [:div.fcr-wrapper.fcr-ui
-     (let [user (feed/get-user-attrs user-id)
-           feed-urls (map first (feed/make-expressions (:feeds user)))
-           feeds (map feed/get-feed-attrs feed-urls)]
+     (let [user (backend/get-user-attrs user-id)
+           feed-urls (map first (backend/make-expressions (:feeds user)))
+           feeds (map backend/get-feed-attrs feed-urls)]
        (for [feed feeds]
          [:div.fcr-news-item 
           [:a.fcr-link {:href (str "feed?url=" (:url feed))}
@@ -291,7 +292,7 @@
               [:noscript last-sync]])]]))]]])
 
 (defn build-settings [user-id extra-style]
-  (let [user (feed/get-user-attrs user-id)]
+  (let [user (backend/get-user-attrs user-id)]
     [:html
      (head "Feedcircuit settings" extra-style)
      [:body {:onLoad "initAppearance();"}
@@ -334,12 +335,13 @@
   (let [feeds (s/split-lines feed-lines)
         styles (map #(s/split % #"\s+")
                     (s/split-lines style-lines))
-        new-feeds (->> (feed/make-expressions feeds)
+        known-feeds (backend/all-feeds)
+        new-feeds (->> (backend/make-expressions feeds)
                        (map first)
-                       (remove @feed/feed-index))]
+                       (remove known-feeds))]
     (doseq [url new-feeds]
-      (feed/add-feed! url))
-    (feed/update-user-attrs! user-id assoc :feeds feeds :styles styles)))
+      (backend/add-feed! url))
+    (backend/update-user-attrs! user-id assoc :feeds feeds :styles styles)))
 
 (defn build-login-options [extra-style]
   [:html

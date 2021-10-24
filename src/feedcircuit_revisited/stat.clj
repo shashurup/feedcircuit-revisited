@@ -1,6 +1,7 @@
 (ns feedcircuit-revisited.stat
   (:require [clojure.tools.logging :as log]
             [clojure.zip :as zip]
+            [feedcircuit-revisited.backend :as backend]
             [feedcircuit-revisited.content :as content]
             [feedcircuit-revisited.feed :as feed]
             [feedcircuit-revisited.storage :as storage]
@@ -64,7 +65,7 @@
 
 (defn collect-feed! [url]
   (let [stat (compute url)]
-    (send feed/feed-index write-stat url stat)
+    (backend/update-feed! url stat)
     stat))
 
 (defn collect-and-log-safe! [url]

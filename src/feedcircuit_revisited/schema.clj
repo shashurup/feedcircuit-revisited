@@ -1,6 +1,7 @@
 (ns feedcircuit-revisited.schema
   (:require [clojure.set :as set]
             [clojure.string :as string]
+            [feedcircuit-revisited.backend :as backend]
             [feedcircuit-revisited.feed :as feed]
             [feedcircuit-revisited.content :as content]
             [datomic.client.api :as d]))
@@ -193,7 +194,7 @@
 (defn import-feed [db-conn feed-url]
   (let [feed  (feed/get-feed-attrs feed-url)
         items (map #(feed/fix-summary-and-content % nil) ; apply hard summary limit - 4096
-                   (feed/get-numbered-items feed-url 0))]
+                   (backend/get-numbered-items feed-url 0))]
     (concat 
      (d/transact db-conn {:tx-data (prepare-feed-tx-data feed)})
      (for [data (prepare-items-tx-data feed-url items)]

@@ -1,6 +1,7 @@
 (ns feedcircuit-revisited.main
   (:gen-class)
-  (:require [feedcircuit-revisited.conf :as conf]
+  (:require [feedcircuit-revisited.backend :as backend]
+            [feedcircuit-revisited.conf :as conf]
             [feedcircuit-revisited.content :as content]
             [feedcircuit-revisited.handler :as handler]
             [feedcircuit-revisited.feed :as feed]
@@ -36,6 +37,7 @@
 
 (defn _run []
   (conf/load-from-file "config")
+  (backend/init!)
   (feed/init!)
   (stat/init!)
   (content/init-cache!)
