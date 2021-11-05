@@ -1,34 +1,6 @@
-* DONE Get rid of aside
-* DONE Fix iframe size to usual video ratio
-* DONE Get rid of classes and styles
-* DONE Fix RSS items without id or guid
-* DONE Come up with better solution for iframe aspect ratio
-* DONE Do not try to parse non HTML content
-* DONE Deal with auth failure upon pressing "Done"
-  By now nothing happens
-* TODO Support RSS 2 (and atom) enclosures
-* DONE Support "comments" RSS tag
-* DONE Improve content detection, tell article from comments
-  CLOSED: [2020-05-04 Пн 14:04]
-* DONE Appearance settings (themes, font size etc.)
-  base16-ocean, base16-gruvbox-dark-soft, solarized-dark, base16-twilight,
-  base16-atlas, base16-flat, base16-gruvbox-light-soft
-* TODO Feeds discovery
-* DONE Choose new icon for marking items as read
-  CLOSED: [2019-10-04 Пт 09:01]
-  [[~/devel/feedcircuit-revisited/src/feedcircuit_revisited/ui.clj::defn checkbox-svg][SVG to fix]]
-* DONE Remove h1 when making content summary
-  CLOSED: [2019-10-03 Чт 18:37]
-  [[file:~/devel/feedcircuit-revisited/src/feedcircuit_revisited/content.clj::defmulti summarize][Summarize fn]]
-* DONE Handle 404 upon opening the content
-  CLOSED: [2019-10-03 Чт 19:26]
-* DONE Get rid of built-in cache
-* DONE Use edn/read
-* DONE Cache selected content
-* DONE connection-timeout and socket-timeout
-* DONE figure padding and margins
-* DONE Support CORS for /selected
-* DONE Figure why cookie with theme get expired on my phone and iPad
-* DONE Change UI paradigm - use same window for all links
-* DONE Non JS mode
-* TODO Non CSS mode??
+* Задачи
+** TODO Support RSS 2 (and atom) enclosures
+** TODO Feeds discovery
+** TODO Non CSS mode??
+** TODO Запилить суммаризатор контента
+   https://habr.com/ru/post/586634/?utm_source=habrahabr&utm_medium=rss&utm_campaign=586634

@@ -171,8 +171,7 @@
   "Deduce next update time for the feed located at url.
    The algorithm takes into account how often the feed is updated."
   [url]
-  (let [last-items (backend/get-numbered-items url
-                                               (max 0 (- (backend/get-item-count url) 10)))
+  (let [last-items (take 16 (backend/get-numbered-items-backwards url))
         dates (->> last-items
                    (map :published)
                    (remove nil?)
@@ -193,11 +192,9 @@
   "List of feeds subscribed to by at least one user."
   []
   (->> (backend/all-users)
-       (map backend/get-user-attrs)
-       (map :feeds)
+       (map backend/get-user-data)
+       (map #(map :feed (filter :active (:sources %))))
        (reduce into)
-       backend/make-expressions
-       (map first)
        set))
 
 (defn sync! []

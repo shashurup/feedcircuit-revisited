@@ -50,16 +50,6 @@
     (map-indexed #(assoc %2 :num (+ start %1))
                  (storage/get-items dir start))))
 
-(defn get-feed-items [feed start]
-  (->> (get-numbered-items feed start)
-       (map #(add-uid-and-feed-title (assoc % :feed feed)))))
-
-(defn get-item [uid]
-  (let [feed-pos (parse-unique-id uid)]
-    (if (coll? feed-pos)
-      (let [[feed pos] feed-pos]
-        (first (get-feed-items feed pos))))))
-
 (defn init-feed-index! [_ data-dir]
   (->> (fs/list-dir (str data-dir "/feeds"))
        (map fs/normalized)
@@ -81,6 +71,28 @@
       (send feed-index load-feed! feed)
       (await feed-index)
       (get-item-count feed))))
+
+(defn get-numbered-items-backwards
+  "Returns lazy numbered sequence of items
+   in the directory dir beginning from the start
+   and moving backwards"
+  ([feed]
+   (get-numbered-items-backwards feed (dec (get-item-count feed))))
+  ([feed start]
+   (let [dir (get-dir feed)
+         start (or start (dec (get-item-count feed)))]
+     (map-indexed #(assoc %2 :num (- start %1))
+                  (storage/get-items-backwards dir start)))))
+
+(defn get-feed-items [feed start]
+  (->> (get-numbered-items-backwards feed start)
+       (map #(add-uid-and-feed-title (assoc % :feed feed)))))
+
+(defn get-item [uid]
+  (let [feed-pos (parse-unique-id uid)]
+    (if (coll? feed-pos)
+      (let [[feed pos] feed-pos]
+        (first (get-feed-items feed pos))))))
 
 ;=============================
 
@@ -134,27 +146,20 @@
 
 ; === user handling ===
 
-(defn parse-feed-expression
-  "Feed expression consists of the feed url and a list of
+(defn parse-filters
+  "Filter expression consists of a list of
    authors and categories to include or exclude."
-  [expr]
-  (let [parse-expr #(let [include (not= \! (first %))]
+  [filters]
+  (let [parse-filter #(let [include (not= \! (first %))]
                       [(if include % (apply str (rest %)))
                        include])
-        add-default #(if (some second %) % (conj % [:all true]))
-        [url filters] (cstr/split expr #" " 2)]
-    [url
-     (->> (if (cstr/blank? filters) [] (cstr/split filters #","))
-          (map cstr/trim)
-          (map cstr/lower-case)
-          (map parse-expr)
-          vec
-          add-default)]))
-
-(defn make-expressions [feeds]
-  (->> feeds
-       (filter #(not= (first %) \#))
-       (map parse-feed-expression)))
+        add-default #(if (some second %) % (conj % [:all true]))]
+    (->> (if (cstr/blank? filters) [] (cstr/split filters #","))
+         (map cstr/trim)
+         (map cstr/lower-case)
+         (map parse-filter)
+         vec
+         add-default)))
 
 (defn get-attrs-for-filter [item]
   (->> (concat (:author item) (:category item))
@@ -171,25 +176,15 @@
                              (= attr term))]
                verdict)))))
 
-(defn get-unread-items [user]
-  (let [{feeds :feeds
-         positions :positions} user]
-    (->> (make-expressions feeds)
-         (map (fn [[feed exprs]]
-                (let [pos (get positions feed (max 0 (- (get-item-count feed) 10)))]
-                  (->> (get-numbered-items feed pos)
-                       (filter #(item-matches % exprs))
-                       (map #(add-uid-and-feed-title (assoc % :feed feed)))))))
-         (apply concat))))
-
-(defn get-selected-among-unread [user]
-  (let [{selected :selected
-         positions :positions} user]
-    (->> selected
-         (filter :feed)
-         (remove #(< (:num %) (get positions (:feed %))))
-         (map get-unique-id)
-         set)))
+(defn get-unread-items [sources]
+  (apply concat
+         (for [{feed :feed
+                filters :filters
+                pos :position} (filter :active sources)
+               :let [exprs (parse-filters filters)]]
+           (->> (get-numbered-items feed pos)
+                (filter #(item-matches % exprs))
+                (map #(add-uid-and-feed-title (assoc % :feed feed)))))))
 
 (defn all-users []
   (->> (str (conf/param :data-dir) "/users")
@@ -236,12 +231,10 @@
 (defn get-selected-items
   "Lazy sequence of items user marked for later reading."
   [user-id]
-  (let [user (get-user-attrs user-id)
-        feed-urls (map first (make-expressions (:feeds user)))
-        items (:selected user [])]
-    (sort-by #(vector (.indexOf feed-urls (:feed %))
-                      (:num %))
-             (map add-uid-and-feed-title items))))
+  (let [{sources :sources
+         selected :selected} (get-user-data user-id)
+        nums (into {} (map #(vector (:id %) (:num %)) sources))]
+    (sort-by #(vector (nums (:feed %)) (:num %)) selected)))
 
 (defn retrieve-item [uid]
   (or (get-item uid)
@@ -275,6 +268,47 @@
          (filter #(= (:feed %) feed))
          (map get-unique-id)
          set)))
+
+(defn get-user-data [user-id]
+  (let [{id :id
+         feeds :feeds
+         positions :positions
+         selected :selected
+         styles :styles} (get-user-attrs user-id)]
+    {:id id
+     :sources (map-indexed (fn [idx feed]
+                             (let [[url filters] (cstr/split feed #" " 2)
+                                   active (not= (first url) \#)
+                                   url (if active url (subs url 1))]
+                               {:num idx
+                                :active active
+                                :id url
+                                :feed url
+                                :filters filters
+                                :position (get positions url)}))
+                           feeds)
+     :selected (map add-uid-and-feed-title selected)
+     :styles styles}))
+
+(defn initial-position [feed]
+  (or (:num (last (take 16 (get-numbered-items-backwards feed)))) 0))
+
+(defn update-settings! [user-id sources styles]
+  (let [positions (:positions (get-user-attrs user-id))
+        feeds (map #(str (when-not (:active %) "#")
+                         (:feed %)
+                         (when (:filters %) " ")
+                         (:filters %))
+                   sources)
+        missing-positions (->> sources
+                               (filter :active)
+                               (map :feed)
+                               (remove positions)
+                               (map #(vector % (initial-position %)))
+                               (into {}))]
+    (update-user-attrs! user-id assoc :feeds (vec feeds)
+                                      :styles styles
+                                      :positions (merge positions missing-positions))))
 
 (defn init! []
   (send feed-index init-feed-index! (conf/param :data-dir))

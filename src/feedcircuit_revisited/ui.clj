@@ -140,19 +140,10 @@
                         ))))))
 
 (defn build-feed [user-id feed from item-count extra-style]
-  (let [total-count (backend/get-item-count feed)
-        item-count (or item-count page-size)
-        start-from (or from (if (> total-count item-count)
-                              (- total-count item-count)
-                              0))
-        next-from (if (> start-from item-count)
-                    (- start-from item-count)
-                    0)
-        next-count (if (> start-from item-count)
-                     item-count
-                     start-from)
+  (let [item-count (or item-count page-size)
+        items (take item-count (backend/get-feed-items feed from))
+        next-from (dec (or (:num (last items)) 0))
         title (:title (backend/get-feed-attrs feed))
-        items (reverse (take item-count (backend/get-feed-items feed start-from)))
         checked (backend/get-selected-for-feed (backend/get-user-attrs user-id) feed)]
     [:html
      (head title extra-style)
@@ -164,16 +155,17 @@
                         (bookmark-icon-svg)
                         "fc"
                         checked)
-       (if (> start-from 0)
+       (if (>= next-from 0)
          [:a.fcr-btn
-          {:href (str "feed?from=" next-from "&count=" next-count "&url=" feed)}
-          (str "<< Previous " next-count)])]]]))
+          {:href (str "feed?from=" next-from "&count=" item-count "&url=" feed)}
+          (str "<< Previous " item-count)])]]]))
 
 (defn build-unread [user-id item-count extra-style]
-  (let [user (backend/get-user-attrs user-id)
-        items (take item-count (backend/get-unread-items user))
+  (let [{sources :sources
+         selected :selected} (backend/get-user-data user-id)
+        items (take item-count (backend/get-unread-items sources))
         next-positions (get-next-positions items)
-        checked (backend/get-selected-among-unread user)]
+        checked (set (map :uid selected))]
     [:html
      (head "Feedcircuit" extra-style)
      [:body
@@ -272,8 +264,8 @@
    [:body
     (navbar user-id :sources)
     [:div.fcr-wrapper.fcr-ui
-     (let [user (backend/get-user-attrs user-id)
-           feed-urls (map first (backend/make-expressions (:feeds user)))
+     (let [sources (:sources (backend/get-user-data user-id))
+           feed-urls (map :feed (filter :active sources))
            feeds (map backend/get-feed-attrs feed-urls)]
        (for [feed feeds]
          [:div.fcr-news-item 
@@ -291,8 +283,18 @@
               [:script (format "document.write(new Date(\"%s\").toLocaleString());" last-sync)]
               [:noscript last-sync]])]]))]]])
 
+(defn serialize-source [subj]
+  (str (when-not (:active subj) "#")
+       (:feed subj)
+       (when (:filters subj) " ")
+       (:filters subj)))
+
+(defn serialize-style [subj]
+  (s/join " " subj))
+
 (defn build-settings [user-id extra-style]
-  (let [user (backend/get-user-attrs user-id)]
+  (let [{sources :sources
+         styles :styles} (backend/get-user-data user-id)]
     [:html
      (head "Feedcircuit settings" extra-style)
      [:body {:onLoad "initAppearance();"}
@@ -311,7 +313,7 @@
        [:p "selects everything except Politics category."]
        [:form {:action "settings" :method "POST"}
         [:textarea#feeds {:class "fcr-setting-input" :name "feeds"}
-         (s/join "\n" (:feeds user))]
+         (s/join "\n" (map serialize-source sources))]
         [:a.fcr-link {:onClick "toggleAppearance();" :href "#"}
          [:h1#appearance-header "Appearance settings"]]
         [:div#appearance {:style "display: none"}
@@ -325,23 +327,33 @@
          [:p [:code "example.com  http://www.example.com/style.css"]]
          [:p "The site is expected to be a substring of the source url."]
          [:textarea#styles {:class "fcr-setting-input" :name "styles"}
-          (->> (:styles user)
-               (map #(s/join " " %))
-               (s/join "\n"))]]
+          (s/join "\n" (map serialize-style styles))]]
         [:div.fcr-bottom-buttons
          (submit-button "Save")]]]]]))
 
+(defn parse-source [subj]
+  (let [active (not (s/starts-with? subj "#"))
+        [feed filters] (s/split subj #"\s+" 2)]
+    (merge 
+     {:active active
+      :feed (if active feed (subs feed 1))}
+     (when (not-empty filters)
+       {:filters filters}))))
+
+(defn parse-style [subj]
+  (vec (s/split subj #"\s+" 2)))
+
 (defn save-settings [user-id feed-lines style-lines]
-  (let [feeds (s/split-lines feed-lines)
-        styles (map #(s/split % #"\s+")
-                    (s/split-lines style-lines))
+  (let [sources (map parse-source (s/split-lines feed-lines))
+        styles (map parse-style (s/split-lines style-lines))
         known-feeds (backend/all-feeds)
-        new-feeds (->> (backend/make-expressions feeds)
-                       (map first)
+        new-feeds (->> sources
+                       (filter :active)
+                       (map :feed)
                        (remove known-feeds))]
     (doseq [url new-feeds]
-      (backend/add-feed! url))
-    (backend/update-user-attrs! user-id assoc :feeds feeds :styles styles)))
+      (feed/add-feed! url))
+    (backend/update-settings! user-id sources styles)))
 
 (defn build-login-options [extra-style]
   [:html

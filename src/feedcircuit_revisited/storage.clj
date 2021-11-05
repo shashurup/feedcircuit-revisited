@@ -48,7 +48,23 @@
         items (apply concat (take-while not-empty
                                         (map #(get-block dir %)
                                              (iterate inc start-block))))]
-    (nthrest items start-offset)))
+    (drop start-offset items)))
+
+
+(defn get-items-backwards
+  "Returns lazy sequence of items in the directory dir
+   beginning from the start and moving backwards"
+  [dir start]
+  (let [start-block (quot start block-size)
+        first-block (get-block dir start-block)
+        start-offset (rem start block-size)]
+    (apply concat
+           (drop (- (count first-block) (inc start-offset))
+                 (reverse first-block))
+           (take-while not-empty
+                       (map #(reverse (get-block dir %))
+                            (iterate dec (dec start-block)))))))
+
 
 (defn append-items!
   "Appends items to the end of the list in the directory dir"
