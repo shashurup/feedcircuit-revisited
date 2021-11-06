@@ -144,7 +144,7 @@
         items (take item-count (backend/get-feed-items feed from))
         next-from (dec (or (:num (last items)) 0))
         title (:title (backend/get-feed-attrs feed))
-        checked (backend/get-selected-for-feed (backend/get-user-attrs user-id) feed)]
+        checked (set (map :uid (:selected (backend/get-user-data user-id))))]
     [:html
      (head title extra-style)
      [:body
@@ -205,7 +205,7 @@
     (if (coll? link) (first link) link)))
 
 (defn find-styles [user-id url]
-  (let [styles (:styles (backend/get-user-attrs user-id))]
+  (let [styles (:styles (backend/get-user-data user-id))]
     (map second (filter (fn [[pattern style]]
                           (s/includes? url pattern)) styles))))
 
@@ -247,7 +247,19 @@
 
 (defn mark-read [user-id to-positions]
   (let [pos-map (into {} to-positions)]
-    (backend/update-user-attrs! user-id update :positions merge pos-map)))
+    (backend/update-positions! user-id pos-map)))
+
+(defn retrieve-item [url]
+  (let [html (content/retrieve-and-parse url)
+        content (content/detect html url nil)]
+    {:link url
+     :title (content/get-title html)
+     :summary (content/summarize (vec (conj content :body)))}))
+
+(defn selected-add! [user-id ids]
+  (->> ids
+       (map #(if (backend/item-id? %) % (retrieve-item %)))
+       (backend/selected-add! user-id)))
 
 (defn feed-logo []
   [:svg.fcr-feed-logo {:viewBox "0 0 50 50"

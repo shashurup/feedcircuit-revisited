@@ -192,9 +192,9 @@
    (map #(apply concat %))))
 
 (defn import-feed [db-conn feed-url]
-  (let [feed  (feed/get-feed-attrs feed-url)
+  (let [feed  (backend/get-feed-attrs feed-url)
         items (map #(feed/fix-summary-and-content % nil) ; apply hard summary limit - 4096
-                   (backend/get-numbered-items feed-url 0))]
+                   (backend/get-items feed-url 0))]
     (concat 
      (d/transact db-conn {:tx-data (prepare-feed-tx-data feed)})
      (for [data (prepare-items-tx-data feed-url items)]
@@ -225,4 +225,4 @@
              ))))
 
 (defn import-user [db-conn e-mail]
-  (d/transact db-conn {:tx-data (prepare-user-tx-data (feed/get-user-attrs e-mail))}))
+  (d/transact db-conn {:tx-data (prepare-user-tx-data (backend/get-user-attrs e-mail))}))

@@ -31,24 +31,10 @@
     (Long/parseLong subj)
     (catch NumberFormatException _ nil)))
 
-(defn parse-unique-id [uid]
-  (if uid
-    (if-let [[_ ord-num feed] (re-matches #"([0-9]+),(.*)" uid)]
-      [feed (as-int ord-num)]
-      uid)))
-
 (defn add-uid-and-feed-title [item]
   (assoc item
          :uid (get-unique-id item)
          :feed-title (:title (get-feed-attrs (:feed item)))))
-
-(defn get-numbered-items 
-  "Returns lazy numbered sequence of items
-   in the directory dir beginning from the start"
-  [feed start]
-  (let [dir (get-dir feed)]
-    (map-indexed #(assoc %2 :num (+ start %1))
-                 (storage/get-items dir start))))
 
 (defn init-feed-index! [_ data-dir]
   (->> (fs/list-dir (str data-dir "/feeds"))
@@ -72,27 +58,45 @@
       (await feed-index)
       (get-item-count feed))))
 
-(defn get-numbered-items-backwards
+(defn add-feed-num-uid [item feed num]
+  (let [item (assoc item :feed feed :num num)]
+    (assoc item :uid (get-unique-id item))))
+
+(defn get-items 
+  "Returns lazy numbered sequence of items
+   in the directory dir beginning from the start"
+  [feed start]
+  (let [dir (get-dir feed)]
+    (map-indexed #(add-feed-num-uid %2 feed (+ start %1))
+                 (storage/get-items dir start))))
+
+(defn get-items-backwards
   "Returns lazy numbered sequence of items
    in the directory dir beginning from the start
    and moving backwards"
   ([feed]
-   (get-numbered-items-backwards feed (dec (get-item-count feed))))
+   (get-items-backwards feed (dec (get-item-count feed))))
   ([feed start]
    (let [dir (get-dir feed)
          start (or start (dec (get-item-count feed)))]
-     (map-indexed #(assoc %2 :num (- start %1))
+     (map-indexed #(add-feed-num-uid %2 feed (- start %1))
                   (storage/get-items-backwards dir start)))))
 
-(defn get-feed-items [feed start]
-  (->> (get-numbered-items-backwards feed start)
-       (map #(add-uid-and-feed-title (assoc % :feed feed)))))
+(defn parse-item-id [subj]
+  (if (string? subj)
+    (when-let [[_ ord-num feed] (re-matches #"([0-9]+),(.*)" subj)]
+      [feed (as-int ord-num)])))
 
 (defn get-item [uid]
-  (let [feed-pos (parse-unique-id uid)]
-    (if (coll? feed-pos)
-      (let [[feed pos] feed-pos]
-        (first (get-feed-items feed pos))))))
+  (when-let [[feed pos] (parse-item-id uid)]
+    (first (get-items feed pos))))
+
+(defn get-feed-items [feed start]
+  (let [feed-title (:title (get-feed-attrs feed))]
+    (->> (get-items-backwards feed start)
+         (map #(assoc % :feed-title feed-title)))))
+
+(def item-id? parse-item-id)
 
 ;=============================
 
@@ -181,10 +185,11 @@
          (for [{feed :feed
                 filters :filters
                 pos :position} (filter :active sources)
-               :let [exprs (parse-filters filters)]]
-           (->> (get-numbered-items feed pos)
+               :let [exprs (parse-filters filters)
+                     feed-title (:title (get-feed-attrs feed))]]
+           (->> (get-items feed pos)
                 (filter #(item-matches % exprs))
-                (map #(add-uid-and-feed-title (assoc % :feed feed)))))))
+                (map #(assoc % :feed-title feed-title))))))
 
 (defn all-users []
   (->> (str (conf/param :data-dir) "/users")
@@ -228,21 +233,6 @@
 (defn update-user-attrs! [user-id f & args]
   (apply swap! (ensure-user-attrs user-id) f args))
 
-(defn get-selected-items
-  "Lazy sequence of items user marked for later reading."
-  [user-id]
-  (let [{sources :sources
-         selected :selected} (get-user-data user-id)
-        nums (into {} (map #(vector (:id %) (:num %)) sources))]
-    (sort-by #(vector (nums (:feed %)) (:num %)) selected)))
-
-(defn retrieve-item [uid]
-  (or (get-item uid)
-      (let [html (content/retrieve-and-parse uid)]
-        {:link uid
-         :title (content/get-title html)
-         :summary (content/summarize html)})))
-
 (defn cache-item-content [item]
   (when-not (:content item)
     (let [feed (:feed item)
@@ -252,7 +242,7 @@
                                       content-ident)))))
 
 (defn selected-add! [user-id ids]
-  (let [items (map retrieve-item ids)]
+  (let [items (map #(if (item-id? %) (get-item %) %) ids)]
     (doall (map cache-item-content items))
     (update-user-attrs! user-id update :selected into items)))
 
@@ -261,13 +251,6 @@
             (let [id (get-unique-id item)]
               (some #(= id %) ids)))]
     (update-user-attrs! user-id update :selected #(remove in-ids? %))))
-
-(defn get-selected-for-feed [user feed]
-  (let [selected (:selected user)]
-    (->> selected
-         (filter #(= (:feed %) feed))
-         (map get-unique-id)
-         set)))
 
 (defn get-user-data [user-id]
   (let [{id :id
@@ -290,8 +273,16 @@
      :selected (map add-uid-and-feed-title selected)
      :styles styles}))
 
+(defn get-selected-items
+  "Lazy sequence of items user marked for later reading."
+  [user-id]
+  (let [{sources :sources
+         selected :selected} (get-user-data user-id)
+        nums (into {} (map #(vector (:id %) (:num %)) sources))]
+    (sort-by #(vector (nums (:feed %)) (:num %)) selected)))
+
 (defn initial-position [feed]
-  (or (:num (last (take 16 (get-numbered-items-backwards feed)))) 0))
+  (or (:num (last (take 16 (get-items-backwards feed)))) 0))
 
 (defn update-settings! [user-id sources styles]
   (let [positions (:positions (get-user-attrs user-id))
@@ -309,6 +300,16 @@
     (update-user-attrs! user-id assoc :feeds (vec feeds)
                                       :styles styles
                                       :positions (merge positions missing-positions))))
+
+(defn add-source! [user-id url]
+  (let [{sources :sources
+         styles :styles} (get-user-data user-id)]
+    (update-settings! user-id
+                      (conj sources {:active true :feed url})
+                      styles)))
+
+(defn update-positions! [user-id positions]
+  (update-user-attrs! user-id update :positions merge positions))
 
 (defn init! []
   (send feed-index init-feed-index! (conf/param :data-dir))

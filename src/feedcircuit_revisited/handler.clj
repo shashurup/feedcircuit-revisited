@@ -69,7 +69,7 @@
 
   (POST "/selected" {user-id :user {id "id"} :form-params}
         (->> (ensure-coll id)
-             (backend/selected-add! user-id)))
+             (ui/selected-add! user-id)))
 
   (DELETE "/selected" {user-id :user {id :id} :params}
           (->> (ensure-coll id)
@@ -87,7 +87,7 @@
                                 selected "selected-item"} :form-params}
         (let [positions (map parse-feed-postion (ensure-coll np))
               items     (ensure-coll selected)]
-          (backend/selected-add! user-id items)
+          (ui/selected-add! user-id items)
           (ui/mark-read user-id positions)
           {:status 303 :headers {"Location" "/"}}))
 
@@ -129,7 +129,7 @@
                      {url :url} :params}
        (if-not ((backend/all-feeds) url)
          (feed/add-feed! url))
-       (backend/update-user-attrs! user-id update :feeds conj url)
+       (backend/add-source! user-id url)
        {:status 303 :headers {"Location" "/"}})
 
   (GET "/debug" request (str request))

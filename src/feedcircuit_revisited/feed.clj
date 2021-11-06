@@ -171,7 +171,7 @@
   "Deduce next update time for the feed located at url.
    The algorithm takes into account how often the feed is updated."
   [url]
-  (let [last-items (take 16 (backend/get-numbered-items-backwards url))
+  (let [last-items (take 16 (backend/get-items-backwards url))
         dates (->> last-items
                    (map :published)
                    (remove nil?)
