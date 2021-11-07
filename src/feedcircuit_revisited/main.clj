@@ -18,9 +18,9 @@
   (let [jetty-params (select-keys (conf/param) [:host :port])
         handler (handler/create)
         repl-server (nrepl/start-server :port 7888)]
+    (backend/init!)
     (feed/init!)
     (stat/init!)
-    (content/init-cache!)
     (log/info "Running Jetty with " jetty-params)
     (run-jetty handler jetty-params)
     (nrepl/stop-server repl-server)

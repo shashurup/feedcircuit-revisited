@@ -4,7 +4,6 @@
             [feedcircuit-revisited.backend :as backend]
             [feedcircuit-revisited.content :as content]
             [feedcircuit-revisited.feed :as feed]
-            [feedcircuit-revisited.storage :as storage]
             [feedcircuit-revisited.jsoup :as jsoup]))
 
 (defn unique? [ident html]
@@ -56,12 +55,6 @@
     (when (not-empty data)
       {:content-ident (compute-content-identifier data)
        :content-to-summary-ratio (compute-content-to-summary-ratio data)})))
-
-(defn write-stat [index url stat]
-  (let [dir (get-in index [url :dir])]
-    (storage/set-attrs dir
-                       (merge (storage/get-attrs dir) stat)))
-  index)
 
 (defn collect-feed! [url]
   (let [stat (compute url)]

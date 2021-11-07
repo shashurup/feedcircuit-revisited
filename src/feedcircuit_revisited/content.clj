@@ -1,6 +1,5 @@
 (ns feedcircuit-revisited.content
   (:require [feedcircuit-revisited.jsoup :as jsoup]
-            [feedcircuit-revisited.storage :as storage]
             [feedcircuit-revisited.conf :as conf]
             [hiccup.core :as hiccup]
             [me.raynes.fs :as fs]
