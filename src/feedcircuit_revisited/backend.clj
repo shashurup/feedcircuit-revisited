@@ -1,6 +1,5 @@
 (ns feedcircuit-revisited.backend
   (:require [feedcircuit-revisited.conf :as conf]
-            [feedcircuit-revisited.content :as content]
             [feedcircuit-revisited.storage :as storage]
             [clojure.set :as cset]
             [clojure.string :as cstr]
@@ -82,6 +81,33 @@
      (map-indexed #(add-feed-num-uid %2 feed (- start %1))
                   (storage/get-items-backwards dir start)))))
 
+(defn get-feed-items [feed start]
+  (let [feed-title (:title (get-feed-attrs feed))]
+    (->> (get-items-backwards feed start)
+         (map #(assoc % :feed-title feed-title)))))
+
+
+; === content caching ===
+
+
+(defonce content-index (agent {} :error-handler #(log/error % "Failed to update content index")))
+
+(defn content-dir [] (str (conf/param :data-dir) "/content"))
+
+(defn init-content-index! [_]
+  (into {}
+        (map-indexed #(vector (first %2) %1)
+                    (storage/get-items (content-dir) 0))))
+
+(defn enrich-with-content [item]
+  (if (:content item)
+    item
+    (if-let [idx (@content-index (:link item))]
+      (binding [storage/block-size 8]
+        (let [[_ _ content] (first (storage/get-items (content-dir) idx))]
+          (assoc item :content content)))
+      item)))
+
 (defn parse-item-id [subj]
   (if (string? subj)
     (when-let [[_ ord-num feed] (re-matches #"([0-9]+),(.*)" subj)]
@@ -89,12 +115,24 @@
 
 (defn get-item [uid]
   (when-let [[feed pos] (parse-item-id uid)]
-    (first (get-items feed pos))))
+    (enrich-with-content (first (get-items feed pos)))))
 
-(defn get-feed-items [feed start]
-  (let [feed-title (:title (get-feed-attrs feed))]
-    (->> (get-items-backwards feed start)
-         (map #(assoc % :feed-title feed-title)))))
+(defn add-content!
+  ([uid content]
+   (if-let [{url :link
+             title :title} (get-item uid)]
+     (add-content! url title content)))
+  ([url title content]
+   (letfn [(add! [index]
+             (if (index url)
+               index
+               (let [dir (content-dir)]
+                 (fs/mkdirs dir)
+                 (binding [storage/block-size 8]
+                   (assoc index
+                          url
+                          (last (storage/append-items! dir [[url title content]])))))))]
+     (send content-index add!))))
 
 (def item-id? parse-item-id)
 
@@ -233,17 +271,19 @@
 (defn update-user-attrs! [user-id f & args]
   (apply swap! (ensure-user-attrs user-id) f args))
 
-(defn cache-item-content [item]
-  (when-not (:content item)
-    (let [feed (:feed item)
-          content-ident (when feed
-                          (:content-ident (get-feed-attrs feed)))]
-      (future (content/cache-content! (:link item)
-                                      content-ident)))))
+(defn separate-content [item]
+  (if (:content item)
+    (let [{url :link
+           title :title
+           content :content} item]
+      (add-content! url title content)
+      (dissoc item :content))
+    item))
 
 (defn selected-add! [user-id ids]
-  (let [items (map #(if (item-id? %) (get-item %) %) ids)]
-    (doall (map cache-item-content items))
+  (let [items (map #(if (item-id? %)
+                      (get-item %)
+                      (separate-content %)) ids)]
     (update-user-attrs! user-id update :selected into items)))
 
 (defn selected-remove! [user-id ids]
@@ -313,4 +353,5 @@
 
 (defn init! []
   (send feed-index init-feed-index! (conf/param :data-dir))
+  (send content-index init-content-index!)
   (await feed-index))

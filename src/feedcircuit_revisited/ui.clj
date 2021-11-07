@@ -209,12 +209,29 @@
     (map second (filter (fn [[pattern style]]
                           (s/includes? url pattern)) styles))))
 
+(defn retrieve-content [url feed]
+  (let [html (content/retrieve-and-parse url)
+        content-ident (:content-ident (backend/get-feed-attrs feed))]
+    (content/detect html url content-ident)))
+
+(defn ensure-content [item]
+  (if (:content item)
+    item
+    (if-let [{url :link feed :feed} item]
+      (assoc item :content (retrieve-content url feed)))))
+
+(defn make-item-from [url]
+  (let [html (content/retrieve-and-parse url)
+        content (content/detect html url nil)]
+    {:link url
+     :title (content/get-title html)
+     :summary (content/summarize (vec (conj content :body)))
+     :content content}))
+
 (defn build-content [uid show-done extra-style user-id]
   (let [item (or (backend/get-item uid)
-                 {:link uid})
+                 (make-item-from uid))
         link (get-item-link item)
-        content-ident (when-let [feed (:feed item)]
-                        (:content-ident (backend/get-feed-attrs feed)))
         site-styles (find-styles user-id link)]
     (or
      (try
@@ -223,7 +240,7 @@
               author :author
               category :category
               comments :comments
-              uid :uid} (content/augment item content-ident)]
+              uid :uid} (ensure-content item)]
          (if content
            [:html
             (apply head title extra-style site-styles)
@@ -249,17 +266,20 @@
   (let [pos-map (into {} to-positions)]
     (backend/update-positions! user-id pos-map)))
 
-(defn retrieve-item [url]
-  (let [html (content/retrieve-and-parse url)
-        content (content/detect html url nil)]
-    {:link url
-     :title (content/get-title html)
-     :summary (content/summarize (vec (conj content :body)))}))
+(defn queue-content-caching [uid]
+  (future
+    (if-let [{url :link feed :feed} (backend/get-item uid)]
+      (let [content (content/detect (content/retrieve-and-parse url)
+                                    url
+                                    (:content-ident (backend/get-feed-attrs feed)))]
+        (backend/add-content! uid content)))))
 
 (defn selected-add! [user-id ids]
-  (->> ids
-       (map #(if (backend/item-id? %) % (retrieve-item %)))
-       (backend/selected-add! user-id)))
+  (let [ids-to-cache (filter backend/item-id? ids)]
+    (->> ids
+         (map #(if (backend/item-id? %) % (make-item-from %)))
+         (backend/selected-add! user-id))
+    (map queue-content-caching ids-to-cache)))
 
 (defn feed-logo []
   [:svg.fcr-feed-logo {:viewBox "0 0 50 50"

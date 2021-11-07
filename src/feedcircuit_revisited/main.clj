@@ -40,7 +40,6 @@
   (backend/init!)
   (feed/init!)
   (stat/init!)
-  (content/init-cache!)
   (_start-server))
 
 (defn _restart-server []
