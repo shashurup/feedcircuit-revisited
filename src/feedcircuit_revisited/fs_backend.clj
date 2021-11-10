@@ -103,20 +103,30 @@
 (defn get-dir [feed]
   (get-in @feed-index [feed :dir]))
 
+(defn ensure-ns [subj ns]
+  (into {} (for [[k v] subj]
+             [(if (namespace k)
+                k
+                (keyword ns (name k))) v])))
+
 (defn get-feed-attrs [feed]
-  (get-attrs (get-dir feed)))
+  (ensure-ns (get-attrs (get-dir feed)) "feed"))
 
 (defn all-feeds [] @feed-index)
 
 (defn get-unique-id [item]
-  (if-let [num (:num item)]
-    (str num "," (:feed item))
-    (:link item)))
+  (if-let [num (:item/num item)]
+    (str num "," (:item/feed item))
+    (:item/link item)))
+
+(defn add-uid [item]
+  (assoc item :item/uid (get-unique-id item)))
 
 (defn add-uid-and-feed-title [item]
-  (assoc item
-         :uid (get-unique-id item)
-         :feed-title (:title (get-feed-attrs (:feed item)))))
+  (-> item
+      (ensure-ns "item")
+      add-uid
+      (assoc :feed/title (:feed/title (get-feed-attrs (:feed item))))))
 
 (defn init-feed-index! [_ data-dir]
   (->> (fs/list-dir (str data-dir "/feeds"))
@@ -141,8 +151,8 @@
       (get-item-count feed))))
 
 (defn add-feed-num-uid [item feed num]
-  (let [item (assoc item :feed feed :num num)]
-    (assoc item :uid (get-unique-id item))))
+  (let [item (assoc item :item/feed feed :item/num num)]
+    (add-uid (ensure-ns item "item"))))
 
 (defn get-items 
   "Returns lazy numbered sequence of items
@@ -178,12 +188,12 @@
                     (read-items (content-dir) 0))))
 
 (defn enrich-with-content [item]
-  (if (:content item)
+  (if (:item/content item)
     item
-    (if-let [idx (@content-index (:link item))]
+    (if-let [idx (@content-index (:item/link item))]
       (binding [block-size 8]
         (let [[_ _ content] (first (read-items (content-dir) idx))]
-          (assoc item :content content)))
+          (assoc item :item/content content)))
       item)))
 
 (defn parse-item-id [subj]
@@ -197,8 +207,8 @@
 
 (defn add-content!
   ([uid content]
-   (if-let [{url :link
-             title :title} (get-item uid)]
+   (if-let [{url :item/link
+             title :item/title} (get-item uid)]
      (add-content! url title content)))
   ([url title content]
    (letfn [(add! [index]
@@ -309,12 +319,12 @@
   (apply swap! (ensure-user-attrs user-id) f args))
 
 (defn separate-content [item]
-  (if (:content item)
-    (let [{url :link
-           title :title
-           content :content} item]
+  (if (:item/content item)
+    (let [{url :item/link
+           title :item/title
+           content :item/content} item]
       (add-content! url title content)
-      (dissoc item :content))
+      (dissoc item :item/content))
     item))
 
 (defn selected-add! [user-id ids]
@@ -335,34 +345,34 @@
          positions :positions
          selected :selected
          styles :styles} (get-user-attrs user-id)]
-    {:id id
-     :sources (map-indexed (fn [idx feed]
+    {:user/id id
+     :user/sources (map-indexed (fn [idx feed]
                              (let [[url filters] (cstr/split feed #" " 2)
                                    active (not= (first url) \#)
                                    url (if active url (subs url 1))]
-                               {:num idx
-                                :active active
-                                :id url
-                                :feed url
-                                :filters filters
-                                :position (get positions url)}))
+                               {:source/num idx
+                                :source/active active
+                                :source/id url
+                                :source/feed url
+                                :source/filters filters
+                                :source/position (get positions url)}))
                            feeds)
-     :selected (map add-uid-and-feed-title selected)
-     :styles styles}))
+     :user/selected (map add-uid-and-feed-title selected)
+     :user/styles styles}))
 
 (defn initial-position [feed]
   (or (:num (last (take 16 (get-items-backwards feed)))) 0))
 
 (defn update-settings! [user-id sources styles]
   (let [positions (:positions (get-user-attrs user-id))
-        feeds (map #(str (when-not (:active %) "#")
-                         (:feed %)
-                         (when (:filters %) " ")
-                         (:filters %))
+        feeds (map #(str (when-not (:source/active %) "#")
+                         (:source/feed %)
+                         (when (:source/filters %) " ")
+                         (:source/filters %))
                    sources)
         missing-positions (->> sources
-                               (filter :active)
-                               (map :feed)
+                               (filter :source/active)
+                               (map :source/feed)
                                (remove positions)
                                (map #(vector % (initial-position %)))
                                (into {}))]

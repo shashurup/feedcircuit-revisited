@@ -111,7 +111,7 @@
      [attrs items]))
 
 (defn self-containing-feed? [attrs]
-  (when-let [ratio (:content-to-summary-ratio attrs)]
+  (when-let [ratio (:feed/content-to-summary-ratio attrs)]
     (< (max (- 1 ratio) (- ratio 1)) 0.2)))
 
 (defn fix-summary-and-content
@@ -193,7 +193,7 @@
   []
   (->> (backend/all-users)
        (map backend/get-user-data)
-       (map #(map :feed (filter :active (:sources %))))
+       (map #(map :source/feed (filter :source/active (:user/sources %))))
        (reduce into)
        set))
 

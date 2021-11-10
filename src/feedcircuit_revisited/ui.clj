@@ -9,7 +9,7 @@
 (def page-size 16)
 
 (defn get-next-positions [user-items]
-  (into {} (map #(vector (:feed %) (inc (:num %))) user-items)))
+  (into {} (map #(vector (:item/feed %) (inc (:item/num %))) user-items)))
 
 (defn bookmark-icon-svg []
   [:svg {:viewBox "-3 -3 66 99"}
@@ -115,12 +115,12 @@
 (defn build-item-list [items class icon source checked]
   (if (empty? items)
     [:p.fcr-no-more-items "No more items"]
-    (for [[idx {title :title
-                summary :summary
-                content :content
-                uid :uid
-                feed :feed
-                feed-title :feed-title}] (map-indexed vector items)]
+    (for [[idx {title :item/title
+                summary :item/summary
+                content :item/content
+                uid :item/uid
+                feed :item/feed
+                feed-title :feed/title}] (map-indexed vector items)]
       (list (item-checkbox idx
                            class
                            "toggleItem(this);"
@@ -142,9 +142,9 @@
 (defn build-feed [user-id feed from item-count extra-style]
   (let [item-count (or item-count page-size)
         items (take item-count (backend/get-feed-items feed from))
-        next-from (dec (or (:num (last items)) 0))
-        title (:title (backend/get-feed-attrs feed))
-        checked (set (map :uid (:selected (backend/get-user-data user-id))))]
+        next-from (dec (or (:item/num (last items)) 0))
+        title (:feed/title (backend/get-feed-attrs feed))
+        checked (set (map :item/uid (:user/selected (backend/get-user-data user-id))))]
     [:html
      (head title extra-style)
      [:body
@@ -161,11 +161,11 @@
           (str "<< Previous " item-count)])]]]))
 
 (defn build-unread [user-id item-count extra-style]
-  (let [{sources :sources
-         selected :selected} (backend/get-user-data user-id)
+  (let [{sources :user/sources
+         selected :user/selected} (backend/get-user-data user-id)
         items (take item-count (backend/get-unread-items sources))
         next-positions (get-next-positions items)
-        checked (set (map :uid selected))]
+        checked (set (map :item/uid selected))]
     [:html
      (head "Feedcircuit" extra-style)
      [:body
@@ -201,32 +201,32 @@
          (submit-button "Done")]]]]]))
 
 (defn get-item-link [item]
-  (let [link (:link item)]
+  (let [link (:item/link item)]
     (if (coll? link) (first link) link)))
 
 (defn find-styles [user-id url]
-  (let [styles (:styles (backend/get-user-data user-id))]
+  (let [styles (:user/styles (backend/get-user-data user-id))]
     (map second (filter (fn [[pattern style]]
                           (s/includes? url pattern)) styles))))
 
 (defn retrieve-content [url feed]
   (let [html (content/retrieve-and-parse url)
-        content-ident (:content-ident (backend/get-feed-attrs feed))]
+        content-ident (:feed/content-ident (backend/get-feed-attrs feed))]
     (content/detect html url content-ident)))
 
 (defn ensure-content [item]
-  (if (:content item)
+  (if (:item/content item)
     item
-    (if-let [{url :link feed :feed} item]
-      (assoc item :content (retrieve-content url feed)))))
+    (if-let [{url :item/link feed :item/feed} item]
+      (assoc item :item/content (retrieve-content url feed)))))
 
 (defn make-item-from [url]
   (let [html (content/retrieve-and-parse url)
         content (content/detect html url nil)]
-    {:link url
-     :title (content/get-title html)
-     :summary (content/summarize (vec (conj content :body)))
-     :content content}))
+    {:item/link url
+     :item/title (content/get-title html)
+     :item/summary (content/summarize (vec (conj content :body)))
+     :item/content content}))
 
 (defn build-content [uid show-done extra-style user-id]
   (let [item (or (backend/get-item uid)
@@ -235,12 +235,12 @@
         site-styles (find-styles user-id link)]
     (or
      (try
-       (let [{title :title
-              content :content
-              author :author
-              category :category
-              comments :comments
-              uid :uid} (ensure-content item)]
+       (let [{title :item/title
+              content :item/content
+              author :item/author
+              category :item/category
+              comments :item/comments
+              uid :item/uid} (ensure-content item)]
          (if content
            [:html
             (apply head title extra-style site-styles)
@@ -268,10 +268,10 @@
 
 (defn queue-content-caching [uid]
   (future
-    (if-let [{url :link feed :feed} (backend/get-item uid)]
+    (if-let [{url :item/link feed :item/feed} (backend/get-item uid)]
       (let [content (content/detect (content/retrieve-and-parse url)
                                     url
-                                    (:content-ident (backend/get-feed-attrs feed)))]
+                                    (:feed/content-ident (backend/get-feed-attrs feed)))]
         (backend/add-content! uid content)))))
 
 (defn selected-add! [user-id ids]
@@ -296,37 +296,37 @@
    [:body
     (navbar user-id :sources)
     [:div.fcr-wrapper.fcr-ui
-     (let [sources (:sources (backend/get-user-data user-id))
-           feed-urls (map :feed (filter :active sources))
+     (let [sources (:user/sources (backend/get-user-data user-id))
+           feed-urls (map :source/feed (filter :source/active sources))
            feeds (map backend/get-feed-attrs feed-urls)]
        (for [feed feeds]
          [:div.fcr-news-item 
-          [:a.fcr-link {:href (str "feed?url=" (:url feed))}
-           [:h1 (:title feed)]]
-          (if-let [image-url (not-empty (:image feed))]
+          [:a.fcr-link {:href (str "feed?url=" (:feed/url feed))}
+           [:h1 (:feed/title feed)]]
+          (if-let [image-url (not-empty (:feed/image feed))]
             [:img.fcr-feed-logo {:src image-url}]
             (feed-logo))
-          (if-let [summary (not-empty (:summary feed))]
+          (if-let [summary (not-empty (:feed/summary feed))]
             [:p summary])
           [:p.fcr-item-footer
-           [:a.fcr-link {:href (:url feed)} (:url feed)]
-           (if-let [last-sync (:last-sync feed)]
+           [:a.fcr-link {:href (:feed/url feed)} (:feed/url feed)]
+           (if-let [last-sync (:feed/last-sync feed)]
              [:span ", updated&nbsp;at&nbsp;"
               [:script (format "document.write(new Date(\"%s\").toLocaleString());" last-sync)]
               [:noscript last-sync]])]]))]]])
 
 (defn serialize-source [subj]
-  (str (when-not (:active subj) "#")
-       (:feed subj)
-       (when (:filters subj) " ")
-       (:filters subj)))
+  (str (when-not (:source/active subj) "#")
+       (:source/feed subj)
+       (when (:source/filters subj) " ")
+       (:source/filters subj)))
 
 (defn serialize-style [subj]
   (s/join " " subj))
 
 (defn build-settings [user-id extra-style]
-  (let [{sources :sources
-         styles :styles} (backend/get-user-data user-id)]
+  (let [{sources :user/sources
+         styles :user/styles} (backend/get-user-data user-id)]
     [:html
      (head "Feedcircuit settings" extra-style)
      [:body {:onLoad "initAppearance();"}
@@ -367,10 +367,10 @@
   (let [active (not (s/starts-with? subj "#"))
         [feed filters] (s/split subj #"\s+" 2)]
     (merge 
-     {:active active
-      :feed (if active feed (subs feed 1))}
+     {:source/active active
+      :source/feed (if active feed (subs feed 1))}
      (when (not-empty filters)
-       {:filters filters}))))
+       {:source/filters filters}))))
 
 (defn parse-style [subj]
   (vec (s/split subj #"\s+" 2)))
@@ -380,8 +380,8 @@
         styles (map parse-style (s/split-lines style-lines))
         known-feeds (backend/all-feeds)
         new-feeds (->> sources
-                       (filter :active)
-                       (map :feed)
+                       (filter :source/active)
+                       (map :source/feed)
                        (remove known-feeds))]
     (doseq [url new-feeds]
       (feed/add-feed! url))

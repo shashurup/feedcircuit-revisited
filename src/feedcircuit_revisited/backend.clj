@@ -40,9 +40,9 @@
 (def update-positions! b/update-positions!)
 
 (defn get-feed-items [feed start]
-  (let [feed-title (:title (get-feed-attrs feed))]
+  (let [feed-title (:feed/title (get-feed-attrs feed))]
     (->> (get-items-backwards feed start)
-         (map #(assoc % :feed-title feed-title)))))
+         (map #(assoc % :feed/title feed-title)))))
 
 
 (defn parse-filters
@@ -61,7 +61,7 @@
          add-default)))
 
 (defn get-attrs-for-filter [item]
-  (->> (concat (:author item) (:category item))
+  (->> (concat (:item/author item) (:item/category item))
        (map cstr/lower-case)
        vec))
 
@@ -77,28 +77,28 @@
 
 (defn get-unread-items [sources]
   (apply concat
-         (for [{feed :feed
-                filters :filters
-                pos :position} (filter :active sources)
+         (for [{feed :source/feed
+                filters :source/filters
+                pos :source/position} (filter :source/active sources)
                :let [exprs (parse-filters filters)
-                     feed-title (:title (get-feed-attrs feed))]]
+                     feed-title (:feed/title (get-feed-attrs feed))]]
            (->> (get-items feed pos)
                 (filter #(item-matches % exprs))
-                (map #(assoc % :feed-title feed-title))))))
+                (map #(assoc % :feed/title feed-title))))))
 
 (defn get-selected-items
   "Lazy sequence of items user marked for later reading."
   [user-id]
-  (let [{sources :sources
-         selected :selected} (get-user-data user-id)
-        nums (into {} (map #(vector (:id %) (:num %)) sources))]
-    (sort-by #(vector (nums (:feed %)) (:num %)) selected)))
+  (let [{sources :user/sources
+         selected :user/selected} (get-user-data user-id)
+        nums (into {} (map #(vector (:source/feed %) (:source/num %)) sources))]
+    (sort-by #(vector (nums (:item/feed %)) (:item/num %)) selected)))
 
 (defn add-source! [user-id url]
-  (let [{sources :sources
-         styles :styles} (get-user-data user-id)]
+  (let [{sources :user/sources
+         styles :user/styles} (get-user-data user-id)]
     (update-settings! user-id
-                      (conj sources {:active true :feed url})
+                      (conj sources {:source/active true :source/feed url})
                       styles)))
 
 (def init! b/init!)

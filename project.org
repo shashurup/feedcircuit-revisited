@@ -4,3 +4,5 @@
 ** TODO Non CSS mode??
 ** TODO Запилить суммаризатор контента
    https://habr.com/ru/post/586634/?utm_source=habrahabr&utm_medium=rss&utm_campaign=586634
+** TODO all-feeds, active-feeds, stat collector
+   Часть кода ожидает мапу, часть урлы, а не идшники фидов
