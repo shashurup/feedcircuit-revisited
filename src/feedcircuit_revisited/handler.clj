@@ -10,6 +10,7 @@
             [feedcircuit-revisited.conf :as conf]
             [feedcircuit-revisited.feed :as feed]
             [feedcircuit-revisited.ui :as ui]
+            [feedcircuit-revisited.utils :as u]
             [feedcircuit-revisited.auth :as auth]))
 
 (defn html5 [subject]
@@ -20,11 +21,6 @@
     (if-let [[_ ord-num feed] (re-matches #"([0-9]+),(.*)" feed-pos)]
       [feed (as-int ord-num)]
       feed-pos)))
-
-(defn ensure-coll [x]
-  (cond
-    (coll? x) x
-    x [x]))
 
 (defn redirect-to-login [url]
   {:session nil :status 302 :headers {"Location" url}})
@@ -68,11 +64,11 @@
        (html5 (ui/build-selected user-id extra-style)))
 
   (POST "/selected" {user-id :user {id "id"} :form-params}
-        (->> (ensure-coll id)
+        (->> (u/ensure-coll id)
              (ui/selected-add! user-id)))
 
   (DELETE "/selected" {user-id :user {id :id} :params}
-          (->> (ensure-coll id)
+          (->> (u/ensure-coll id)
                (backend/selected-remove! user-id))))
 
 (defroutes protected-routes
@@ -85,15 +81,15 @@
 
   (POST "/next" {user-id :user {np "next-position"
                                 selected "selected-item"} :form-params}
-        (let [positions (map parse-feed-postion (ensure-coll np))
-              items     (ensure-coll selected)]
+        (let [positions (map parse-feed-postion (u/ensure-coll np))
+              items     (u/ensure-coll selected)]
           (ui/selected-add! user-id items)
           (ui/mark-read user-id positions)
           {:status 303 :headers {"Location" "/"}}))
 
   (POST "/complete-selected" {user-id :user
                               {selected "selected-item"} :form-params}
-        (backend/selected-remove! user-id (ensure-coll selected))
+        (backend/selected-remove! user-id (u/ensure-coll selected))
         {:status 303 :headers {"Location" "selected"}})
 
   (GET "/feed" {user-id :user

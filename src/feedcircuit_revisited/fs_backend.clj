@@ -1,16 +1,12 @@
 (ns feedcircuit-revisited.fs-backend
   (:require [feedcircuit-revisited.conf :as conf]
+            [feedcircuit-revisited.utils :as u]
             [clojure.edn :as edn]
             [clojure.java.io :as io]
             [clojure.set :as cset]
             [clojure.string :as cstr]
             [clojure.tools.logging :as log]
             [me.raynes.fs :as fs]))
-
-(defn as-int [subj]
-  (try
-    (Long/parseLong subj)
-    (catch NumberFormatException _ nil)))
 
 ; === storage ===
 
@@ -42,7 +38,7 @@
   (->> (fs/list-dir dir)
        (map fs/base-name)
        (filter #(re-matches #"[0-9]+" %))
-       (map as-int)
+       (map u/as-int)
        (cons 0)  ; in case there are no blocks yet
        (apply max)))
 
@@ -103,14 +99,8 @@
 (defn get-dir [feed]
   (get-in @feed-index [feed :dir]))
 
-(defn ensure-ns [subj ns]
-  (into {} (for [[k v] subj]
-             [(if (namespace k)
-                k
-                (keyword ns (name k))) v])))
-
 (defn get-feed-attrs [feed]
-  (ensure-ns (get-attrs (get-dir feed)) "feed"))
+  (u/ensure-keys-ns (get-attrs (get-dir feed)) "feed"))
 
 (defn all-feeds [] @feed-index)
 
@@ -126,7 +116,7 @@
 
 (defn add-uid-and-feed-title [item]
   (-> item
-      (ensure-ns "item")
+      (u/ensure-keys-ns "item")
       add-uid
       (assoc :feed/title (:feed/title (get-feed-attrs (:feed item))))))
 
@@ -154,7 +144,7 @@
 
 (defn add-feed-num-uid [item feed num]
   (let [item (assoc item :item/feed feed :item/num num)]
-    (add-uid (ensure-ns item "item"))))
+    (add-uid (u/ensure-keys-ns item "item"))))
 
 (defn get-items 
   "Returns lazy numbered sequence of items
@@ -201,7 +191,7 @@
 (defn parse-item-id [subj]
   (if (string? subj)
     (when-let [[_ ord-num feed] (re-matches #"([0-9]+),(.*)" subj)]
-      [feed (as-int ord-num)])))
+      [feed (u/as-int ord-num)])))
 
 (defn get-item [uid]
   (when-let [[feed pos] (parse-item-id uid)]
