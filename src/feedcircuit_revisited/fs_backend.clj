@@ -100,7 +100,7 @@
   (get-in @feed-index [feed :dir]))
 
 (defn get-feed-attrs [feed]
-  (u/ensure-keys-ns (get-attrs (get-dir feed)) "feed"))
+  (u/ensure-keys-ns "feed" (get-attrs (get-dir feed))))
 
 (defn all-feeds [] @feed-index)
 
@@ -115,8 +115,7 @@
       (assoc :item/id (get-unique-id item))))
 
 (defn add-uid-and-feed-title [item]
-  (-> item
-      (u/ensure-keys-ns "item")
+  (-> (u/ensure-keys-ns "item" item)
       add-uid
       (assoc :feed/title (:feed/title (get-feed-attrs (:feed item))))))
 
@@ -144,7 +143,7 @@
 
 (defn add-feed-num-uid [item feed num]
   (let [item (assoc item :item/feed feed :item/num num)]
-    (add-uid (u/ensure-keys-ns item "item"))))
+    (add-uid (u/ensure-keys-ns "item" item))))
 
 (defn get-items 
   "Returns lazy numbered sequence of items

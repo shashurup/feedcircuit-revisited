@@ -7,5 +7,5 @@
 ** TODO all-feeds, active-feeds, stat collector
    Часть кода ожидает мапу, часть урлы, а не идшники фидов
 ** DONE :uid -> :id
-** TODO выделить модуль utils
-** TODO Хранить данные с неймспейсами
+** DONE выделить модуль utils
+** DONE Хранить данные с неймспейсами

@@ -5,7 +5,7 @@
     (Long/parseLong subj)
     (catch NumberFormatException _ nil)))
 
-(defn ensure-keys-ns [subj ns]
+(defn ensure-keys-ns [ns subj]
   (into {} (for [[k v] subj]
              [(if (namespace k)
                 k

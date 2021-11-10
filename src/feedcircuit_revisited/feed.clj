@@ -11,6 +11,7 @@
             [feedcircuit-revisited.content :as content]
             [feedcircuit-revisited.conf :as conf]
             [feedcircuit-revisited.rfc822 :as rfc822]
+            [feedcircuit-revisited.utils :as u]
             [clojure.core.memoize :as memz]
             [clojure.string :as s]
             [clojure.tools.logging :as log]))
@@ -81,7 +82,10 @@
                       (hash (:summary item)))))
 
 (defn parse-rss-item [item]
-  (ensure-item-id (reduce parse-rss-item-attribute {} (:content item))))
+  (->> (:content item)
+       (reduce parse-rss-item-attribute {})
+       ensure-item-id
+       (u/ensure-keys-ns "item")))
 
 (defn find-channel [feed-xml]
   (first (filter #(= (:tag %) :channel)
@@ -98,7 +102,8 @@
 (defn parse-feed-details [feed-xml]
   (->> (:content (find-details feed-xml))
        (filter #(not (contains? #{:item :entry} (:tag %))))
-       (reduce parse-rss-item-attribute {})))
+       (reduce parse-rss-item-attribute {})
+       (u/ensure-keys-ns "feed")))
 
 (defn fetch-items
   "Fetches new items from the feed located at the url."
@@ -120,14 +125,14 @@
    in this case it is made shorter. At the same time
    content may be absent, in this case summary takes its place."
   [item self-containing]
-  (let [summary (:summary item)
-        content (:content item)]
+  (let [summary (:item/summary item)
+        content (:item/content item)]
     (update (if (empty? summary)
-              (assoc item :summary (or content ""))
+              (assoc item :item/summary (or content ""))
               (if (and (empty? content) self-containing)
-                (assoc item :content summary)
+                (assoc item :item/content summary)
                 item))
-            :summary #(if (> (count %) content/summary-soft-limit)
+            :item/summary #(if (> (count %) content/summary-soft-limit)
                         (content/summarize %)
                         %))))
 
@@ -135,16 +140,16 @@
   "Make all references in content and summary absolute"
   [item base-url]
   (cond-> item
-    (:summary item) (update :summary content/make-refs-absolute base-url)
-    (:content item) (update :content content/make-refs-absolute base-url)))
+    (:item/summary item) (update :item/summary content/make-refs-absolute base-url)
+    (:item/content item) (update :item/content content/make-refs-absolute base-url)))
 
 (defn prepare-items [feed self-containing items]
-  (let [known-ids (backend/get-known-ids feed (map :id items))]
+  (let [known-ids (backend/get-known-ids feed (map :item/id items))]
     (->> items
-         (remove #(known-ids (:id %)))
+         (remove #(known-ids (:item/id %)))
          (map #(fix-refs % feed))
          (map #(fix-summary-and-content % self-containing))
-         (sort-by :published))))
+         (sort-by :item/published))))
 
 (defn add-feed! [url]
   (let [[attrs items] (fetch-items url)]
