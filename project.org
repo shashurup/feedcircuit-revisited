@@ -6,3 +6,6 @@
    https://habr.com/ru/post/586634/?utm_source=habrahabr&utm_medium=rss&utm_campaign=586634
 ** TODO all-feeds, active-feeds, stat collector
    Часть кода ожидает мапу, часть урлы, а не идшники фидов
+** DONE :uid -> :id
+** TODO выделить модуль utils
+** TODO Хранить данные с неймспейсами

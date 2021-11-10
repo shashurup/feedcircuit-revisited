@@ -118,7 +118,7 @@
     (for [[idx {title :item/title
                 summary :item/summary
                 content :item/content
-                uid :item/uid
+                uid :item/id
                 feed :item/feed
                 feed-title :feed/title}] (map-indexed vector items)]
       (list (item-checkbox idx
@@ -144,7 +144,7 @@
         items (take item-count (backend/get-feed-items feed from))
         next-from (dec (or (:item/num (last items)) 0))
         title (:feed/title (backend/get-feed-attrs feed))
-        checked (set (map :item/uid (:user/selected (backend/get-user-data user-id))))]
+        checked (set (map :item/id (:user/selected (backend/get-user-data user-id))))]
     [:html
      (head title extra-style)
      [:body
@@ -165,7 +165,7 @@
          selected :user/selected} (backend/get-user-data user-id)
         items (take item-count (backend/get-unread-items sources))
         next-positions (get-next-positions items)
-        checked (set (map :item/uid selected))]
+        checked (set (map :item/id selected))]
     [:html
      (head "Feedcircuit" extra-style)
      [:body
@@ -240,7 +240,7 @@
               author :item/author
               category :item/category
               comments :item/comments
-              uid :item/uid} (ensure-content item)]
+              uid :item/id} (ensure-content item)]
          (if content
            [:html
             (apply head title extra-style site-styles)

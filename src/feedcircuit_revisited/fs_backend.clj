@@ -120,7 +120,9 @@
     (:item/link item)))
 
 (defn add-uid [item]
-  (assoc item :item/uid (get-unique-id item)))
+  (-> item
+      (assoc :item/source-id (:item/id item))
+      (assoc :item/id (get-unique-id item))))
 
 (defn add-uid-and-feed-title [item]
   (-> item
