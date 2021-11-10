@@ -144,7 +144,7 @@
     (:item/content item) (update :item/content content/make-refs-absolute base-url)))
 
 (defn prepare-items [feed self-containing items]
-  (let [known-ids (backend/get-known-ids feed (map :item/id items))]
+  (let [known-ids (backend/known-ids feed (map :item/id items))]
     (->> items
          (remove #(known-ids (:item/id %)))
          (map #(fix-refs % feed))
@@ -156,27 +156,27 @@
     (backend/add-feed! url attrs)
     (backend/append-items! url (prepare-items url nil items))))
 
-(defn sync-feed! [url]
-  (let [attrs (backend/get-feed-attrs url)
+(defn sync-feed! [feed]
+  (let [attrs (backend/get-feed-attrs feed)
         self-containing (self-containing-feed? attrs)
-        [new-attrs items] (fetch-items url)]
-    (backend/update-feed! url new-attrs)
-    (backend/append-items! url (prepare-items url self-containing items))))
+        [new-attrs items] (fetch-items feed)]
+    (backend/update-feed! feed new-attrs)
+    (backend/append-items! feed (prepare-items feed self-containing items))))
 
-(defn sync-and-log-safe! [url]
-  (log/info "Fetching" url)
+(defn sync-and-log-safe! [feed]
+  (log/info "Fetching" feed)
   (try
-    (let [result (sync-feed! url)]
-      (log/info ">>" result "items from" url)
+    (let [result (sync-feed! feed)]
+      (log/info ">>" result "items from" feed)
       result)
     (catch Exception ex
-      (log/error ex "Failed to get news from" url))))
+      (log/error ex "Failed to get news from" feed))))
 
 (defn next-update-time
   "Deduce next update time for the feed located at url.
    The algorithm takes into account how often the feed is updated."
-  [url]
-  (let [last-items (take 16 (backend/get-items-backwards url))
+  [feed]
+  (let [last-items (take 16 (backend/get-items-backwards feed))
         dates (->> last-items
                    (map :published)
                    (remove nil?)
@@ -193,23 +193,12 @@
                                         (count deltas))))))))
 ; === sync ===
 
-(defn active-feeds
-  "List of feeds subscribed to by at least one user."
-  []
-  (->> (backend/all-users)
-       (map backend/get-user-data)
-       (map #(map :source/feed (filter :source/active (:user/sources %))))
-       (reduce into)
-       set))
-
 (defn sync! []
-  (let [active (active-feeds)]
-    (->> (keys (backend/all-feeds))
-         (filter active)
-         (filter #(jt/before? (next-update-time %)
-                              (jt/instant)))
-         (map #(future (vector % (sync-and-log-safe! %))))
-         (map deref))))
+  (->> (backend/active-feed-urls)
+       (filter #(jt/before? (next-update-time %)
+                            (jt/instant)))
+       (map #(future (vector % (sync-and-log-safe! %))))
+       (map deref)))
 
 (defn init-auto-sync []
   (future

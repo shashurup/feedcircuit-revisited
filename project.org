@@ -1,11 +1,30 @@
+* Сценарии использования бакенда
+** unread items
+*** sources (with feed titles)
+*** selected (ids only)
+** item content
+*** linked feed details (for content detection)
+** selected items
+*** selected (with linked feed titles)
+*** sources (feed ids only for sorting)
+** source items
+*** one feed details
+*** selected (ids only)
+** sources list
+*** sources (with feed details)
+** feed/active-feeds
+*** как список для sync'a (должно хватить только идшников)
+*** как список для сборки статистики (хватит только идшника)
 * Задачи
 ** TODO Support RSS 2 (and atom) enclosures
 ** TODO Feeds discovery
 ** TODO Non CSS mode??
 ** TODO Запилить суммаризатор контента
    https://habr.com/ru/post/586634/?utm_source=habrahabr&utm_medium=rss&utm_campaign=586634
-** TODO all-feeds, active-feeds, stat collector
-   Часть кода ожидает мапу, часть урлы, а не идшники фидов
 ** DONE :uid -> :id
 ** DONE выделить модуль utils
 ** DONE Хранить данные с неймспейсами
+** DONE all-feeds, active-feeds, stat collector
+   Часть кода ожидает мапу, часть урлы, а не идшники фидов
+** TODO Расширить get-user-data для опциональной линковки аттрибутов фидов
+** DONE Допилить синк и коллектор статистики, чтобы использовал ид фидов, а не урлы

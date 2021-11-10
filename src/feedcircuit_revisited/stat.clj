@@ -15,7 +15,7 @@
 
 (defn find-content [item]
   [item
-   (->> (:link item)
+   (->> (:item/link item)
         content/retrieve-and-parse
         content/find-content-element)])
 
@@ -33,7 +33,7 @@
 
 (defn calc-ratio [[item zipper]]
   (float (/ (content/text-size-recursively (zip/node zipper))
-            (content/calculate-size (:summary item)))))
+            (content/calculate-size (:item/summary item)))))
 
 (defn average [xs]
   (when (not-empty xs)
@@ -41,37 +41,37 @@
 
 (defn compute-content-to-summary-ratio [data]
   (->> data
-       (filter (comp :summary first))
+       (filter (comp :item/summary first))
        (map calc-ratio)
        average))
 
 (defn compute [url]
   (let [[_ items] (feed/fetch-items url)
         data (->> items
-                  (remove :content)
+                  (remove :item/content)
                   (map #(future (find-content %)))
                   (map deref)
                   (filter second))]
     (when (not-empty data)
-      {:content-ident (compute-content-identifier data)
-       :content-to-summary-ratio (compute-content-to-summary-ratio data)})))
+      {:feed/content-ident (compute-content-identifier data)
+       :feed/content-to-summary-ratio (compute-content-to-summary-ratio data)})))
 
-(defn collect-feed! [url]
-  (let [stat (compute url)]
-    (backend/update-feed! url stat)
+(defn collect-feed! [feed]
+  (let [stat (compute feed)]
+    (backend/update-feed! feed stat)
     stat))
 
-(defn collect-and-log-safe! [url]
+(defn collect-and-log-safe! [feed]
   (try
-    (log/info "Collecting statistics for" url)
-    (let [stat (collect-feed! url)]
-      (log/info "Statistics for" url "are" stat)
+    (log/info "Collecting statistics for" feed)
+    (let [stat (collect-feed! feed)]
+      (log/info "Statistics for" feed "are" stat)
       stat)
     (catch Exception ex
-      (log/error ex "Failed to collect statistics for" url))))
+      (log/error ex "Failed to collect statistics for" feed))))
 
 (defn collect! []
-  (map collect-and-log-safe! (feed/active-feeds)))
+  (map collect-and-log-safe! (backend/active-feed-urls)))
 
 (defn init-collector []
   (future

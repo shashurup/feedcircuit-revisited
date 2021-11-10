@@ -123,7 +123,7 @@
 
   (GET "/subscribe" {user-id :user
                      {url :url} :params}
-       (if-not ((backend/all-feeds) url)
+       (if (backend/unknown-feeds [url])
          (feed/add-feed! url))
        (backend/add-source! user-id url)
        {:status 303 :headers {"Location" "/"}})

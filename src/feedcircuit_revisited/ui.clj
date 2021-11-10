@@ -378,11 +378,10 @@
 (defn save-settings [user-id feed-lines style-lines]
   (let [sources (map parse-source (s/split-lines feed-lines))
         styles (map parse-style (s/split-lines style-lines))
-        known-feeds (backend/all-feeds)
         new-feeds (->> sources
                        (filter :source/active)
                        (map :source/feed)
-                       (remove known-feeds))]
+                       backend/unknow-feeds)]
     (doseq [url new-feeds]
       (feed/add-feed! url))
     (backend/update-settings! user-id sources styles)))

@@ -100,9 +100,7 @@
   (get-in @feed-index [feed :dir]))
 
 (defn get-feed-attrs [feed]
-  (u/ensure-keys-ns "feed" (get-attrs (get-dir feed))))
-
-(defn all-feeds [] @feed-index)
+  (assoc (u/ensure-keys-ns "feed" (get-attrs (get-dir feed))) :feed/url feed))
 
 (defn get-unique-id [item]
   (if-let [num (:item/num item)]
@@ -226,7 +224,7 @@
 (defn dir-path [url]
   (str (fs/normalized (str (conf/param :data-dir) "/feeds/" (dir-name url)))))
 
-(defn get-known-ids [feed ids]
+(defn known-ids [feed ids]
   (get-in @feed-index [feed :known-ids]))
 
 (defn add-feed! [feed attrs]
@@ -373,6 +371,17 @@
 
 (defn update-positions! [user-id positions]
   (update-user-attrs! user-id update :positions merge positions))
+
+(defn active-feed-urls []
+  (->> (all-users)
+       (map get-user-attrs)
+       (map :positions)
+       (map keys)
+       (apply concat)
+       set))
+
+(defn unknown-feeds [urls]
+  (remove @feed-index urls))
 
 (defn init! []
   (send feed-index init-feed-index! (conf/param :data-dir))
