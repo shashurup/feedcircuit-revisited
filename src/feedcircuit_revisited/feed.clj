@@ -144,7 +144,7 @@
     (:item/content item) (update :item/content content/make-refs-absolute base-url)))
 
 (defn prepare-items [feed self-containing items]
-  (let [known-ids (backend/known-ids feed (map :item/id items))]
+  (let [known-ids (set (backend/known-ids feed (map :item/id items)))]
     (->> items
          (remove #(known-ids (:item/id %)))
          (map #(fix-refs % feed))

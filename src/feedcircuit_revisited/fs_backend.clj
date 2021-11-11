@@ -112,35 +112,44 @@
       (assoc :item/source-id (:item/id item))
       (assoc :item/id (get-unique-id item))))
 
+(defn ensure-item-ns [item]
+  (u/ensure-keys-ns "item" item))
+
 (defn fix-id-and-ns [item]
-  (add-uid (u/ensure-keys-ns "item" item)))
+  (add-uid (ensure-item-ns item)))
 
 (defn add-uid-and-feed-title [item]
   (let [item (fix-id-and-ns item)
-        feed-title (:feed/title (get-feed-attrs (:item/feed item)))]
+        feed-title (get-in @feed-index [(:item/feed item) :title])]
     (assoc item :feed/title feed-title)))
 
 (defn init-feed-index! [_ data-dir]
   (->> (fs/list-dir (str data-dir "/feeds"))
        (map fs/normalized)
        (filter fs/directory?)
-       (map #(vector (:url (get-attrs %))
-                     {:dir (str %)}))
+       (map #(let [attrs (u/ensure-keys-ns "feed" (get-attrs %))]
+               [(:feed/url attrs)
+                {:dir (str %)
+                 :title (:feed/title attrs)}]))
        (into {})))
 
 (defn load-feed! [index url]
   (when-not (get-in index [url :item-count])
     (let [items (read-items (get-in index [url :dir]) 0)]
       (update index url merge {:item-count (count items)
-                               :known-ids (set (map :id items))}))))
+                               :known-ids (set (map #(:item/id (ensure-item-ns %))
+                                                    items))}))))
 
-(defn get-item-count [feed]
-  (if-let [result (get-in @feed-index [feed :item-count])]
+(defn get-in-feed [feed key]
+  (if-let [result (get-in @feed-index [feed key])]
     result
     (do
       (send feed-index load-feed! feed)
       (await feed-index)
-      (get-item-count feed))))
+      (get-in-feed feed key))))
+
+(defn get-item-count [feed]
+  (get-in-feed feed :item-count))
 
 (defn add-feed-num-uid [item feed num]
   (let [item (assoc item :item/feed feed :item/num num)]
@@ -228,7 +237,7 @@
   (str (fs/normalized (str (conf/param :data-dir) "/feeds/" (dir-name url)))))
 
 (defn known-ids [feed ids]
-  (get-in @feed-index [feed :known-ids]))
+  (filter (get-in-feed feed :known-ids) ids))
 
 (defn add-feed! [feed attrs]
   (send feed-index
@@ -247,21 +256,22 @@
         (fn [index]
           (let [dir (get-in index [feed :dir])]
             (set-attrs dir (merge (get-attrs dir) attrs))
-            index))))
+            (update index feed merge {:title (:feed/title attrs)})))))
 
 (defn append-items! [feed items]
   (send feed-index
         (fn [index]
+          (load-feed! index feed)
           (let [cnt (get-in index [feed :item-count])
                 known-ids (get-in index [feed :known-ids])
-                new-items (remove #(known-ids (:id %)) items)
+                new-items (remove #(known-ids (:item/id %)) items)
                 dir (get-in index [feed :dir])
                 new-item-count (count new-items)]
             (write-items! dir new-items)
             (update index feed merge {:item-count (+ cnt new-item-count)
                                       :last-sync-count new-item-count
                                       :known-ids (cset/union known-ids
-                                                             (set (map #(:id %) new-items)))}))))
+                                                             (set (map #(:item/id %) new-items)))}))))
   (await feed-index)
   (get-in @feed-index [feed :last-sync-count]))
 
@@ -352,7 +362,7 @@
                                     :source/filters filters
                                     :source/position (get positions url)}
                                    (when (some #{:sources/feed-title} opts)
-                                     {:feed/title (:feed/title (get-feed-attrs url))})
+                                     {:feed/title (get-in @feed-index [url :title])})
                                    (when (some #{:sources/feed-details} opts)
                                      (get-feed-attrs url))))
                                 parsed-feeds)
