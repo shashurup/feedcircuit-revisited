@@ -162,7 +162,7 @@
 
 (defn build-unread [user-id item-count extra-style]
   (let [{sources :user/sources
-         selected :user/selected} (backend/get-user-data user-id)
+         selected :user/selected} (backend/get-user-data user-id :sources/feed-title)
         items (take item-count (backend/get-unread-items sources))
         next-positions (get-next-positions items)
         checked (set (map :item/id selected))]
@@ -296,21 +296,21 @@
    [:body
     (navbar user-id :sources)
     [:div.fcr-wrapper.fcr-ui
-     (let [sources (:user/sources (backend/get-user-data user-id))
-           feed-urls (map :source/feed (filter :source/active sources))
-           feeds (map backend/get-feed-attrs feed-urls)]
-       (for [feed feeds]
+     (let [sources (->> (backend/get-user-data user-id :sources/feed-details)
+                        :user/sources
+                        (filter :source/active))]
+       (for [source sources]
          [:div.fcr-news-item 
-          [:a.fcr-link {:href (str "feed?url=" (:feed/url feed))}
-           [:h1 (:feed/title feed)]]
-          (if-let [image-url (not-empty (:feed/image feed))]
+          [:a.fcr-link {:href (str "feed?url=" (:feed/url source))}
+           [:h1 (:feed/title source)]]
+          (if-let [image-url (not-empty (:feed/image source))]
             [:img.fcr-feed-logo {:src image-url}]
             (feed-logo))
-          (if-let [summary (not-empty (:feed/summary feed))]
+          (if-let [summary (not-empty (:feed/summary source))]
             [:p summary])
           [:p.fcr-item-footer
-           [:a.fcr-link {:href (:feed/url feed)} (:feed/url feed)]
-           (if-let [last-sync (:feed/last-sync feed)]
+           [:a.fcr-link {:href (:feed/url source)} (:feed/url source)]
+           (if-let [last-sync (:feed/last-sync source)]
              [:span ", updated&nbsp;at&nbsp;"
               [:script (format "document.write(new Date(\"%s\").toLocaleString());" last-sync)]
               [:noscript last-sync]])]]))]]])
@@ -381,7 +381,7 @@
         new-feeds (->> sources
                        (filter :source/active)
                        (map :source/feed)
-                       backend/unknow-feeds)]
+                       backend/unknown-feeds)]
     (doseq [url new-feeds]
       (feed/add-feed! url))
     (backend/update-settings! user-id sources styles)))

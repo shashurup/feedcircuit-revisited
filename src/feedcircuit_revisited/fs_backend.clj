@@ -112,10 +112,13 @@
       (assoc :item/source-id (:item/id item))
       (assoc :item/id (get-unique-id item))))
 
+(defn fix-id-and-ns [item]
+  (add-uid (u/ensure-keys-ns "item" item)))
+
 (defn add-uid-and-feed-title [item]
-  (-> (u/ensure-keys-ns "item" item)
-      add-uid
-      (assoc :feed/title (:feed/title (get-feed-attrs (:feed item))))))
+  (let [item (fix-id-and-ns item)
+        feed-title (:feed/title (get-feed-attrs (:item/feed item)))]
+    (assoc item :feed/title feed-title)))
 
 (defn init-feed-index! [_ data-dir]
   (->> (fs/list-dir (str data-dir "/feeds"))
@@ -141,7 +144,7 @@
 
 (defn add-feed-num-uid [item feed num]
   (let [item (assoc item :item/feed feed :item/num num)]
-    (add-uid (u/ensure-keys-ns "item" item))))
+    (fix-id-and-ns item)))
 
 (defn get-items 
   "Returns lazy numbered sequence of items
@@ -328,25 +331,36 @@
               (some #(= id %) ids)))]
     (update-user-attrs! user-id update :selected #(remove in-ids? %))))
 
-(defn get-user-data [user-id]
+(defn get-user-data [user-id & opts]
   (let [{id :id
          feeds :feeds
          positions :positions
          selected :selected
-         styles :styles} (get-user-attrs user-id)]
+         styles :styles} (get-user-attrs user-id)
+        parsed-feeds (map #(let [[url filters] (cstr/split % #" " 2)
+                                 active (not= (first url) \#)
+                                 url (if active url (subs url 1))]
+                             [url filters active])
+                          feeds)]
     {:user/id id
-     :user/sources (map-indexed (fn [idx feed]
-                             (let [[url filters] (cstr/split feed #" " 2)
-                                   active (not= (first url) \#)
-                                   url (if active url (subs url 1))]
-                               {:source/num idx
-                                :source/active active
-                                :source/id url
-                                :source/feed url
-                                :source/filters filters
-                                :source/position (get positions url)}))
-                           feeds)
-     :user/selected (map add-uid-and-feed-title selected)
+     :user/sources (map-indexed (fn [idx [url filters active]]
+                                  (merge 
+                                   {:source/num idx
+                                    :source/active active
+                                    :source/id url
+                                    :source/feed url
+                                    :source/filters filters
+                                    :source/position (get positions url)}
+                                   (when (some #{:sources/feed-title} opts)
+                                     {:feed/title (:feed/title (get-feed-attrs url))})
+                                   (when (some #{:sources/feed-details} opts)
+                                     (get-feed-attrs url))))
+                                parsed-feeds)
+     :user/selected (if (some #{:selected/details} opts)
+                      (map add-uid-and-feed-title selected)
+                      (->> selected
+                           (map fix-id-and-ns)
+                           (map #(select-keys % [:item/id]))))
      :user/styles styles}))
 
 (defn initial-position [feed]

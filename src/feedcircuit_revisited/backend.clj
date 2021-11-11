@@ -6,8 +6,6 @@
 
 (def get-feed-attrs b/get-feed-attrs)
 
-(def all-feeds b/all-feeds)
-
 (def add-feed! b/add-feed!)
 
 (def update-feed! b/update-feed!)
@@ -83,9 +81,9 @@
   (apply concat
          (for [{feed :source/feed
                 filters :source/filters
-                pos :source/position} (filter :source/active sources)
-               :let [exprs (parse-filters filters)
-                     feed-title (:feed/title (get-feed-attrs feed))]]
+                pos :source/position
+                feed-title :feed/title} (filter :source/active sources)
+               :let [exprs (parse-filters filters)]]
            (->> (get-items feed pos)
                 (filter #(item-matches % exprs))
                 (map #(assoc % :feed/title feed-title))))))
@@ -94,7 +92,7 @@
   "Lazy sequence of items user marked for later reading."
   [user-id]
   (let [{sources :user/sources
-         selected :user/selected} (get-user-data user-id)
+         selected :user/selected} (get-user-data user-id :selected/details)
         nums (into {} (map #(vector (:source/feed %) (:source/num %)) sources))]
     (sort-by #(vector (nums (:item/feed %)) (:item/num %)) selected)))
 
