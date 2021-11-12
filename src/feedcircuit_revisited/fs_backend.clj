@@ -237,7 +237,7 @@
   (str (fs/normalized (str (conf/param :data-dir) "/feeds/" (dir-name url)))))
 
 (defn known-ids [feed ids]
-  (filter (get-in-feed feed :known-ids) ids))
+  (set (filter (get-in-feed feed :known-ids) ids)))
 
 (defn add-feed! [feed attrs]
   (send feed-index
