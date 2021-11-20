@@ -143,7 +143,7 @@
   (let [item-count (or item-count page-size)
         items (take item-count (backend/get-feed-items feed from))
         next-from (dec (or (:item/num (last items)) 0))
-        title (:feed/title (backend/get-feed-attrs feed))
+        title (backend/get-feed-attr-by-id feed :feed/title)
         checked (set (map :item/id (:user/selected (backend/get-user-data user-id))))]
     [:html
      (head title extra-style)
@@ -211,7 +211,7 @@
 
 (defn retrieve-content [url feed]
   (let [html (content/retrieve-and-parse url)
-        content-ident (:feed/content-ident (backend/get-feed-attrs feed))]
+        content-ident (backend/get-feed-attr-by-id feed :feed/content-ident)]
     (content/detect html url content-ident)))
 
 (defn ensure-content [item]
@@ -271,7 +271,7 @@
     (if-let [{url :item/link feed :item/feed} (backend/get-item uid)]
       (let [content (content/detect (content/retrieve-and-parse url)
                                     url
-                                    (:feed/content-ident (backend/get-feed-attrs feed)))]
+                                    (backend/get-feed-attr-by-id feed :feed/content-ident))]
         (backend/add-content! uid content)))))
 
 (defn selected-add! [user-id ids]

@@ -56,19 +56,19 @@
       {:feed/content-ident (compute-content-identifier data)
        :feed/content-to-summary-ratio (compute-content-to-summary-ratio data)})))
 
-(defn collect-feed! [feed]
-  (let [stat (compute feed)]
-    (backend/update-feed! feed stat)
+(defn collect-feed! [url]
+  (let [stat (compute url)]
+    (backend/update-feed! url stat)
     stat))
 
-(defn collect-and-log-safe! [feed]
+(defn collect-and-log-safe! [url]
   (try
-    (log/info "Collecting statistics for" feed)
-    (let [stat (collect-feed! feed)]
-      (log/info "Statistics for" feed "are" stat)
+    (log/info "Collecting statistics for" url)
+    (let [stat (collect-feed! url)]
+      (log/info "Statistics for" url "are" stat)
       stat)
     (catch Exception ex
-      (log/error ex "Failed to collect statistics for" feed))))
+      (log/error ex "Failed to collect statistics for" url))))
 
 (defn collect! []
   (map collect-and-log-safe! (backend/active-feed-urls)))

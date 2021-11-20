@@ -4,7 +4,9 @@
 
 (require '[feedcircuit-revisited.fs-backend :as b])
 
-(def get-feed-attrs b/get-feed-attrs)
+(def get-feed-attr b/get-feed-attr)
+
+(def get-feed-attr-by-id b/get-feed-attr-by-id)
 
 (def add-feed! b/add-feed!)
 
@@ -42,7 +44,7 @@
 (def unknown-feeds b/unknown-feeds)
 
 (defn get-feed-items [feed start]
-  (let [feed-title (:feed/title (get-feed-attrs feed))]
+  (let [feed-title (get-feed-attr-by-id feed :feed/title)]
     (->> (get-items-backwards feed start)
          (map #(assoc % :feed/title feed-title)))))
 

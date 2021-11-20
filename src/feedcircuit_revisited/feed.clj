@@ -115,8 +115,8 @@
         items (map parse-rss-item (extract-rss-items feed-xml))]
      [attrs items]))
 
-(defn self-containing-feed? [attrs]
-  (when-let [ratio (:feed/content-to-summary-ratio attrs)]
+(defn self-containing-feed? [ratio]
+  (when ratio
     (< (max (- 1 ratio) (- ratio 1)) 0.2)))
 
 (defn fix-summary-and-content
@@ -143,11 +143,11 @@
     (:item/summary item) (update :item/summary content/make-refs-absolute base-url)
     (:item/content item) (update :item/content content/make-refs-absolute base-url)))
 
-(defn prepare-items [feed self-containing items]
-  (let [known-ids (backend/known-ids feed (map :item/id items))]
+(defn prepare-items [url self-containing items]
+  (let [known-ids (backend/known-ids url (map :item/id items))]
     (->> items
          (remove #(known-ids (:item/id %)))
-         (map #(fix-refs % feed))
+         (map #(fix-refs % url))
          (map #(fix-summary-and-content % self-containing))
          (sort-by :item/published))))
 
@@ -156,27 +156,28 @@
     (backend/add-feed! url attrs)
     (backend/append-items! url (prepare-items url nil items))))
 
-(defn sync-feed! [feed]
-  (let [attrs (backend/get-feed-attrs feed)
-        self-containing (self-containing-feed? attrs)
-        [new-attrs items] (fetch-items feed)]
-    (backend/update-feed! feed new-attrs)
-    (backend/append-items! feed (prepare-items feed self-containing items))))
+(defn sync-feed! [url]
+  (let [cs-ratio (backend/get-feed-attr url :feed/content-to-summary-ratio)
+        self-containing (self-containing-feed? cs-ratio)
+        [new-attrs items] (fetch-items url)]
+    (backend/update-feed! url new-attrs)
+    (backend/append-items! url (prepare-items url self-containing items))))
 
-(defn sync-and-log-safe! [feed]
-  (log/info "Fetching" feed)
+(defn sync-and-log-safe! [url]
+  (log/info "Fetching" url)
   (try
-    (let [result (sync-feed! feed)]
-      (log/info ">>" result "items from" feed)
+    (let [result (sync-feed! url)]
+      (log/info ">>" result "items from" url)
       result)
     (catch Exception ex
-      (log/error ex "Failed to get news from" feed))))
+      (log/error ex "Failed to get news from" url))))
 
 (defn next-update-time
   "Deduce next update time for the feed located at url.
    The algorithm takes into account how often the feed is updated."
-  [feed]
-  (let [last-items (take 16 (backend/get-items-backwards feed))
+  [url]
+  (let [feed (backend/get-feed-attr url :feed/id)
+        last-items (take 16 (backend/get-items-backwards feed))
         dates (->> last-items
                    (map :published)
                    (remove nil?)
