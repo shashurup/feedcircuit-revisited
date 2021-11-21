@@ -1,31 +1,16 @@
 (ns feedcircuit-revisited.fs-backend
   (:require [feedcircuit-revisited.conf :as conf]
             [feedcircuit-revisited.utils :as u]
-            [clojure.edn :as edn]
-            [clojure.java.io :as io]
             [clojure.set :as cset]
             [clojure.string :as cstr]
             [clojure.tools.logging :as log]
             [me.raynes.fs :as fs]))
 
-; === storage ===
-
-(defn write-file [filename data]
-  (let [tempfilename (str filename ".temp")]
-    (with-open [w (io/writer tempfilename)]
-      (binding [*out* w] (pr data)))
-    (fs/rename tempfilename filename)))
-
-(defn read-file [filename]
-  (if (fs/exists? filename)
-    (with-open [r (java.io.PushbackReader. (io/reader filename))]
-      (edn/read r))))
-
 ; a good place to add cache
-(def get-data read-file)
+(def get-data u/read-file)
 
 (defn set-data [filename data]
-  (write-file filename data)
+  (u/write-file filename data)
   data)
 
 (defn get-block [dir block-num]

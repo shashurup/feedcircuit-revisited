@@ -2,10 +2,14 @@
 (ns user
   (:require [feedcircuit-revisited.main :as m]
             [feedcircuit-revisited.feed :as f]
-	    [feedcircuit-revisited.content :as c]
-	    [feedcircuit-revisited.ui :as u]
-	    [feedcircuit-revisited.handler :as handler]
-	    [feedcircuit-revisited.storage :as storage]
+            [feedcircuit-revisited.backend :as b]
+            [feedcircuit-revisited.schema :as schema]
+            [feedcircuit-revisited.datomic-backend :as bda]
+            [feedcircuit-revisited.fs-backend :as bfs]
+            [feedcircuit-revisited.content :as c]
+            [feedcircuit-revisited.ui :as u]
+            [feedcircuit-revisited.handler :as handler]
+            [feedcircuit-revisited.storage :as storage]
             [feedcircuit-revisited.conf :as conf]
             [feedcircuit-revisited.schema :as s]
             [datomic.client.api :as d]
@@ -21,165 +25,252 @@
 : 
 
 #+begin_src clojure :results pp
-(->> (d/index-pull (d/db s/db-conn)
+(->> (d/index-pull (d/db bda/conn)
                    {:index :avet
                     :selector '[*]
                     :start '[:item/num 42]})
-     (filter #(= (get-in % [:item/feed :db/id]) 83562883726309))               
+     ;(filter #(= (get-in % [:item/feed :db/id]) 83562883726309))               
      (take 16))
 #+end_src
 
 #+RESULTS:
 #+begin_example
-({:db/id 96757023259664,
-  :item/id "https://www.exler.ru/films/lyudi-v-chernom-1.htm",
+({:item/link "https://kiwibyrd.org/2021/08/17/21h82/",
+  :item/category
+  ["Folger Library"
+   "Francis Bacon"
+   "General François Cartier"
+   "TEMPEST"
+   "William Friedman"
+   "АНБ США"
+   "История"
+   "Книги"
+   "Криптография"
+   "Люди"
+   "Обман"
+   "Разведслужбы"
+   "Уильям Фридман"
+   "Франсуа Картье"
+   "Фрэнсис Бэкон"],
+  :item/summary "",
+  :item/source-id "http://kiwibyrd.org/?p=5683",
+  :item/feed+id [83562883711105 "http://kiwibyrd.org/?p=5683"],
+  :item/published "2021-08-17T10:53:55Z",
   :item/num 42,
-  :item/link "https://www.exler.ru/films/lyudi-v-chernom-1.htm",
-  :item/title "Люди в черном: Интернэшнл",
+  :db/id 96757023244452,
+  :item/feed #:db{:id 83562883711105},
+  :item/title "Бэкон, Tempest и книга Картье, часть 9",
+  :item/author ["idboris"]}
+ {:item/link
+  "http://feedproxy.google.com/~r/zerohedge/feed/~3/5q_rKjkBTkM/conte-quits-italys-pm-new-bid-build-majority",
   :item/summary
-  "<p><a class=\"fancybox\" src=\"https://www.exler.ru/img/films/02-09-2019/big/1.jpg\" rel=\"media\"><img align=\"left\" alt=\"\" border=\"0\" class=\"align-left\"  src=\"https://www.exler.ru/img/films/02-09-2019/1.jpg\"  /></a>Когда-то давно маленькая Молли (Тесса Томпсон) увидела людей в черном за работой - они поджигали мозги ее родителям, чтобы те все забыли. И с той поры девчушка стала мечтать быть в команде этих замечательных людей. Она выросла, стала работать в кол-центре, а по вечерам ходит на кастинги в ФБР, ЦРУ, Госдеп и прочие почтенные заведения, требуя устроить ее в агентство, где все в черных костюмчиках и ручкаются с инопланетянами.",
-  :item/published "2019-09-02T06:00:00Z",
-  :item/feed #:db{:id 83562883726309}}
- {:db/id 96757023259665,
-  :item/id "https://www.exler.ru/films/chernobyl.htm",
+  "<p>The Tuesday resignation of Italian Prime Minister Giuseppe Conte has left the country in what the Italians call a government crisis \"in the dark\" - one which has no obvious solution, according to <a href=\"https://www.barrons.com/news/what-s-next-for-italy-after-pm-conte-s-resignation-01611660906?tesla=y\"><em>AFP</em></a>.</p>",
+  :item/source-id "686890 at https://www.zerohedge.com",
+  :item/has-content true,
+  :item/feed+id [79164837200002 "686890 at https://www.zerohedge.com"],
+  :item/published "2021-01-26T15:25:00Z",
+  :item/num 42,
+  :db/id 101155069755603,
+  :item/feed #:db{:id 79164837200002},
+  :item/title
+  "Conte Quits As Italy's PM In New Bid To Build Majority "}
+ {:item/link "https://kiwibyrd.org/2021/08/06/21h81/",
+  :item/category
+  ["История" "Книги" "Математика" "Роджер Пенроуз" "Уильям Клиффорд"],
+  :item/summary "",
+  :item/source-id "http://kiwibyrd.org/?p=5657",
+  :item/feed+id [83562883711105 "http://kiwibyrd.org/?p=5657"],
+  :item/published "2021-08-06T10:20:54Z",
   :item/num 43,
-  :item/link "https://www.exler.ru/films/chernobyl.htm",
-  :item/title "Чернобыль",
+  :db/id 96757023244453,
+  :item/feed #:db{:id 83562883711105},
+  :item/title "Программа Клиффорда как рубеж и перспектива",
+  :item/author ["idboris"]}
+ {:item/link
+  "http://feedproxy.google.com/~r/zerohedge/feed/~3/6r1QVg8bzLQ/gamestop-halted-after-surging-billionaire-call-buying-tweet",
   :item/summary
-  "<p><a class=\"fancybox\" rel=\"media\" src=\"https://www.exler.ru/img/films/05-09-2019/big/1.jpg\"><img align=\"left\" alt=\"\" border=\"0\" class=\"align-left\" src=\"https://www.exler.ru/img/films/05-09-2019/1.jpg\"></img></a>Сериал начинается с того, что академик Валерий Легасов (Джаред Харрис), два года назад сыгравший огромную роль в ликвидации аварии на Чернобыльской АЭС, начитывает на диктофон малоизвестные факты о катастрофе на ЧАЭС. Записанные кассеты Легасов прячет в потайном месте, откуда их должны забрать, после чего вешается в своей квартире.</p>",
-  :item/published "2019-09-05T06:00:00Z",
-  :item/feed #:db{:id 83562883726309}}
- {:db/id 96757023259666,
-  :item/id "https://www.exler.ru/films/dzhon-uik-3.htm",
+  "<span class=\"field field--name-title field--type-string field--label-hidden\" property=\"schema:name\">\"Let's Gooooo!!!\" - GameStop Halted After Surging On Billionaire Call-Buying Tweet</span>\n\n            <div class=\"clearfix text-formatted field field--name-body field--type-text-with-summary field--label-hidden field__item\" property=\"schema:text\"><p>Just when you thought it was safe to pile into the shorts again after yesterday's utter farce in GME shares, this morning has seen the mockery continue.</p>\n\n<p>A pre-market buying panic was sold into during the cash session and was about to erase all the gains when suddenly, none other than billionaire VC Chamath Palihapitiya tweeted the following...</p>\n\n<blockquote class=\"twitter-tweet\">\n<p dir=\"ltr\" lang=\"en\" xml:lang=\"en\">Lots of <a href=\"https://twitter.com/search?q=%24GME&amp;src=ctag&amp;ref_src=twsrc%5Etfw\">$GME</a> talk soooooo....<br /><br />\nWe bought Feb $115 calls on <a href=\"https://twitter.com/search?q=%24GME&amp;src=ctag&amp;ref_src=twsrc%5Etfw\">$GME</a> this morning.<br /><br />\nLet’s gooooooo!!!!!!!! <a href=\"https://t.co/XhOKL1fgKN\">https://t.co/XhOKL1fgKN</a> <a href=\"https://t.co/rbcB3Igl15\">pic.twitter.com/rbcB3Igl15</a></p>\n— Chamath Palihapitiya (@chamath) <a href=\"https://twitter.com/chamath/status/1354089928313823232?ref_src=twsrc%5Etfw\">January 26, 2021</a></blockquote>\n<script async=\"\" charset=\"utf-8\" src=\"https://platform.twitter.com/widgets.js\"></script><p>And GME shares immediately spiked higher and were halted...</p>\n\n<p><a data-image-external-href=\"\" data-image-href=\"/s3/files/inline-images/2021-01-26_7-35-13.jpg?itok=YmQ37FB2\" data-link-option=\"0\" href=\"https://cms.zerohedge.com/s3/files/inline-images/2021-01-26_7-35-13.jpg?itok=YmQ37FB2\"><picture><img alt=\"\" data-entity-type=\"file\" data-entity-uuid=\"65f267be-e41d-4641-ac62-040da900e8e3\" data-responsive-image-style=\"inline_images\" height=\"359\" src=\"https://zh-prod-1cc738ca-7d3b-4a72-b792-20bd8d8fa069.storage.googleapis.com/s3fs-public/styles/inline_image_mobile/public/inline-images/2021-01-26_7-35-13.jpg?itok=YmQ37FB2\" typeof=\"foaf:Image\" width=\"500\" /></picture></a></p>\n\n<p>So while yesterday was a Robinhood vs Citadel cage-match, today is billionaire (Ken Griffiin) vs billionaire as Chamath sides with the WallStreetBets crowd...</p>\n\n<blockquote class=\"twitter-tweet\">\n<p dir=\"ltr\" lang=\"en\" xml:lang=\"en\">It's not reddit vs Ken Griffin...<br /><br />\nIt's Chamath vs Ken<br /><br />\nWe have a billionaire vs billionaire rumble in the jungle</p>\n— zerohedge (@zerohedge) <a href=\"https://twitter.com/zerohedge/status/1354091262505340929?ref_src=twsrc%5Etfw\">January 26, 2021</a></blockquote>\n</div>",
+  :item/source-id "686909 at https://www.zerohedge.com",
+  :item/has-content true,
+  :item/feed+id [79164837200002 "686909 at https://www.zerohedge.com"],
+  :item/published "2021-01-26T15:41:50Z",
+  :item/num 43,
+  :db/id 101155069755604,
+  :item/feed #:db{:id 79164837200002},
+  :item/title
+  "\"Let's Gooooo!!!\" - GameStop Halted After Surging On Billionaire Call-Buying Tweet"}
+ {:item/link "https://kiwibyrd.org/2021/07/31/21h74/",
+  :item/category
+  ["8200"
+   "NSO Group"
+   "Безопасность через неясность"
+   "Брэнды"
+   "Израиль"
+   "Обман"
+   "Разведслужбы"],
+  :item/summary "",
+  :item/source-id "http://kiwibyrd.org/?p=5645",
+  :item/feed+id [83562883711105 "http://kiwibyrd.org/?p=5645"],
+  :item/published "2021-07-31T09:38:47Z",
   :item/num 44,
-  :item/link "https://www.exler.ru/films/dzhon-uik-3.htm",
-  :item/title "Джон Уик 3",
+  :db/id 96757023244454,
+  :item/feed #:db{:id 83562883711105},
+  :item/title "Национальные особенности бизнеса на шпионаже",
+  :item/author ["idboris"]}
+ {:item/link
+  "http://feedproxy.google.com/~r/zerohedge/feed/~3/V34k4_PjnHg/biden-halt-oil-gas-leasing-federal-land",
   :item/summary
-  "<p align=\"left\"><a class=\"fancybox\" rel=\"media\" src=\"https://www.exler.ru/img/films/09-09-2019/big/1.jpg\"><img align=\"left\" alt=\"\" border=\"0\" class=\"align-left\" src=\"https://www.exler.ru/img/films/09-09-2019/1.jpg\"></img></a>Для тех зрителей, которые только что подключились к нашей передаче, кратко напомним содержание двух предыдущих серий. В первой серии страшный киллер Джон Уик по кличке Баба Яга (Киану Ривз) удалился на покой, выкосив половину Нью-Йорка по приказу русского криминального авторитета Вигго Зигфридовича Тарасофф. Когда Джон Уик находился на покое, сынишка Вигго с двумя другими придурками забрались в дом Джона Уика и наваляли страшному киллеру конкретных люлей. При этом убили его собаку и забрали его машину. После этого Джон Уик встал, отправился в \"Континенталь\", там получил оружие и черный костюмчик, ну и далее уложил все достопочтенное семейство Вигго вместе с его шебутным сынишкой и несколькими сотнями бойцов.</p>",
-  :item/published "2019-09-09T06:00:00Z",
-  :item/feed #:db{:id 83562883726309}}
- {:db/id 96757023259667,
-  :item/id
-  "https://www.exler.ru/films/ohotnik-za-razumom-vtoroj-sezon.htm",
+  "<p>As previously reported, and as was just confirmed by the WSJ, President Biden on Wednesday will announce that he is halting all new oil and gas leasing on federal territory, \"setting up a confrontation with the oil industry over the future of U.S. energy.\" And since this effectively will suspend all fracking on federal lands (albeit once the extension period expires), this means that contrary to his representations, Biden is in fact banning fracking despite his Aug 31, 2020 proclamation that “I am not banning fracking. Let me say that again. I am not banning fracking, no matter how many times Donald Trump lies about me.\"</p>",
+  :item/source-id "686912 at https://www.zerohedge.com",
+  :item/has-content true,
+  :item/feed+id [79164837200002 "686912 at https://www.zerohedge.com"],
+  :item/published "2021-01-26T15:55:22Z",
+  :item/num 44,
+  :db/id 101155069755605,
+  :item/feed #:db{:id 79164837200002},
+  :item/title "Biden To Halt Oil, Gas Leasing On Federal Land"}
+ {:item/link "https://kiwibyrd.org/2021/07/25/21h73/",
+  :item/category
+  ["Francis Bacon"
+   "The Independent"
+   "История"
+   "Обман"
+   "Управление восприятием"
+   "Фрэнсис Бэкон"],
+  :item/summary "",
+  :item/source-id "http://kiwibyrd.org/?p=5634",
+  :item/feed+id [83562883711105 "http://kiwibyrd.org/?p=5634"],
+  :item/published "2021-07-25T10:00:44Z",
   :item/num 45,
-  :item/link
-  "https://www.exler.ru/films/ohotnik-za-razumom-vtoroj-sezon.htm",
-  :item/title "Охотник за разумом. Второй сезон",
+  :db/id 96757023244455,
+  :item/feed #:db{:id 83562883711105},
+  :item/title "Философ или клоун? (Бэкон бэспокоит…)",
+  :item/author ["idboris"]}
+ {:item/link
+  "http://feedproxy.google.com/~r/zerohedge/feed/~3/yBL5a8K1urg/home-prices-soar-45-times-feds-inflation-target-all-us-cities",
   :item/summary
-  "<p align=\"left\"><a class=\"fancybox\" rel=\"media\" src=\"https://www.exler.ru/img/films/16-09-2019/big/1.jpg\"><img align=\"left\" alt=\"\" border=\"0\" class=\"align-left\" src=\"https://www.exler.ru/img/films/16-09-2019/1.jpg\"></img></a>В <a src=\"https://www.exler.ru/films/ohotnik-za-razumom.htm\">первом сезоне</a> сериала \"Охотник за разумом\" рассказывалось о том, как два спецагента ФБР Холден Форд (Джонатан Грофф) и Билли Тенч (Холт МакКэллани) изучают поведенческие портреты знаменитых убийц и открывают само понятие \"серийный убийца\", которое означает, что этот человек совершает все свои убийства по определенной схеме. Им в этой работе помогает профессор психологии Венди Карр (Анна Торв). </p>",
-  :item/published "2019-09-16T06:00:00Z",
-  :item/feed #:db{:id 83562883726309}}
- {:db/id 96757023259668,
-  :item/id "https://www.exler.ru/films/samyj-zhestokij-god.htm",
+  "<p>The Fed's most frequent lament is that no matter how many trillions in bonds (and stocks and ETFs) it buys or how much liquidity it forehoses into the market, it just can't push inflation higher.</p>",
+  :item/source-id "686907 at https://www.zerohedge.com",
+  :item/has-content true,
+  :item/feed+id [79164837200002 "686907 at https://www.zerohedge.com"],
+  :item/published "2021-01-26T16:10:00Z",
+  :item/num 45,
+  :db/id 101155069755606,
+  :item/feed #:db{:id 79164837200002},
+  :item/title
+  "Home Prices Soar At 4.5 Times The Fed's Inflation Target In All US Cities"}
+ {:item/link "https://kiwibyrd.org/2021/07/18/21h72/",
+  :item/category
+  ["Francis Bacon"
+   "General François Cartier"
+   "William Friedman"
+   "История"
+   "Книги"
+   "Криптография"
+   "Люди"
+   "Обман"
+   "Разведслужбы"
+   "Уильям Фридман"
+   "Франсуа Картье"
+   "Фрэнсис Бэкон"],
+  :item/summary "",
+  :item/source-id "http://kiwibyrd.org/?p=5609",
+  :item/feed+id [83562883711105 "http://kiwibyrd.org/?p=5609"],
+  :item/published "2021-07-18T09:51:32Z",
   :item/num 46,
-  :item/link "https://www.exler.ru/films/samyj-zhestokij-god.htm",
-  :item/title "Самый жестокий год",
+  :db/id 96757023244456,
+  :item/feed #:db{:id 83562883711105},
+  :item/title "Бэкон, магия и книга Картье, часть 8",
+  :item/author ["idboris"]}
+ {:item/link
+  "http://feedproxy.google.com/~r/zerohedge/feed/~3/Z6Vc393vUJg/gordon-johnson-expect-tesla-beat-2021-shipment-guidance-and-q4-net-income",
   :item/summary
-  "<p><a class=\"fancybox\" rel=\"media\" src=\"https://www.exler.ru/img/films/19-09-2019/big/1.jpg\"><img align=\"left\" alt=\"\" border=\"0\" class=\"align-left\" src=\"https://www.exler.ru/img/films/19-09-2019/1.jpg\"></img></a>Нью-Йорк, зима 1981 года, Манхэттен. Иммигрант из Латинской Америки Эйбел Моралес (Оскар Айзек) имеет бизнес, связанный с топливоперевозкой. Бизнес развивается довольно активно, Эйбел очень амбициозен и имеет большие планы на будущее. При этом он старается вести бизнес максимально честно и не приемлет решения вопросов бандитскими  методами.</p>",
-  :item/published "2019-09-19T06:00:00Z",
-  :item/feed #:db{:id 83562883726309}}
- {:db/id 96757023259669,
-  :item/id "https://www.exler.ru/films/yesterday.htm",
+  "<p>Tesla is set to report earnings on Wednesday after the bell this week and, as such, GLJ's principal Gordon Johnson has released his look into what Q4 numbers could bring. Johnson estimates that Tesla will beat expectations in both its 2021 shipment guidance and its Q4 2020 net income.</p>",
+  :item/source-id "686887 at https://www.zerohedge.com",
+  :item/has-content true,
+  :item/feed+id [79164837200002 "686887 at https://www.zerohedge.com"],
+  :item/published "2021-01-26T16:25:00Z",
+  :item/num 46,
+  :db/id 101155069755607,
+  :item/feed #:db{:id 79164837200002},
+  :item/title
+  "Gordon Johnson: Expect Tesla To \"Beat\" On 2021 Shipment Guidance And Q4 Net Income"}
+ {:item/link
+  "http://feedproxy.google.com/~r/zerohedge/feed/~3/1NmJ02zElr0/top-cbs-execs-suspended-after-la-times-exposes-widening-allegations-racist-sexist-conduct",
+  :item/summary
+  "<p>Two top <em>CBS</em> executives have been suspended following a <a href=\"https://www.latimes.com/entertainment-arts/business/story/2021-01-24/cbs-television-stations-peter-dunn-racism-sexism\"><em>LA Times</em></a> investigation detailing \"widening allegations that the pair cultivated an environment that included <strong>bullying female managers and blocking efforts to hire and retain Black journalists.</strong>\"</p>",
+  :item/source-id "686910 at https://www.zerohedge.com",
+  :item/has-content true,
+  :item/feed+id [79164837200002 "686910 at https://www.zerohedge.com"],
+  :item/published "2021-01-26T16:40:00Z",
   :item/num 47,
-  :item/link "https://www.exler.ru/films/yesterday.htm",
-  :item/title "Yesterday",
+  :db/id 101155069755608,
+  :item/feed #:db{:id 79164837200002},
+  :item/title
+  "Top CBS Execs Suspended After LA Times Exposes 'Widening Allegations' Of Racist, Sexist Conduct"}
+ {:item/link
+  "http://feedproxy.google.com/~r/zerohedge/feed/~3/bz2Y_DZN3fQ/remote-workers-robinhoodrs-routed-critical-internet-services-suffer-major-east-coast-outage",
   :item/summary
-  "<p align=\"left\"><a class=\"fancybox\" rel=\"media\" src=\"https://www.exler.ru/img/films/23-09-2019/big/1.jpg\"><img align=\"left\" alt=\"\" border=\"0\" class=\"align-left\" src=\"https://www.exler.ru/img/films/23-09-2019/1.jpg\"></img></a>Англичанин индийского происхождения Джек Малик (Химеш Пател) живет в маленьком городке, работает на складе магазина оптовой продажи и мечтает стать музыкантом. У Джека даже есть импресарио - бывшая одноклассница Элли Эпплтон (Лили Джеймс). Впрочем, только она верит в то, что у Джека в музыке есть будущее: скажем прямо, песенки он пишет очень так себе, так что шанс вырваться наверх из маленьких прокуренных клубов у него очень призрачный. </p>",
-  :item/published "2019-09-23T06:00:00Z",
-  :item/feed #:db{:id 83562883726309}}
- {:db/id 96757023259670,
-  :item/id "https://www.exler.ru/films/prishelcy-iz-proshlogo.htm",
+  "<span class=\"field field--name-title field--type-string field--label-hidden\" property=\"schema:name\">Remote-Workers & Robinhood'rs Routed As Critical Internet Services Suffer Major East Coast Outage</span>\n\n            <div class=\"clearfix text-formatted field field--name-body field--type-text-with-summary field--label-hidden field__item\" property=\"schema:text\"><p>Users of Zoom, YouTube, Google, Gmail, Google Meet, Robinhood, Slack, Spotify, and Amazon Web Services are reporting issues or outages on Tuesday morning, according to <a href=\"https://downdetector.com/\">Downdetector</a>.</p>\n\n<p><a data-image-external-href=\"\" data-image-href=\"/s3/files/inline-images/2021-01-26%20%281%29.png?itok=clLeWXwp\" data-link-option=\"0\" href=\"https://cms.zerohedge.com/s3/files/inline-images/2021-01-26%20%281%29.png?itok=clLeWXwp\"><picture><img alt=\"\" data-entity-type=\"file\" data-entity-uuid=\"6ad815f4-c2ec-4aa8-bfeb-6975e869b927\" data-responsive-image-style=\"inline_images\" height=\"471\" src=\"https://zh-prod-1cc738ca-7d3b-4a72-b792-20bd8d8fa069.storage.googleapis.com/s3fs-public/styles/inline_image_mobile/public/inline-images/2021-01-26%20%281%29.png?itok=clLeWXwp\" typeof=\"foaf:Image\" width=\"500\" /></picture></a></p>\n\n<p><strong>These web services are critical for remote working folks and could cause disruptions.</strong></p>\n\n<p>Zoom users are reporting issues or outages across Mid-Atlantic and Northeast states.</p>\n\n<p><a data-image-external-href=\"\" data-image-href=\"/s3/files/inline-images/2021-01-26%20%282%29.png?itok=6om-JzUD\" data-link-option=\"0\" href=\"https://cms.zerohedge.com/s3/files/inline-images/2021-01-26%20%282%29.png?itok=6om-JzUD\"><picture><img alt=\"\" data-entity-type=\"file\" data-entity-uuid=\"e0a88687-c106-4f73-baf7-097647f084af\" data-responsive-image-style=\"inline_images\" height=\"471\" src=\"https://zh-prod-1cc738ca-7d3b-4a72-b792-20bd8d8fa069.storage.googleapis.com/s3fs-public/styles/inline_image_mobile/public/inline-images/2021-01-26%20%282%29.png?itok=6om-JzUD\" typeof=\"foaf:Image\" width=\"500\" /></picture></a></p>\n\n<p>The same goes for users of Google...</p>\n\n<p><a data-image-external-href=\"\" data-image-href=\"/s3/files/inline-images/2021-01-26%20%284%29.png?itok=SnYE8piz\" data-link-option=\"0\" href=\"https://cms.zerohedge.com/s3/files/inline-images/2021-01-26%20%284%29.png?itok=SnYE8piz\"><picture><img alt=\"\" data-entity-type=\"file\" data-entity-uuid=\"c3b32e0d-8196-490b-8800-f4567d1528ef\" data-responsive-image-style=\"inline_images\" height=\"522\" src=\"https://zh-prod-1cc738ca-7d3b-4a72-b792-20bd8d8fa069.storage.googleapis.com/s3fs-public/styles/inline_image_mobile/public/inline-images/2021-01-26%20%284%29.png?itok=SnYE8piz\" typeof=\"foaf:Image\" width=\"500\" /></picture></a></p>\n\n<p>..and we all know who is to blame...</p>\n\n<p><a data-image-external-href=\"\" data-image-href=\"/s3/files/inline-images/2021-01-26%20%283%29.png?itok=oifNgsVn\" data-link-option=\"0\" href=\"https://cms.zerohedge.com/s3/files/inline-images/2021-01-26%20%283%29.png?itok=oifNgsVn\"><picture><img alt=\"\" data-entity-type=\"file\" data-entity-uuid=\"7fc11b1c-a992-4330-939e-727b7067b040\" data-responsive-image-style=\"inline_images\" height=\"591\" src=\"https://zh-prod-1cc738ca-7d3b-4a72-b792-20bd8d8fa069.storage.googleapis.com/s3fs-public/styles/inline_image_mobile/public/inline-images/2021-01-26%20%283%29.png?itok=oifNgsVn\" typeof=\"foaf:Image\" width=\"500\" /></picture></a></p>\n\n<p><em>Developing...</em></p>\n</div>\n      <span class=\"field field--name-uid field--type-entity-reference field--label-hidden\" rel=\"schema:author\"><a about=\"https://cms.zerohedge.com/users/tyler-durden\" class=\"username\" datatype=\"\" href=\"https://cms.zerohedge.com/users/tyler-durden\" lang=\"\" property=\"schema:name\" title=\"View user profile.\" typeof=\"schema:Person\" xml:lang=\"\">Tyler Durden</a></span>\n<span class=\"field field--name-created field--type-created field--label-hidden\" content=\"2021-01-26T16:56:09+00:00\" property=\"schema:dateCreated\">Tue, 01/26/2021 - 11:56</span>",
+  :item/source-id "686920 at https://www.zerohedge.com",
+  :item/has-content true,
+  :item/feed+id [79164837200002 "686920 at https://www.zerohedge.com"],
+  :item/published "2021-01-26T16:56:09Z",
   :item/num 48,
-  :item/link "https://www.exler.ru/films/prishelcy-iz-proshlogo.htm",
-  :item/title "Пришельцы из прошлого",
+  :db/id 101155069755609,
+  :item/feed #:db{:id 79164837200002},
+  :item/title
+  "Remote-Workers & Robinhood'rs Routed As Critical Internet Services Suffer Major East Coast Outage"}
+ {:item/link
+  "http://feedproxy.google.com/~r/zerohedge/feed/~3/kVxPcbBZ9io/nancy-and-paul-pelosi-bought-more-1-million-tesla-disney-and-apple-calls-december",
   :item/summary
-  "<p align=\"left\"><a class=\"fancybox\" rel=\"media\" src=\"https://www.exler.ru/img/films/26-09-2019/big/1.jpg\"><img align=\"left\" alt=\"\" border=\"0\" class=\"align-left\" src=\"https://www.exler.ru/img/films/26-09-2019/1.jpg\"></img></a>Современная Норвегия, Осло. Несколько лет назад в городе начали появляться пришельцы из прошлого, причем из определенных временных промежутков: пещерные люди, викинги и аристократия XIX века. Прибывают они из океана: там происходит какая-то зеленая вспышка, после чего на поверхность начинают всплывать люди. Что это за порталы такие во времени - никто понять не может. </p>",
-  :item/published "2019-09-26T06:00:00Z",
-  :item/feed #:db{:id 83562883726309}}
- {:db/id 96757023259671,
-  :item/id
-  "https://www.exler.ru/films/chelovek-pauk-vdali-ot-doma.htm",
+  "<p>When one looks at a situation like Monday's insanity-fueled, retail induced <a href=\"https://www.zerohedge.com/markets/daytrading-army-unleashes-furious-cascade-short-squeeze-meltups\">short squeeze</a> across the board, one must ask:<em> who are the government officials that have allowed this to happen and what have they been doing during the time they should be regulating such multiple-sigma market absurdities</em>?</p>",
+  :item/source-id "686781 at https://www.zerohedge.com",
+  :item/has-content true,
+  :item/feed+id [79164837200002 "686781 at https://www.zerohedge.com"],
+  :item/published "2021-01-26T17:10:00Z",
   :item/num 49,
-  :item/link
-  "https://www.exler.ru/films/chelovek-pauk-vdali-ot-doma.htm",
-  :item/title "Человек-паук: Вдали от дома",
+  :db/id 101155069755610,
+  :item/feed #:db{:id 79164837200002},
+  :item/title
+  "Nancy And Paul Pelosi Bought More Than $1 Million In Tesla, Disney And Apple Calls In December"}
+ {:item/link
+  "http://feedproxy.google.com/~r/zerohedge/feed/~3/BlMx25wfm1I/target-give-all-hourly-employees-500-bonus",
   :item/summary
-  "<p><a class=\"fancybox\" rel=\"media\" src=\"https://www.exler.ru/img/films/30-09-2019/big/1.jpg\"><img align=\"left\" alt=\"\" border=\"0\" class=\"align-left\" src=\"https://www.exler.ru/img/films/30-09-2019/1.jpg\"></img></a>События в новом фильме происходят после <a src=\"https://www.exler.ru/films/mstiteli-final.htm\">финала Мстителей</a>, в котором супергерои наконец-то одолели санитара природы Таноса и восстановили распыленное население, но потеряли Тони Старка. Питер Паркер (Том Холланд), он же Человек-паук, грустит: Тони Старк для него был кумиром и наставником. И Питеру надоела вся эта супергеройская возня: он все-таки школьник, у него есть виды на неприступную красотку-одноклассницу Эм Джей (Зендея), а тут еще классу предстоит поехать в путешествие по Европе, так что у Питера есть шанс попробовать завоевать сердце красавицы: ну кто сможет устоять, когда тебе на верхней площадке Эйфелевой башни вручат красивую безделушку?</p>",
-  :item/published "2019-09-30T06:00:00Z",
-  :item/feed #:db{:id 83562883726309}}
- {:db/id 96757023259672,
-  :item/id "https://www.exler.ru/films/bol-i-slava.htm",
+  "<p><em>By Marianne Wilson of <a href=\"https://chainstoreage.com/target-give-employees-500-bonus\">Chain Store Age,</a></em></p>\n\n<p>On the heels of a strong holiday season, Target is paying out its fifth round of employee bonuses during the pandemic.</p>",
+  :item/source-id "686900 at https://www.zerohedge.com",
+  :item/has-content true,
+  :item/feed+id [79164837200002 "686900 at https://www.zerohedge.com"],
+  :item/published "2021-01-26T17:25:00Z",
   :item/num 50,
-  :item/link "https://www.exler.ru/films/bol-i-slava.htm",
-  :item/title "Боль и слава",
+  :db/id 101155069755611,
+  :item/feed #:db{:id 79164837200002},
+  :item/title "Target To Give All Hourly Employees $500 Bonus"}
+ {:item/link
+  "http://feedproxy.google.com/~r/zerohedge/feed/~3/4V-mGtASYyw/budweiser-pepsi-other-prominent-brands-pass-years-superbowl",
   :item/summary
-  "<p align=\"left\"><a class=\"fancybox\" rel=\"media\" src=\"https://www.exler.ru/img/films/03-10-2019/big/1.jpg\"><img align=\"left\" alt=\"\" border=\"0\" class=\"align-left\" src=\"https://www.exler.ru/img/films/03-10-2019/1.jpg\"></img></a>Сальвадор Майо (Антонио Бандерас) - стареющий режиссер, который пережил свой пик славы не один десяток лет назад. Он давно не снимает, находится в творческом кризисе. Одинок, очень болен и несчастен. Сальвадор - сосредоточение всевозможных болезней: бессоница, хронические фарингиты, отиты, рефлюкс, язва, бронхиальная астма, мышечные боли в пояснице, спине, коленях и плечах, боли в суставах, постоянный звон в ушах, хрипы и свисты в легких, постоянные мигрени, проблемы с позвоночником. А тут еще и новая странная проблема, которая не позволяет ему просто глотать таблетки: их приходится растирать в пыль, чтобы он не подавился. И Сальвадор боится, что это признак какого-то страшного заболевания. </p>",
-  :item/published "2019-10-03T06:00:00Z",
-  :item/feed #:db{:id 83562883726309}}
- {:db/id 96757023259673,
-  :item/id "https://www.exler.ru/films/tajna-pechati-drakona.htm",
+  "<p><em>Submitted by Market Crumbs</em></p>\n\n<p class=\"XzvDs _208Ie ljrnk blog-post-text-font blog-post-text-color _2QAo- _25MYV _1Fao9 ljrnk public-DraftStyleDefault-block-depth0 public-DraftStyleDefault-text-ltr\" id=\"viewer-aiuk6\"><span class=\"vkIF2 public-DraftStyleDefault-ltr\"><span style=\"color: rgb(0, 0, 0);\">This year's Super Bowl was long destined to be a far cry from the usual spectacle as a result of the pandemic. Super Bowl LV, which will be held at Tampa's Raymond James Stadium, will see </span><a class=\"_2qJYG blog-link-hashtag-color _2xVcV\" href=\"https://www.espn.com/nfl/story/_/id/30758819/vaccinated-health-workers-22000-fans-attendance-super-bowl-lv\" rel=\"noopener\" target=\"_blank\"><u class=\"sDZYg\">only 22,000 fans</u></a><span style=\"color: rgb(0, 0, 0);\"> witness the game in person compared to a stadium capacity of 65,000.</span><span style=\"color: rgb(72, 73, 74);\"> </span></span></p>",
+  :item/source-id "686883 at https://www.zerohedge.com",
+  :item/has-content true,
+  :item/feed+id [79164837200002 "686883 at https://www.zerohedge.com"],
+  :item/published "2021-01-26T17:45:00Z",
   :item/num 51,
-  :item/link "https://www.exler.ru/films/tajna-pechati-drakona.htm",
-  :item/title "Тайна печати дракона",
+  :db/id 101155069755612,
+  :item/feed #:db{:id 79164837200002},
+  :item/title
+  "Budweiser, Pepsi, Other Prominent Brands Pass On This Year's Superbowl"}
+ {:item/link
+  "http://feedproxy.google.com/~r/zerohedge/feed/~3/kxH_K6enJy0/chart-explains-larry-fink-green-agenda",
   :item/summary
-  "<p><a class=\"fancybox\" rel=\"media\" src=\"https://www.exler.ru/img/films/07-10-2019/big/1.jpg\"><img align=\"left\" alt=\"\" border=\"0\" class=\"align-left\" src=\"https://www.exler.ru/img/films/07-10-2019/1.jpg\"></img></a>Английский путешественник и географ Джонатан Грин (Джейсон Флеминг) изобрел способ очень точного измерения расстояний, в результате чего он делает карты поразительной подробности и достоверности. Царь Петр I заказал Грину карту европейской части России. Грин отправился в Россию, по пути на беду встретившись с самим Вием, но все-таки добрался до Москвы. </p>",
-  :item/published "2019-10-07T06:00:00Z",
-  :item/feed #:db{:id 83562883726309}}
- {:db/id 96757023259674,
-  :item/id "https://www.exler.ru/films/prestupnik.htm",
+  "<p>Earlier today, Blackrock founder and billionaire Larry Fink <a href=\"https://www.cnbc.com/video/2021/01/26/blackrock-ceo-larry-fink-annual-letter-sustainability.html\">took over the CNBC airwaves</a>, and the favorite scribe of the ultra rich, Andrew Ross Sorkin, penned an article in the NYT about how \"<a href=\"https://www.nytimes.com/2021/01/26/business/dealbook/larry-fink-letter-blackrock-climate.html\">BlackRock Chief Pushes a Big New Climate Goal for the Corporate World</a>\" in which he said that \"Larry Fink is using his firm’s huge influence to pressure companies to eliminate greenhouse gas emissions by 2050.\" Which, of course, is an amusing take - the Blackrock CEO led a similar \"crusade\" against buybacks in 2013-2016 with absolutely zero success and in fact, buybacks exploded in 2017 and 2018 after Trump allowed offshore tax repatriation, leaving companies more indebted than ever and more prone to failure once a catastrophic event happened. Such as covid.</p>",
+  :item/source-id "686928 at https://www.zerohedge.com",
+  :item/has-content true,
+  :item/feed+id [79164837200002 "686928 at https://www.zerohedge.com"],
+  :item/published "2021-01-26T18:06:19Z",
   :item/num 52,
-  :item/link "https://www.exler.ru/films/prestupnik.htm",
-  :item/title "Преступник",
-  :item/summary
-  "<p><a class=\"fancybox\" rel=\"media\" src=\"https://www.exler.ru/img/films/10-10-2019/big/1.jpg\"><img align=\"left\" alt=\"\" border=\"0\" class=\"align-left\" src=\"https://www.exler.ru/img/films/10-10-2019/1.jpg\" /></a>Любопытнейший сериальный эксперимент Netflix. Этот сериал почему-то иногда именуют \"юридическим процедуралом\" (<i>процедурал</i> - сериал с независимыми друг от друга сериями, которые можно смотреть по отдельности), однако это скорее расследовательский, то есть детективный процедурал. </p>\r\n\r\n<p>В каждой серии всего три одинаковые локации, которые могут быть в любом городе. Основная локация - комната, в которой происходит допрос предполагаемого преступника. В допросе участвует один детектив, два детектива или один детектив и один вышестоящий инспектор. Во время допроса ведется видеозапись, о чем преступника предупреждают. В комнате висит здоровенное зеркало, за которым находится пункт наблюдения: в нем находятся другие сотрудники полиции - психолог, начальник, специалист по компьютерам и так далее. </p>",
-  :item/published "2019-10-10T06:00:00Z",
-  :item/feed #:db{:id 83562883726309}}
- {:db/id 96757023259675,
-  :item/id "https://www.exler.ru/films/dedvud.htm",
-  :item/num 53,
-  :item/link "https://www.exler.ru/films/dedvud.htm",
-  :item/title "Дэдвуд",
-  :item/summary
-  "<p align=\"left\"><a class=\"fancybox\" rel=\"media\" src=\"https://www.exler.ru/img/films/14-10-2019/big/1.jpg\"><img align=\"left\" alt=\"\" border=\"0\" class=\"align-left\" src=\"https://www.exler.ru/img/films/14-10-2019/1.jpg\"></img></a>Об этом фильме невозможно говорить без предыстории, потому что он, по сути, является полнометражным финалом знаменитого одноименного сериала.</p>\r\n\r\n<p align=\"left\">Сериал \"Дэдвуд\" выходил в 2004-2006 годах. Действие начиналось в 1876 году, в сериале рассказывалось о поселке Дэдвуд в Южной Дакоте: поселок был создан старателями во время \"золотой лихорадки\". Кроме старателей в поселок, который постепенно будет превращаться в городок, стекаются всякие авантюристы и преступники. </p>",
-  :item/published "2019-10-14T06:00:00Z",
-  :item/feed #:db{:id 83562883726309}}
- {:db/id 96757023259676,
-  :item/id "https://www.exler.ru/films/el-camino-vo-vse-tyazhkie.htm",
-  :item/num 54,
-  :item/link
-  "https://www.exler.ru/films/el-camino-vo-vse-tyazhkie.htm",
-  :item/title "El Camino: Во все тяжкие",
-  :item/summary
-  "<p align=\"left\"><a class=\"fancybox\" rel=\"media\" src=\"https://www.exler.ru/img/films/17-10-2019/big/1.jpg\"><img align=\"left\" alt=\"\" border=\"0\" class=\"align-left\" src=\"https://www.exler.ru/img/films/17-10-2019/1.jpg\"></img></a>Идея полнометражного фильма о судьбе Джесси Пинкмана (Аарон Пол) появилась у создателя сериала \"<a src=\"https://www.exler.ru/films/vo-vse-tyazhkie.htm\">Во все тяжкие</a>\" Винса Гиллигана еще во время съемок заключительного сезона. В 2017 году Гиллиган поделился этой идеей с Аароном Полом и тот сказал, что готов в этом участвовать. Сценарий картины Гиллиган написал сам, и он же выступил исполнительным продюсером и собственноручно поставил картину, хотя до этого в полнометражном формате ничего не снимал.</p>",
-  :item/published "2019-10-17T06:00:00Z",
-  :item/feed #:db{:id 83562883726309}}
- {:db/id 96757023259677,
-  :item/id "https://www.exler.ru/films/dryan.htm",
-  :item/num 55,
-  :item/link "https://www.exler.ru/films/dryan.htm",
-  :item/title "Дрянь",
-  :item/summary
-  "<p><a class=\"fancybox\" rel=\"media\" src=\"https://www.exler.ru/img/films/09-12-2019/big/1.jpg\"><img align=\"left\" alt=\"\" border=\"0\" class=\"align-left\" src=\"https://www.exler.ru/img/films/09-12-2019/1.jpg\"></img></a>Дрянь (Фиби Уоллер-Бридж) - тридцатилетняя англичанка, живущая в Лондоне. У нее проблемы во взаимоотношениях с ее парнем Гарри (Хью Скиннер), Дрянь ничего не имеет против быстрых знакомств и последующих сексуальных контактов. Она пытается заниматься бизнесом: держит маленькую кафешку, на стенах которых развешены изображения морских свинок. Эту кафешку Дрянь затевала вместе со своей близкой подругой Бу (Дженни Рейнсфорд), однако Бу погибла в результате несчастного случая, что Дрянь очень тяжело переживает, ну и дела у нее в кафешке идут откровенно плохо. </p>",
-  :item/published "2019-12-09T06:00:00Z",
-  :item/feed #:db{:id 83562883726309}}
- {:db/id 96757023259678,
-  :item/id "https://www.exler.ru/films/dzhoker.htm",
-  :item/num 56,
-  :item/link "https://www.exler.ru/films/dzhoker.htm",
-  :item/title "Джокер",
-  :item/summary
-  "<p><a class=\"fancybox\" rel=\"media\" src=\"https://www.exler.ru/img/films/12-12-2019/big/1.jpg\"><img align=\"left\" alt=\"\" border=\"0\" class=\"align-left\" src=\"https://www.exler.ru/img/films/12-12-2019/1.jpg\"></img></a>Мрачный город Готэм, начало 1980-х годов. Сорокалетний Артур Флек (Хоакин Феникс) живет в убогой квартирке с больной матерью Пенни (Фрэнсис Конрой). Артур имеет психическое заболевание, полученное в детстве после сильного удара головы, ходит на консультации к психотерапевту, где ему выписывают лекарства. Он мечтает стать стендап-комиком и записывает в тетрадку всякие идеи для шуток и скетчей. </p>",
-  :item/published "2019-12-12T06:00:00Z",
-  :item/feed #:db{:id 83562883726309}}
- {:db/id 96757023259679,
-  :item/id "https://www.exler.ru/films/angry-birds-2-v-kino.htm",
-  :item/num 57,
-  :item/link "https://www.exler.ru/films/angry-birds-2-v-kino.htm",
-  :item/title "Angry Birds 2 в кино",
-  :item/summary
-  "<p align=\"left\"><a class=\"fancybox\" rel=\"media\" src=\"https://www.exler.ru/img/films/16-12-2019/big/1.jpg\"><img align=\"left\" alt=\"\" border=\"0\" class=\"align-left\" src=\"https://www.exler.ru/img/films/16-12-2019/1.jpg\"></img></a>Позволю себе напомнить содержание <a src=\"https://www.exler.ru/films/angry-birds-v-kino.htm\">предыдущего фильма</a>. На Птичьем острове безмятежно живут птички. Невесело там только Рэду (Джейсон Судейкис) - парии, мизантропу и социопату. В какой-то момент на остров прибыли свиньи со своего Свинского острова. Свиньи для птиц устроили веселое представление, но оказалось, что это просто завеса для подлой операции - свиньи похитили птичьи яйца. И после этого именно рассерженный Рэд организовал экспедицию, которая отправилась на Свинский остров, чтобы вернуть яйца обратно. </p>",
-  :item/published "2019-12-16T06:00:00Z",
-  :item/feed #:db{:id 83562883726309}})
+  :db/id 101155069755613,
+  :item/feed #:db{:id 79164837200002},
+  :item/title "The Chart That Explains Larry Fink's \"Green\" Agenda"})
 
 #+end_example
 
