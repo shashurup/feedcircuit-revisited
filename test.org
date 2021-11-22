@@ -28,249 +28,82 @@
 (->> (d/index-pull (d/db bda/conn)
                    {:index :avet
                     :selector '[*]
-                    :start '[:item/num 42]})
+                    :start '[:item/num 10]})
      ;(filter #(= (get-in % [:item/feed :db/id]) 83562883726309))               
-     (take 16))
+     (take 5))
 #+end_src
 
 #+RESULTS:
 #+begin_example
-({:item/link "https://kiwibyrd.org/2021/08/17/21h82/",
+({:item/link
+  "http://feedproxy.google.com/~r/zerohedge/feed/~3/OcSvHDC0icc/covid-lockdown-policies-will-disproportionately-hit-black-americans-decades-new-study",
+  :item/summary
+  "<p><em><strong>\"Follow the science\" </strong></em>exclaimed every virtue-signaling talking head as left-leaning authorities/officials clamped down on Americans' rights nationwide... \"wear a mask\", \"shelter at home\", \"no comingling\", \"slow the spread\", \"think of the children\", \"save grandma\" were the cries as the virus refused to pay attention to state and local authories' orders to behave as the \"scientist\" textbooks claimed.</p>",
+  :item/source-id "686033 at https://www.zerohedge.com",
+  :item/feed+id [83562883711106 "686033 at https://www.zerohedge.com"],
+  :item/published "2021-01-26T02:20:11Z",
+  :item/num 10,
+  :db/id 92358976733363,
+  :item/feed #:db{:id 83562883711106},
+  :item/title
+  "COVID Lockdown Policies Will Disproportionately Hit Black Americans For Decades, New Study Finds"}
+ {:item/link "https://kiwibyrd.org/2019/04/23/1943/",
   :item/category
-  ["Folger Library"
-   "Francis Bacon"
-   "General François Cartier"
-   "TEMPEST"
-   "William Friedman"
-   "АНБ США"
-   "История"
-   "Книги"
-   "Криптография"
-   "Люди"
+  ["Предрассудки" "Физика" "активная материя" "живая материя"],
+  :item/summary
+  "(Апрель 2019, idb) Очередное случайное открытие ученых-экспериментаторов – как ещё один маленький ключик к разгадке больших тайн природы. И ещё один повод обратить внимание на странности в реакциях науки на собственные открытия. Сегодня уже многие, наверное, наслышаны о том серьезнейшем кризисе непонимания, который довольно неожиданно обозначился вдруг в фундаментальных основах физики. А значит, и в &#8230; <p class=\"link-more\"><a href=\"https://kiwibyrd.org/2019/04/23/1943/\" class=\"more-link\">Читать <span class=\"screen-reader-text\"> \"Истории прыгающей капли (и при чём тут квантовая&#160;физика)\"</span> далее</a></p>",
+  :item/source-id "http://kiwibyrd.org/?p=4050",
+  :item/has-content true,
+  :item/feed+id [79164837200001 "http://kiwibyrd.org/?p=4050"],
+  :item/published "2019-04-23T09:47:18Z",
+  :item/num 10,
+  :db/id 96757023244430,
+  :item/feed #:db{:id 79164837200001},
+  :item/title
+  "Истории прыгающей капли (и при чём тут квантовая физика)"}
+ {:item/link
+  "http://feedproxy.google.com/~r/zerohedge/feed/~3/cVJXiaJRero/first-casualty-big-short-squeeze-melvin-capital-gets-275bn-bailout-citadel-point72-after",
+  :item/summary
+  "<p>With dozens of heavily shorted (by hedge funds) stocks exploding higher in recent days, it was only a matter of time before the first casualty of said bull raid emerged, and <a href=\"https://www.wsj.com/articles/citadel-point72-to-invest-2-75-billion-into-melvin-capital-management-11611604340?mod=lead_feature_below_a_pos1\">thanks to the WSJ </a>we now have the first name.</p>",
+  :item/source-id "686797 at https://www.zerohedge.com",
+  :item/feed+id [83562883711106 "686797 at https://www.zerohedge.com"],
+  :item/published "2021-01-26T02:45:36Z",
+  :item/num 11,
+  :db/id 92358976733364,
+  :item/feed #:db{:id 83562883711106},
+  :item/title
+  "The First Casualty Of The Big Short Squeeze: Melvin Capital Gets $2.75BN Bailout From Citadel, Point72 After Its Shorts Explode"}
+ {:item/link "https://kiwibyrd.org/2019/04/30/1944/",
+  :item/category
+  ["Deep State"
+   "Mike Pompeo"
+   "TPAJAX"
+   "Глубокое Государство"
+   "Иран"
    "Обман"
-   "Разведслужбы"
-   "Уильям Фридман"
-   "Франсуа Картье"
-   "Фрэнсис Бэкон"],
-  :item/summary "",
-  :item/source-id "http://kiwibyrd.org/?p=5683",
-  :item/feed+id [83562883711105 "http://kiwibyrd.org/?p=5683"],
-  :item/published "2021-08-17T10:53:55Z",
-  :item/num 42,
-  :db/id 96757023244452,
-  :item/feed #:db{:id 83562883711105},
-  :item/title "Бэкон, Tempest и книга Картье, часть 9",
-  :item/author ["idboris"]}
- {:item/link
-  "http://feedproxy.google.com/~r/zerohedge/feed/~3/5q_rKjkBTkM/conte-quits-italys-pm-new-bid-build-majority",
+   "Секретность как коррупция"
+   "ЦРУ США"],
   :item/summary
-  "<p>The Tuesday resignation of Italian Prime Minister Giuseppe Conte has left the country in what the Italians call a government crisis \"in the dark\" - one which has no obvious solution, according to <a href=\"https://www.barrons.com/news/what-s-next-for-italy-after-pm-conte-s-resignation-01611660906?tesla=y\"><em>AFP</em></a>.</p>",
-  :item/source-id "686890 at https://www.zerohedge.com",
-  :item/has-content true,
-  :item/feed+id [79164837200002 "686890 at https://www.zerohedge.com"],
-  :item/published "2021-01-26T15:25:00Z",
-  :item/num 42,
-  :db/id 101155069755603,
-  :item/feed #:db{:id 79164837200002},
+  "(Апрель 2019, idb) Когда главным дипломатом сверхдержавы становится главный шпион и бывший военный, то из его уст можно услышать довольно интересные вещи о базовых основах современной государственности. Майский выпуск американского еженедельника National Review, специализирующегося на консервативно-патриотических обзорах событий из политической жизни США и на таких же портретах ведущих политиков нации, посвятил свою (подобострастную и полностью &#8230; <p class=\"link-more\"><a href=\"https://kiwibyrd.org/2019/04/30/1944/\" class=\"more-link\">Читать <span class=\"screen-reader-text\"> \"«Мы лжем, мы жульничаем, мы воруем» (и почему именно ЭТО должно напоминать вам о славе нашего&#160;государства)\"</span> далее</a></p>",
+  :item/source-id "http://kiwibyrd.org/?p=4056",
+  :item/feed+id [79164837200001 "http://kiwibyrd.org/?p=4056"],
+  :item/published "2019-04-30T19:37:49Z",
+  :item/num 11,
+  :db/id 96757023244431,
+  :item/feed #:db{:id 79164837200001},
   :item/title
-  "Conte Quits As Italy's PM In New Bid To Build Majority "}
- {:item/link "https://kiwibyrd.org/2021/08/06/21h81/",
-  :item/category
-  ["История" "Книги" "Математика" "Роджер Пенроуз" "Уильям Клиффорд"],
-  :item/summary "",
-  :item/source-id "http://kiwibyrd.org/?p=5657",
-  :item/feed+id [83562883711105 "http://kiwibyrd.org/?p=5657"],
-  :item/published "2021-08-06T10:20:54Z",
-  :item/num 43,
-  :db/id 96757023244453,
-  :item/feed #:db{:id 83562883711105},
-  :item/title "Программа Клиффорда как рубеж и перспектива",
-  :item/author ["idboris"]}
+  "«Мы лжем, мы жульничаем, мы воруем» (и почему именно ЭТО должно напоминать вам о славе нашего государства)"}
  {:item/link
-  "http://feedproxy.google.com/~r/zerohedge/feed/~3/6r1QVg8bzLQ/gamestop-halted-after-surging-billionaire-call-buying-tweet",
+  "http://feedproxy.google.com/~r/zerohedge/feed/~3/PAYPZUTc4R0/government-waste-thrives-darkness",
   :item/summary
-  "<span class=\"field field--name-title field--type-string field--label-hidden\" property=\"schema:name\">\"Let's Gooooo!!!\" - GameStop Halted After Surging On Billionaire Call-Buying Tweet</span>\n\n            <div class=\"clearfix text-formatted field field--name-body field--type-text-with-summary field--label-hidden field__item\" property=\"schema:text\"><p>Just when you thought it was safe to pile into the shorts again after yesterday's utter farce in GME shares, this morning has seen the mockery continue.</p>\n\n<p>A pre-market buying panic was sold into during the cash session and was about to erase all the gains when suddenly, none other than billionaire VC Chamath Palihapitiya tweeted the following...</p>\n\n<blockquote class=\"twitter-tweet\">\n<p dir=\"ltr\" lang=\"en\" xml:lang=\"en\">Lots of <a href=\"https://twitter.com/search?q=%24GME&amp;src=ctag&amp;ref_src=twsrc%5Etfw\">$GME</a> talk soooooo....<br /><br />\nWe bought Feb $115 calls on <a href=\"https://twitter.com/search?q=%24GME&amp;src=ctag&amp;ref_src=twsrc%5Etfw\">$GME</a> this morning.<br /><br />\nLet’s gooooooo!!!!!!!! <a href=\"https://t.co/XhOKL1fgKN\">https://t.co/XhOKL1fgKN</a> <a href=\"https://t.co/rbcB3Igl15\">pic.twitter.com/rbcB3Igl15</a></p>\n— Chamath Palihapitiya (@chamath) <a href=\"https://twitter.com/chamath/status/1354089928313823232?ref_src=twsrc%5Etfw\">January 26, 2021</a></blockquote>\n<script async=\"\" charset=\"utf-8\" src=\"https://platform.twitter.com/widgets.js\"></script><p>And GME shares immediately spiked higher and were halted...</p>\n\n<p><a data-image-external-href=\"\" data-image-href=\"/s3/files/inline-images/2021-01-26_7-35-13.jpg?itok=YmQ37FB2\" data-link-option=\"0\" href=\"https://cms.zerohedge.com/s3/files/inline-images/2021-01-26_7-35-13.jpg?itok=YmQ37FB2\"><picture><img alt=\"\" data-entity-type=\"file\" data-entity-uuid=\"65f267be-e41d-4641-ac62-040da900e8e3\" data-responsive-image-style=\"inline_images\" height=\"359\" src=\"https://zh-prod-1cc738ca-7d3b-4a72-b792-20bd8d8fa069.storage.googleapis.com/s3fs-public/styles/inline_image_mobile/public/inline-images/2021-01-26_7-35-13.jpg?itok=YmQ37FB2\" typeof=\"foaf:Image\" width=\"500\" /></picture></a></p>\n\n<p>So while yesterday was a Robinhood vs Citadel cage-match, today is billionaire (Ken Griffiin) vs billionaire as Chamath sides with the WallStreetBets crowd...</p>\n\n<blockquote class=\"twitter-tweet\">\n<p dir=\"ltr\" lang=\"en\" xml:lang=\"en\">It's not reddit vs Ken Griffin...<br /><br />\nIt's Chamath vs Ken<br /><br />\nWe have a billionaire vs billionaire rumble in the jungle</p>\n— zerohedge (@zerohedge) <a href=\"https://twitter.com/zerohedge/status/1354091262505340929?ref_src=twsrc%5Etfw\">January 26, 2021</a></blockquote>\n</div>",
-  :item/source-id "686909 at https://www.zerohedge.com",
-  :item/has-content true,
-  :item/feed+id [79164837200002 "686909 at https://www.zerohedge.com"],
-  :item/published "2021-01-26T15:41:50Z",
-  :item/num 43,
-  :db/id 101155069755604,
-  :item/feed #:db{:id 79164837200002},
-  :item/title
-  "\"Let's Gooooo!!!\" - GameStop Halted After Surging On Billionaire Call-Buying Tweet"}
- {:item/link "https://kiwibyrd.org/2021/07/31/21h74/",
-  :item/category
-  ["8200"
-   "NSO Group"
-   "Безопасность через неясность"
-   "Брэнды"
-   "Израиль"
-   "Обман"
-   "Разведслужбы"],
-  :item/summary "",
-  :item/source-id "http://kiwibyrd.org/?p=5645",
-  :item/feed+id [83562883711105 "http://kiwibyrd.org/?p=5645"],
-  :item/published "2021-07-31T09:38:47Z",
-  :item/num 44,
-  :db/id 96757023244454,
-  :item/feed #:db{:id 83562883711105},
-  :item/title "Национальные особенности бизнеса на шпионаже",
-  :item/author ["idboris"]}
- {:item/link
-  "http://feedproxy.google.com/~r/zerohedge/feed/~3/V34k4_PjnHg/biden-halt-oil-gas-leasing-federal-land",
-  :item/summary
-  "<p>As previously reported, and as was just confirmed by the WSJ, President Biden on Wednesday will announce that he is halting all new oil and gas leasing on federal territory, \"setting up a confrontation with the oil industry over the future of U.S. energy.\" And since this effectively will suspend all fracking on federal lands (albeit once the extension period expires), this means that contrary to his representations, Biden is in fact banning fracking despite his Aug 31, 2020 proclamation that “I am not banning fracking. Let me say that again. I am not banning fracking, no matter how many times Donald Trump lies about me.\"</p>",
-  :item/source-id "686912 at https://www.zerohedge.com",
-  :item/has-content true,
-  :item/feed+id [79164837200002 "686912 at https://www.zerohedge.com"],
-  :item/published "2021-01-26T15:55:22Z",
-  :item/num 44,
-  :db/id 101155069755605,
-  :item/feed #:db{:id 79164837200002},
-  :item/title "Biden To Halt Oil, Gas Leasing On Federal Land"}
- {:item/link "https://kiwibyrd.org/2021/07/25/21h73/",
-  :item/category
-  ["Francis Bacon"
-   "The Independent"
-   "История"
-   "Обман"
-   "Управление восприятием"
-   "Фрэнсис Бэкон"],
-  :item/summary "",
-  :item/source-id "http://kiwibyrd.org/?p=5634",
-  :item/feed+id [83562883711105 "http://kiwibyrd.org/?p=5634"],
-  :item/published "2021-07-25T10:00:44Z",
-  :item/num 45,
-  :db/id 96757023244455,
-  :item/feed #:db{:id 83562883711105},
-  :item/title "Философ или клоун? (Бэкон бэспокоит…)",
-  :item/author ["idboris"]}
- {:item/link
-  "http://feedproxy.google.com/~r/zerohedge/feed/~3/yBL5a8K1urg/home-prices-soar-45-times-feds-inflation-target-all-us-cities",
-  :item/summary
-  "<p>The Fed's most frequent lament is that no matter how many trillions in bonds (and stocks and ETFs) it buys or how much liquidity it forehoses into the market, it just can't push inflation higher.</p>",
-  :item/source-id "686907 at https://www.zerohedge.com",
-  :item/has-content true,
-  :item/feed+id [79164837200002 "686907 at https://www.zerohedge.com"],
-  :item/published "2021-01-26T16:10:00Z",
-  :item/num 45,
-  :db/id 101155069755606,
-  :item/feed #:db{:id 79164837200002},
-  :item/title
-  "Home Prices Soar At 4.5 Times The Fed's Inflation Target In All US Cities"}
- {:item/link "https://kiwibyrd.org/2021/07/18/21h72/",
-  :item/category
-  ["Francis Bacon"
-   "General François Cartier"
-   "William Friedman"
-   "История"
-   "Книги"
-   "Криптография"
-   "Люди"
-   "Обман"
-   "Разведслужбы"
-   "Уильям Фридман"
-   "Франсуа Картье"
-   "Фрэнсис Бэкон"],
-  :item/summary "",
-  :item/source-id "http://kiwibyrd.org/?p=5609",
-  :item/feed+id [83562883711105 "http://kiwibyrd.org/?p=5609"],
-  :item/published "2021-07-18T09:51:32Z",
-  :item/num 46,
-  :db/id 96757023244456,
-  :item/feed #:db{:id 83562883711105},
-  :item/title "Бэкон, магия и книга Картье, часть 8",
-  :item/author ["idboris"]}
- {:item/link
-  "http://feedproxy.google.com/~r/zerohedge/feed/~3/Z6Vc393vUJg/gordon-johnson-expect-tesla-beat-2021-shipment-guidance-and-q4-net-income",
-  :item/summary
-  "<p>Tesla is set to report earnings on Wednesday after the bell this week and, as such, GLJ's principal Gordon Johnson has released his look into what Q4 numbers could bring. Johnson estimates that Tesla will beat expectations in both its 2021 shipment guidance and its Q4 2020 net income.</p>",
-  :item/source-id "686887 at https://www.zerohedge.com",
-  :item/has-content true,
-  :item/feed+id [79164837200002 "686887 at https://www.zerohedge.com"],
-  :item/published "2021-01-26T16:25:00Z",
-  :item/num 46,
-  :db/id 101155069755607,
-  :item/feed #:db{:id 79164837200002},
-  :item/title
-  "Gordon Johnson: Expect Tesla To \"Beat\" On 2021 Shipment Guidance And Q4 Net Income"}
- {:item/link
-  "http://feedproxy.google.com/~r/zerohedge/feed/~3/1NmJ02zElr0/top-cbs-execs-suspended-after-la-times-exposes-widening-allegations-racist-sexist-conduct",
-  :item/summary
-  "<p>Two top <em>CBS</em> executives have been suspended following a <a href=\"https://www.latimes.com/entertainment-arts/business/story/2021-01-24/cbs-television-stations-peter-dunn-racism-sexism\"><em>LA Times</em></a> investigation detailing \"widening allegations that the pair cultivated an environment that included <strong>bullying female managers and blocking efforts to hire and retain Black journalists.</strong>\"</p>",
-  :item/source-id "686910 at https://www.zerohedge.com",
-  :item/has-content true,
-  :item/feed+id [79164837200002 "686910 at https://www.zerohedge.com"],
-  :item/published "2021-01-26T16:40:00Z",
-  :item/num 47,
-  :db/id 101155069755608,
-  :item/feed #:db{:id 79164837200002},
-  :item/title
-  "Top CBS Execs Suspended After LA Times Exposes 'Widening Allegations' Of Racist, Sexist Conduct"}
- {:item/link
-  "http://feedproxy.google.com/~r/zerohedge/feed/~3/bz2Y_DZN3fQ/remote-workers-robinhoodrs-routed-critical-internet-services-suffer-major-east-coast-outage",
-  :item/summary
-  "<span class=\"field field--name-title field--type-string field--label-hidden\" property=\"schema:name\">Remote-Workers & Robinhood'rs Routed As Critical Internet Services Suffer Major East Coast Outage</span>\n\n            <div class=\"clearfix text-formatted field field--name-body field--type-text-with-summary field--label-hidden field__item\" property=\"schema:text\"><p>Users of Zoom, YouTube, Google, Gmail, Google Meet, Robinhood, Slack, Spotify, and Amazon Web Services are reporting issues or outages on Tuesday morning, according to <a href=\"https://downdetector.com/\">Downdetector</a>.</p>\n\n<p><a data-image-external-href=\"\" data-image-href=\"/s3/files/inline-images/2021-01-26%20%281%29.png?itok=clLeWXwp\" data-link-option=\"0\" href=\"https://cms.zerohedge.com/s3/files/inline-images/2021-01-26%20%281%29.png?itok=clLeWXwp\"><picture><img alt=\"\" data-entity-type=\"file\" data-entity-uuid=\"6ad815f4-c2ec-4aa8-bfeb-6975e869b927\" data-responsive-image-style=\"inline_images\" height=\"471\" src=\"https://zh-prod-1cc738ca-7d3b-4a72-b792-20bd8d8fa069.storage.googleapis.com/s3fs-public/styles/inline_image_mobile/public/inline-images/2021-01-26%20%281%29.png?itok=clLeWXwp\" typeof=\"foaf:Image\" width=\"500\" /></picture></a></p>\n\n<p><strong>These web services are critical for remote working folks and could cause disruptions.</strong></p>\n\n<p>Zoom users are reporting issues or outages across Mid-Atlantic and Northeast states.</p>\n\n<p><a data-image-external-href=\"\" data-image-href=\"/s3/files/inline-images/2021-01-26%20%282%29.png?itok=6om-JzUD\" data-link-option=\"0\" href=\"https://cms.zerohedge.com/s3/files/inline-images/2021-01-26%20%282%29.png?itok=6om-JzUD\"><picture><img alt=\"\" data-entity-type=\"file\" data-entity-uuid=\"e0a88687-c106-4f73-baf7-097647f084af\" data-responsive-image-style=\"inline_images\" height=\"471\" src=\"https://zh-prod-1cc738ca-7d3b-4a72-b792-20bd8d8fa069.storage.googleapis.com/s3fs-public/styles/inline_image_mobile/public/inline-images/2021-01-26%20%282%29.png?itok=6om-JzUD\" typeof=\"foaf:Image\" width=\"500\" /></picture></a></p>\n\n<p>The same goes for users of Google...</p>\n\n<p><a data-image-external-href=\"\" data-image-href=\"/s3/files/inline-images/2021-01-26%20%284%29.png?itok=SnYE8piz\" data-link-option=\"0\" href=\"https://cms.zerohedge.com/s3/files/inline-images/2021-01-26%20%284%29.png?itok=SnYE8piz\"><picture><img alt=\"\" data-entity-type=\"file\" data-entity-uuid=\"c3b32e0d-8196-490b-8800-f4567d1528ef\" data-responsive-image-style=\"inline_images\" height=\"522\" src=\"https://zh-prod-1cc738ca-7d3b-4a72-b792-20bd8d8fa069.storage.googleapis.com/s3fs-public/styles/inline_image_mobile/public/inline-images/2021-01-26%20%284%29.png?itok=SnYE8piz\" typeof=\"foaf:Image\" width=\"500\" /></picture></a></p>\n\n<p>..and we all know who is to blame...</p>\n\n<p><a data-image-external-href=\"\" data-image-href=\"/s3/files/inline-images/2021-01-26%20%283%29.png?itok=oifNgsVn\" data-link-option=\"0\" href=\"https://cms.zerohedge.com/s3/files/inline-images/2021-01-26%20%283%29.png?itok=oifNgsVn\"><picture><img alt=\"\" data-entity-type=\"file\" data-entity-uuid=\"7fc11b1c-a992-4330-939e-727b7067b040\" data-responsive-image-style=\"inline_images\" height=\"591\" src=\"https://zh-prod-1cc738ca-7d3b-4a72-b792-20bd8d8fa069.storage.googleapis.com/s3fs-public/styles/inline_image_mobile/public/inline-images/2021-01-26%20%283%29.png?itok=oifNgsVn\" typeof=\"foaf:Image\" width=\"500\" /></picture></a></p>\n\n<p><em>Developing...</em></p>\n</div>\n      <span class=\"field field--name-uid field--type-entity-reference field--label-hidden\" rel=\"schema:author\"><a about=\"https://cms.zerohedge.com/users/tyler-durden\" class=\"username\" datatype=\"\" href=\"https://cms.zerohedge.com/users/tyler-durden\" lang=\"\" property=\"schema:name\" title=\"View user profile.\" typeof=\"schema:Person\" xml:lang=\"\">Tyler Durden</a></span>\n<span class=\"field field--name-created field--type-created field--label-hidden\" content=\"2021-01-26T16:56:09+00:00\" property=\"schema:dateCreated\">Tue, 01/26/2021 - 11:56</span>",
-  :item/source-id "686920 at https://www.zerohedge.com",
-  :item/has-content true,
-  :item/feed+id [79164837200002 "686920 at https://www.zerohedge.com"],
-  :item/published "2021-01-26T16:56:09Z",
-  :item/num 48,
-  :db/id 101155069755609,
-  :item/feed #:db{:id 79164837200002},
-  :item/title
-  "Remote-Workers & Robinhood'rs Routed As Critical Internet Services Suffer Major East Coast Outage"}
- {:item/link
-  "http://feedproxy.google.com/~r/zerohedge/feed/~3/kVxPcbBZ9io/nancy-and-paul-pelosi-bought-more-1-million-tesla-disney-and-apple-calls-december",
-  :item/summary
-  "<p>When one looks at a situation like Monday's insanity-fueled, retail induced <a href=\"https://www.zerohedge.com/markets/daytrading-army-unleashes-furious-cascade-short-squeeze-meltups\">short squeeze</a> across the board, one must ask:<em> who are the government officials that have allowed this to happen and what have they been doing during the time they should be regulating such multiple-sigma market absurdities</em>?</p>",
-  :item/source-id "686781 at https://www.zerohedge.com",
-  :item/has-content true,
-  :item/feed+id [79164837200002 "686781 at https://www.zerohedge.com"],
-  :item/published "2021-01-26T17:10:00Z",
-  :item/num 49,
-  :db/id 101155069755610,
-  :item/feed #:db{:id 79164837200002},
-  :item/title
-  "Nancy And Paul Pelosi Bought More Than $1 Million In Tesla, Disney And Apple Calls In December"}
- {:item/link
-  "http://feedproxy.google.com/~r/zerohedge/feed/~3/BlMx25wfm1I/target-give-all-hourly-employees-500-bonus",
-  :item/summary
-  "<p><em>By Marianne Wilson of <a href=\"https://chainstoreage.com/target-give-employees-500-bonus\">Chain Store Age,</a></em></p>\n\n<p>On the heels of a strong holiday season, Target is paying out its fifth round of employee bonuses during the pandemic.</p>",
-  :item/source-id "686900 at https://www.zerohedge.com",
-  :item/has-content true,
-  :item/feed+id [79164837200002 "686900 at https://www.zerohedge.com"],
-  :item/published "2021-01-26T17:25:00Z",
-  :item/num 50,
-  :db/id 101155069755611,
-  :item/feed #:db{:id 79164837200002},
-  :item/title "Target To Give All Hourly Employees $500 Bonus"}
- {:item/link
-  "http://feedproxy.google.com/~r/zerohedge/feed/~3/4V-mGtASYyw/budweiser-pepsi-other-prominent-brands-pass-years-superbowl",
-  :item/summary
-  "<p><em>Submitted by Market Crumbs</em></p>\n\n<p class=\"XzvDs _208Ie ljrnk blog-post-text-font blog-post-text-color _2QAo- _25MYV _1Fao9 ljrnk public-DraftStyleDefault-block-depth0 public-DraftStyleDefault-text-ltr\" id=\"viewer-aiuk6\"><span class=\"vkIF2 public-DraftStyleDefault-ltr\"><span style=\"color: rgb(0, 0, 0);\">This year's Super Bowl was long destined to be a far cry from the usual spectacle as a result of the pandemic. Super Bowl LV, which will be held at Tampa's Raymond James Stadium, will see </span><a class=\"_2qJYG blog-link-hashtag-color _2xVcV\" href=\"https://www.espn.com/nfl/story/_/id/30758819/vaccinated-health-workers-22000-fans-attendance-super-bowl-lv\" rel=\"noopener\" target=\"_blank\"><u class=\"sDZYg\">only 22,000 fans</u></a><span style=\"color: rgb(0, 0, 0);\"> witness the game in person compared to a stadium capacity of 65,000.</span><span style=\"color: rgb(72, 73, 74);\"> </span></span></p>",
-  :item/source-id "686883 at https://www.zerohedge.com",
-  :item/has-content true,
-  :item/feed+id [79164837200002 "686883 at https://www.zerohedge.com"],
-  :item/published "2021-01-26T17:45:00Z",
-  :item/num 51,
-  :db/id 101155069755612,
-  :item/feed #:db{:id 79164837200002},
-  :item/title
-  "Budweiser, Pepsi, Other Prominent Brands Pass On This Year's Superbowl"}
- {:item/link
-  "http://feedproxy.google.com/~r/zerohedge/feed/~3/kxH_K6enJy0/chart-explains-larry-fink-green-agenda",
-  :item/summary
-  "<p>Earlier today, Blackrock founder and billionaire Larry Fink <a href=\"https://www.cnbc.com/video/2021/01/26/blackrock-ceo-larry-fink-annual-letter-sustainability.html\">took over the CNBC airwaves</a>, and the favorite scribe of the ultra rich, Andrew Ross Sorkin, penned an article in the NYT about how \"<a href=\"https://www.nytimes.com/2021/01/26/business/dealbook/larry-fink-letter-blackrock-climate.html\">BlackRock Chief Pushes a Big New Climate Goal for the Corporate World</a>\" in which he said that \"Larry Fink is using his firm’s huge influence to pressure companies to eliminate greenhouse gas emissions by 2050.\" Which, of course, is an amusing take - the Blackrock CEO led a similar \"crusade\" against buybacks in 2013-2016 with absolutely zero success and in fact, buybacks exploded in 2017 and 2018 after Trump allowed offshore tax repatriation, leaving companies more indebted than ever and more prone to failure once a catastrophic event happened. Such as covid.</p>",
-  :item/source-id "686928 at https://www.zerohedge.com",
-  :item/has-content true,
-  :item/feed+id [79164837200002 "686928 at https://www.zerohedge.com"],
-  :item/published "2021-01-26T18:06:19Z",
-  :item/num 52,
-  :db/id 101155069755613,
-  :item/feed #:db{:id 79164837200002},
-  :item/title "The Chart That Explains Larry Fink's \"Green\" Agenda"})
+  "<p><em>Submitted by <a href=\"https://www.realclearpolitics.com/articles/2021/01/25/government_waste_thrives_in_darkness_145112.html\">Real Clear Politics</a>, authored by Thomas W. Smith chairman of OpenTheBooks.com.</em></p>\n\n<p><a data-image-external-href=\"\" data-image-href=\"/s3/files/inline-images/washington%20darkness.jpg?itok=9jqG6sf9\" data-link-option=\"0\" href=\"https://cms.zerohedge.com/s3/files/inline-images/washington%20darkness.jpg?itok=9jqG6sf9\"><picture><img alt=\"\" data-entity-type=\"file\" data-entity-uuid=\"c40fdc93-fec8-4f1c-8d9b-d581ef0ea9f1\" data-responsive-image-style=\"inline_images\" height=\"333\" src=\"https://zh-prod-1cc738ca-7d3b-4a72-b792-20bd8d8fa069.storage.googleapis.com/s3fs-public/styles/inline_image_mobile/public/inline-images/washington%20darkness.jpg?itok=9jqG6sf9\" typeof=\"foaf:Image\" width=\"500\" /></picture></a></p>\n\n<p>In the last 20 years, our country’s national debt has exploded. In 2001, when George W. Bush took office, the national debt was $5.8 trillion. It took around 225 years -- booms, busts, depressions, wars, etc. -- to amass that much national debt. In just eight years, Bush and a compliant Congress doubled the number to $11.7 trillion. In Barack Obama’s two terms, another $8.6 trillion was added. During the past four years, Donald Trump and Congress fought many battles, but not over this: In that time, America’s future was mortgaged to the tune of another $6.7 trillion. Today, the national debt is around $27 trillion, a four-fold increase in the last two decades. That doesn’t count unfunded mandates. And there is no end in sight. </p>",
+  :item/source-id "686813 at https://www.zerohedge.com",
+  :item/feed+id [83562883711106 "686813 at https://www.zerohedge.com"],
+  :item/published "2021-01-26T02:50:11Z",
+  :item/num 12,
+  :db/id 92358976733365,
+  :item/feed #:db{:id 83562883711106},
+  :item/title "Government Waste Thrives In Darkness"})
 
 #+end_example
 
