@@ -28,26 +28,15 @@
 (->> (d/index-pull (d/db bda/conn)
                    {:index :avet
                     :selector '[*]
-                    :start '[:item/num 10]})
-     ;(filter #(= (get-in % [:item/feed :db/id]) 83562883726309))               
+                    :start '[:item/num 10]
+                    :reverse true})
+     (filter #(= (get-in % [:item/feed :db/id]) 79164837200001))               
      (take 5))
 #+end_src
 
 #+RESULTS:
 #+begin_example
-({:item/link
-  "http://feedproxy.google.com/~r/zerohedge/feed/~3/OcSvHDC0icc/covid-lockdown-policies-will-disproportionately-hit-black-americans-decades-new-study",
-  :item/summary
-  "<p><em><strong>\"Follow the science\" </strong></em>exclaimed every virtue-signaling talking head as left-leaning authorities/officials clamped down on Americans' rights nationwide... \"wear a mask\", \"shelter at home\", \"no comingling\", \"slow the spread\", \"think of the children\", \"save grandma\" were the cries as the virus refused to pay attention to state and local authories' orders to behave as the \"scientist\" textbooks claimed.</p>",
-  :item/source-id "686033 at https://www.zerohedge.com",
-  :item/feed+id [83562883711106 "686033 at https://www.zerohedge.com"],
-  :item/published "2021-01-26T02:20:11Z",
-  :item/num 10,
-  :db/id 92358976733363,
-  :item/feed #:db{:id 83562883711106},
-  :item/title
-  "COVID Lockdown Policies Will Disproportionately Hit Black Americans For Decades, New Study Finds"}
- {:item/link "https://kiwibyrd.org/2019/04/23/1943/",
+({:item/link "https://kiwibyrd.org/2019/04/23/1943/",
   :item/category
   ["Предрассудки" "Физика" "активная материя" "живая материя"],
   :item/summary
@@ -61,49 +50,67 @@
   :item/feed #:db{:id 79164837200001},
   :item/title
   "Истории прыгающей капли (и при чём тут квантовая физика)"}
- {:item/link
-  "http://feedproxy.google.com/~r/zerohedge/feed/~3/cVJXiaJRero/first-casualty-big-short-squeeze-melvin-capital-gets-275bn-bailout-citadel-point72-after",
-  :item/summary
-  "<p>With dozens of heavily shorted (by hedge funds) stocks exploding higher in recent days, it was only a matter of time before the first casualty of said bull raid emerged, and <a href=\"https://www.wsj.com/articles/citadel-point72-to-invest-2-75-billion-into-melvin-capital-management-11611604340?mod=lead_feature_below_a_pos1\">thanks to the WSJ </a>we now have the first name.</p>",
-  :item/source-id "686797 at https://www.zerohedge.com",
-  :item/feed+id [83562883711106 "686797 at https://www.zerohedge.com"],
-  :item/published "2021-01-26T02:45:36Z",
-  :item/num 11,
-  :db/id 92358976733364,
-  :item/feed #:db{:id 83562883711106},
-  :item/title
-  "The First Casualty Of The Big Short Squeeze: Melvin Capital Gets $2.75BN Bailout From Citadel, Point72 After Its Shorts Explode"}
- {:item/link "https://kiwibyrd.org/2019/04/30/1944/",
+ {:item/link "https://kiwibyrd.org/2019/04/15/1942/",
   :item/category
-  ["Deep State"
-   "Mike Pompeo"
-   "TPAJAX"
-   "Глубокое Государство"
-   "Иран"
-   "Обман"
-   "Секретность как коррупция"
-   "ЦРУ США"],
+  ["Internet Archive"
+   "Злоупотребления властью"
+   "Управление восприятием"
+   "Цензура"],
   :item/summary
-  "(Апрель 2019, idb) Когда главным дипломатом сверхдержавы становится главный шпион и бывший военный, то из его уст можно услышать довольно интересные вещи о базовых основах современной государственности. Майский выпуск американского еженедельника National Review, специализирующегося на консервативно-патриотических обзорах событий из политической жизни США и на таких же портретах ведущих политиков нации, посвятил свою (подобострастную и полностью &#8230; <p class=\"link-more\"><a href=\"https://kiwibyrd.org/2019/04/30/1944/\" class=\"more-link\">Читать <span class=\"screen-reader-text\"> \"«Мы лжем, мы жульничаем, мы воруем» (и почему именно ЭТО должно напоминать вам о славе нашего&#160;государства)\"</span> далее</a></p>",
-  :item/source-id "http://kiwibyrd.org/?p=4056",
-  :item/feed+id [79164837200001 "http://kiwibyrd.org/?p=4056"],
-  :item/published "2019-04-30T19:37:49Z",
-  :item/num 11,
-  :db/id 96757023244431,
+  "(Апрель 2019, idb) Когда люди паникуют, то делают, бывает, массу поспешных глупых вещей, о которых потом обычно сожалеют – когда удается успокоиться. Когда же паникуют люди не простые, а большие чиновники государства, то они не только делают глупые поспешные вещи, но и подводят под них далее юридическую законодательную базу. Чтобы для публики любые глупости и &#8230; <p class=\"link-more\"><a href=\"https://kiwibyrd.org/2019/04/15/1942/\" class=\"more-link\">Читать <span class=\"screen-reader-text\"> \"Запрещено всё&#8230;\"</span> далее</a></p>",
+  :item/source-id "http://kiwibyrd.org/?p=4041",
+  :item/feed+id [79164837200001 "http://kiwibyrd.org/?p=4041"],
+  :item/published "2019-04-15T09:47:47Z",
+  :item/num 9,
+  :db/id 96757023244429,
+  :item/feed #:db{:id 79164837200001},
+  :item/title "Запрещено всё…"}
+ {:item/link "https://kiwibyrd.org/2019/04/09/1941/",
+  :item/category
+  ["Linux" "Microsoft" "Windows 10" "Риски компьютерных систем"],
+  :item/summary
+  "(Апрель 2019, idb) Успешное массовое распространение ОС Windows 10 по планете – это неоспоримый факт. Но вот то ли это направление, куда нам хотелось бы двигаться? И можем ли мы лично что-то здесь изменить? Лет шесть тому назад в одном из компьютерных журналов была, помнится, опубликована под именем kiwi byrd одна «неуместная» статья, рассказывающая, по &#8230; <p class=\"link-more\"><a href=\"https://kiwibyrd.org/2019/04/09/1941/\" class=\"more-link\">Читать <span class=\"screen-reader-text\"> \"LINUX: свобода от драконов здесь и&#160;сейчас\"</span> далее</a></p>",
+  :item/source-id "http://kiwibyrd.org/?p=4028",
+  :item/feed+id [79164837200001 "http://kiwibyrd.org/?p=4028"],
+  :item/published "2019-04-09T13:38:28Z",
+  :item/num 8,
+  :db/id 96757023244428,
+  :item/feed #:db{:id 79164837200001},
+  :item/title "LINUX: свобода от драконов здесь и сейчас"}
+ {:item/link "https://kiwibyrd.org/2019/03/31/1935/",
+  :item/category
+  ["Military Deception"
+   "Дубровский Д. И."
+   "Книги"
+   "Обман"
+   "Управление восприятием"],
+  :item/summary
+  "(Март 2019, idb) Людям повсюду и упорно навязывается крайне странный подход к устройству всех дел. Чтобы реальная картина не интересовала вообще никого, чтобы Истина в принципе не соответствовала Правде, а правдой чтобы назывались разные формы лжи&#8230; Одно за другим, с интервалом ровно месяц, в Вашингтоне и Москве имели место два примечательных события, отчетливо связанных общей &#8230; <p class=\"link-more\"><a href=\"https://kiwibyrd.org/2019/03/31/1935/\" class=\"more-link\">Читать <span class=\"screen-reader-text\"> \"Обман как основа государства, самообман как основа&#160;мировоззрения\"</span> далее</a></p>",
+  :item/source-id "http://kiwibyrd.org/?p=4020",
+  :item/feed+id [79164837200001 "http://kiwibyrd.org/?p=4020"],
+  :item/published "2019-03-31T20:34:25Z",
+  :item/num 7,
+  :db/id 96757023244427,
   :item/feed #:db{:id 79164837200001},
   :item/title
-  "«Мы лжем, мы жульничаем, мы воруем» (и почему именно ЭТО должно напоминать вам о славе нашего государства)"}
- {:item/link
-  "http://feedproxy.google.com/~r/zerohedge/feed/~3/PAYPZUTc4R0/government-waste-thrives-darkness",
+  "Обман как основа государства, самообман как основа мировоззрения"}
+ {:item/link "https://kiwibyrd.org/2019/03/23/1934/",
+  :item/category
+  ["ER-bridge"
+   "Википедия (dark side of)"
+   "Обман"
+   "Управление восприятием"
+   "Физика"
+   "психология"],
   :item/summary
-  "<p><em>Submitted by <a href=\"https://www.realclearpolitics.com/articles/2021/01/25/government_waste_thrives_in_darkness_145112.html\">Real Clear Politics</a>, authored by Thomas W. Smith chairman of OpenTheBooks.com.</em></p>\n\n<p><a data-image-external-href=\"\" data-image-href=\"/s3/files/inline-images/washington%20darkness.jpg?itok=9jqG6sf9\" data-link-option=\"0\" href=\"https://cms.zerohedge.com/s3/files/inline-images/washington%20darkness.jpg?itok=9jqG6sf9\"><picture><img alt=\"\" data-entity-type=\"file\" data-entity-uuid=\"c40fdc93-fec8-4f1c-8d9b-d581ef0ea9f1\" data-responsive-image-style=\"inline_images\" height=\"333\" src=\"https://zh-prod-1cc738ca-7d3b-4a72-b792-20bd8d8fa069.storage.googleapis.com/s3fs-public/styles/inline_image_mobile/public/inline-images/washington%20darkness.jpg?itok=9jqG6sf9\" typeof=\"foaf:Image\" width=\"500\" /></picture></a></p>\n\n<p>In the last 20 years, our country’s national debt has exploded. In 2001, when George W. Bush took office, the national debt was $5.8 trillion. It took around 225 years -- booms, busts, depressions, wars, etc. -- to amass that much national debt. In just eight years, Bush and a compliant Congress doubled the number to $11.7 trillion. In Barack Obama’s two terms, another $8.6 trillion was added. During the past four years, Donald Trump and Congress fought many battles, but not over this: In that time, America’s future was mortgaged to the tune of another $6.7 trillion. Today, the national debt is around $27 trillion, a four-fold increase in the last two decades. That doesn’t count unfunded mandates. And there is no end in sight. </p>",
-  :item/source-id "686813 at https://www.zerohedge.com",
-  :item/feed+id [83562883711106 "686813 at https://www.zerohedge.com"],
-  :item/published "2021-01-26T02:50:11Z",
-  :item/num 12,
-  :db/id 92358976733365,
-  :item/feed #:db{:id 83562883711106},
-  :item/title "Government Waste Thrives In Darkness"})
+  "(Март 2019, idb) Сто десятая и сто сороковая годовщины со дня рождения известных ученых – как повод для рассказа о мрачной и малоизвестной стороне замечательной всенародной энциклопедии. Случилось так, что у двух больших физиков-теоретиков – и одно время даже близких коллег-соавторов знаменитых статей – даты дней рождения пришлись на одно и то же время года. &#8230; <p class=\"link-more\"><a href=\"https://kiwibyrd.org/2019/03/23/1934/\" class=\"more-link\">Читать <span class=\"screen-reader-text\"> \"Микромосты Эйнштейна-Розена и большая ложь&#160;Википедии\"</span> далее</a></p>",
+  :item/source-id "http://kiwibyrd.org/?p=4003",
+  :item/feed+id [79164837200001 "http://kiwibyrd.org/?p=4003"],
+  :item/published "2019-03-23T16:33:55Z",
+  :item/num 6,
+  :db/id 96757023244426,
+  :item/feed #:db{:id 79164837200001},
+  :item/title "Микромосты Эйнштейна-Розена и большая ложь Википедии"})
 
 #+end_example
 

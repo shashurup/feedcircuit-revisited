@@ -83,6 +83,33 @@
                                :item/has-content true}]})
   (u/write-file (str content-dir "/" uid) content))
 
+(defn adapt-item [item]
+  (let [id (:db/id item)
+        feed-id (:db/id (:item/feed item))]
+    (-> item
+        (assoc :item/id id
+               :item/feed feed-id)
+        (dissoc :db/id :item/feed+id))))
+
+(defn get-items
+  ([feed start]
+   (get-items feed start nil))
+  ([feed start reverse]
+   (let [start (if start
+                 [:item/num start]
+                 [:item/num])]
+     (->> (d/index-pull (d/db conn)
+                        {:index :avet
+                         :selector '[*]
+                         :start start
+                         :reverse reverse})
+          (map adapt-item)
+          (filter #(= (:item/feed %) feed))))))
+
+(defn get-items-backwards
+  ([feed] (get-items feed nil true))
+  ([feed start] (get-items feed start true)))
+
 (defn init! []
   (def content-dir (conf/param :datomic :content-dir))
   (when (not-empty content-dir)
