@@ -25,108 +25,45 @@
 : 
 
 #+begin_src clojure :results pp
-(->> (d/index-pull (d/db bda/conn)
-                   {:index :avet
-                    :selector '[*]
-                    :start '[:item/num 10]
-                    :reverse true})
-     (filter #(= (get-in % [:item/feed :db/id]) 79164837200001))               
-     (take 5))
+(take 3 (bda/get-items 114349209321077 2000))
+#+end_src
+
+#+RESULTS:
+: ()
+: 
+
+#+begin_src clojure :results pp
+(bda/known-ids nil ["http://kiwibyrd.org/?p=4056" "http://kiwibyrd.org/?p=4068" "1" "blabla" "http://kiwibyrd.org/?p=4050"])
+#+end_src
+
+#+RESULTS:
+: #{"http://kiwibyrd.org/?p=4068"
+:   "http://kiwibyrd.org/?p=4050"
+:   "http://kiwibyrd.org/?p=4056"}
+: 
+
+#+begin_src clojure :results pp
+(bda/get-item "92358976733381")
 #+end_src
 
 #+RESULTS:
 #+begin_example
-({:item/link "https://kiwibyrd.org/2019/04/23/1943/",
-  :item/category
-  ["Предрассудки" "Физика" "активная материя" "живая материя"],
-  :item/summary
-  "(Апрель 2019, idb) Очередное случайное открытие ученых-экспериментаторов – как ещё один маленький ключик к разгадке больших тайн природы. И ещё один повод обратить внимание на странности в реакциях науки на собственные открытия. Сегодня уже многие, наверное, наслышаны о том серьезнейшем кризисе непонимания, который довольно неожиданно обозначился вдруг в фундаментальных основах физики. А значит, и в &#8230; <p class=\"link-more\"><a href=\"https://kiwibyrd.org/2019/04/23/1943/\" class=\"more-link\">Читать <span class=\"screen-reader-text\"> \"Истории прыгающей капли (и при чём тут квантовая&#160;физика)\"</span> далее</a></p>",
-  :item/source-id "http://kiwibyrd.org/?p=4050",
-  :item/has-content true,
-  :item/feed+id [79164837200001 "http://kiwibyrd.org/?p=4050"],
-  :item/published "2019-04-23T09:47:18Z",
-  :item/num 10,
-  :db/id 96757023244430,
-  :item/feed #:db{:id 79164837200001},
-  :item/title
-  "Истории прыгающей капли (и при чём тут квантовая физика)"}
- {:item/link "https://kiwibyrd.org/2019/04/15/1942/",
-  :item/category
-  ["Internet Archive"
-   "Злоупотребления властью"
-   "Управление восприятием"
-   "Цензура"],
-  :item/summary
-  "(Апрель 2019, idb) Когда люди паникуют, то делают, бывает, массу поспешных глупых вещей, о которых потом обычно сожалеют – когда удается успокоиться. Когда же паникуют люди не простые, а большие чиновники государства, то они не только делают глупые поспешные вещи, но и подводят под них далее юридическую законодательную базу. Чтобы для публики любые глупости и &#8230; <p class=\"link-more\"><a href=\"https://kiwibyrd.org/2019/04/15/1942/\" class=\"more-link\">Читать <span class=\"screen-reader-text\"> \"Запрещено всё&#8230;\"</span> далее</a></p>",
-  :item/source-id "http://kiwibyrd.org/?p=4041",
-  :item/feed+id [79164837200001 "http://kiwibyrd.org/?p=4041"],
-  :item/published "2019-04-15T09:47:47Z",
-  :item/num 9,
-  :db/id 96757023244429,
-  :item/feed #:db{:id 79164837200001},
-  :item/title "Запрещено всё…"}
- {:item/link "https://kiwibyrd.org/2019/04/09/1941/",
-  :item/category
-  ["Linux" "Microsoft" "Windows 10" "Риски компьютерных систем"],
-  :item/summary
-  "(Апрель 2019, idb) Успешное массовое распространение ОС Windows 10 по планете – это неоспоримый факт. Но вот то ли это направление, куда нам хотелось бы двигаться? И можем ли мы лично что-то здесь изменить? Лет шесть тому назад в одном из компьютерных журналов была, помнится, опубликована под именем kiwi byrd одна «неуместная» статья, рассказывающая, по &#8230; <p class=\"link-more\"><a href=\"https://kiwibyrd.org/2019/04/09/1941/\" class=\"more-link\">Читать <span class=\"screen-reader-text\"> \"LINUX: свобода от драконов здесь и&#160;сейчас\"</span> далее</a></p>",
-  :item/source-id "http://kiwibyrd.org/?p=4028",
-  :item/feed+id [79164837200001 "http://kiwibyrd.org/?p=4028"],
-  :item/published "2019-04-09T13:38:28Z",
-  :item/num 8,
-  :db/id 96757023244428,
-  :item/feed #:db{:id 79164837200001},
-  :item/title "LINUX: свобода от драконов здесь и сейчас"}
- {:item/link "https://kiwibyrd.org/2019/03/31/1935/",
-  :item/category
-  ["Military Deception"
-   "Дубровский Д. И."
-   "Книги"
-   "Обман"
-   "Управление восприятием"],
-  :item/summary
-  "(Март 2019, idb) Людям повсюду и упорно навязывается крайне странный подход к устройству всех дел. Чтобы реальная картина не интересовала вообще никого, чтобы Истина в принципе не соответствовала Правде, а правдой чтобы назывались разные формы лжи&#8230; Одно за другим, с интервалом ровно месяц, в Вашингтоне и Москве имели место два примечательных события, отчетливо связанных общей &#8230; <p class=\"link-more\"><a href=\"https://kiwibyrd.org/2019/03/31/1935/\" class=\"more-link\">Читать <span class=\"screen-reader-text\"> \"Обман как основа государства, самообман как основа&#160;мировоззрения\"</span> далее</a></p>",
-  :item/source-id "http://kiwibyrd.org/?p=4020",
-  :item/feed+id [79164837200001 "http://kiwibyrd.org/?p=4020"],
-  :item/published "2019-03-31T20:34:25Z",
-  :item/num 7,
-  :db/id 96757023244427,
-  :item/feed #:db{:id 79164837200001},
-  :item/title
-  "Обман как основа государства, самообман как основа мировоззрения"}
- {:item/link "https://kiwibyrd.org/2019/03/23/1934/",
-  :item/category
-  ["ER-bridge"
-   "Википедия (dark side of)"
-   "Обман"
-   "Управление восприятием"
-   "Физика"
-   "психология"],
-  :item/summary
-  "(Март 2019, idb) Сто десятая и сто сороковая годовщины со дня рождения известных ученых – как повод для рассказа о мрачной и малоизвестной стороне замечательной всенародной энциклопедии. Случилось так, что у двух больших физиков-теоретиков – и одно время даже близких коллег-соавторов знаменитых статей – даты дней рождения пришлись на одно и то же время года. &#8230; <p class=\"link-more\"><a href=\"https://kiwibyrd.org/2019/03/23/1934/\" class=\"more-link\">Читать <span class=\"screen-reader-text\"> \"Микромосты Эйнштейна-Розена и большая ложь&#160;Википедии\"</span> далее</a></p>",
-  :item/source-id "http://kiwibyrd.org/?p=4003",
-  :item/feed+id [79164837200001 "http://kiwibyrd.org/?p=4003"],
-  :item/published "2019-03-23T16:33:55Z",
-  :item/num 6,
-  :db/id 96757023244426,
-  :item/feed #:db{:id 79164837200001},
-  :item/title "Микромосты Эйнштейна-Розена и большая ложь Википедии"})
+#:item{:link
+       "http://feedproxy.google.com/~r/zerohedge/feed/~3/2WITJx7ft70/mypillow-ceo-mike-lindell-has-been-permanently-banned-twitter",
+       :id 92358976733381,
+       :summary
+       "<p><a href=\"https://www.theepochtimes.com/twitter-suspends-account-of-mike-lindell-ceo-of-mypillow_3671721.html\"><em>Authored by Mimi Nguyen Ly via The Epoch Times,</em></a></p>\n\n<p><a href=\"https://www.theepochtimes.com/t-twitter\">Twitter</a> late Monday suspended the account of MyPillow founder and CEO <a href=\"https://www.theepochtimes.com/t-mike-lindell\">Mike Lindell</a> on its platform.</p>\n\n<p>Users were faced with an error message,<strong> “You’re trying to follow user that doesn’t exist,” </strong>before the account page simply said that Lindell’s account has been suspended for having violated Twitter rules.</p>",
+       :source-id "686872 at https://www.zerohedge.com",
+       :has-content true,
+       :content
+       "<span class=\"field field--name-title field--type-string field--label-hidden\" property=\"schema:name\">MyPillow CEO Mike Lindell Has Been Permanently Banned From Twitter</span>\n\n            <div class=\"clearfix text-formatted field field--name-body field--type-text-with-summary field--label-hidden field__item\" property=\"schema:text\"><p><a href=\"https://www.theepochtimes.com/twitter-suspends-account-of-mike-lindell-ceo-of-mypillow_3671721.html\"><em>Authored by Mimi Nguyen Ly via The Epoch Times,</em></a></p>\n\n<p><a href=\"https://www.theepochtimes.com/t-twitter\">Twitter</a> late Monday suspended the account of MyPillow founder and CEO <a href=\"https://www.theepochtimes.com/t-mike-lindell\">Mike Lindell</a> on its platform.</p>\n\n<p>Users were faced with an error message,<strong> “You’re trying to follow user that doesn’t exist,” </strong>before the account page simply said that Lindell’s account has been suspended for having violated Twitter rules.</p>\n\n<p>Lindell’s personal Twitter account had over half a million followers before being suspended.</p>\n\n<p><a data-image-external-href=\"\" data-image-href=\"/s3/files/inline-images/mypillow-ceo-mike-lindell-600x721.jpg?itok=kL8eWzDE\" data-link-option=\"0\" href=\"https://cms.zerohedge.com/s3/files/inline-images/mypillow-ceo-mike-lindell-600x721.jpg?itok=kL8eWzDE\"><picture><img alt=\"\" data-entity-type=\"file\" data-entity-uuid=\"505f7387-73aa-4ae9-9188-f777030e1822\" data-responsive-image-style=\"inline_images\" height=\"601\" src=\"https://zh-prod-1cc738ca-7d3b-4a72-b792-20bd8d8fa069.storage.googleapis.com/s3fs-public/styles/inline_image_mobile/public/inline-images/mypillow-ceo-mike-lindell-600x721.jpg?itok=kL8eWzDE\" typeof=\"foaf:Image\" width=\"500\" /></picture></a></p>\n\n<p>The Twitter account of MyPillow CEO Mike Lindell just moments after it was suspended. (Twitter/realMikeLindell/Screenshot)</p>\n\n<p><a data-image-external-href=\"\" data-image-href=\"/s3/files/inline-images/mike-lindell-600x540.jpg?itok=RzTfqjc8\" data-link-option=\"0\" href=\"https://cms.zerohedge.com/s3/files/inline-images/mike-lindell-600x540.jpg?itok=RzTfqjc8\"><picture><img alt=\"\" data-entity-type=\"file\" data-entity-uuid=\"0e9367ec-5c8d-4fa6-994b-df377607feb7\" data-responsive-image-style=\"inline_images\" height=\"450\" src=\"https://zh-prod-1cc738ca-7d3b-4a72-b792-20bd8d8fa069.storage.googleapis.com/s3fs-public/styles/inline_image_mobile/public/inline-images/mike-lindell-600x540.jpg?itok=RzTfqjc8\" typeof=\"foaf:Image\" width=\"500\" /></picture></a></p>\n\n<p>The Twitter account of MyPillow CEO Mike Lindell just moments after it was suspended. (Twitter/realMikeLindell/Screenshot)</p>\n\n<p><strong>Lindell repeatedly violated the company’s civic integrity policy, due to which he was suspended, according to a Twitter spokesperson. </strong>The policy says, in part: “You may not use Twitter’s services for the purpose of manipulating or interfering in elections or other civic processes. This includes posting or sharing content that may suppress participation or mislead people about when, where, or how to participate in a civic process. In addition, we may label and reduce the visibility of Tweets containing false or misleading information about civic processes in order to provide additional context.”</p>\n\n<p>“The public conversation occurring on Twitter is never more important than during elections and other civic events. Any attempts to undermine the integrity of our service is antithetical to our fundamental rights and undermines the core tenets of freedom of expression, the value upon which our company is based.”</p>\n\n<p>Lindell did not immediately respond to a request for comment from The Epoch Times.</p>\n\n<p><strong>A supporter of former President Donald Trump, Lindell was advocating for election integrity amid allegations of widespread voting irregularities and election fraud in the aftermath of the November 2020 general election, which put him under the media spotlight.</strong> Lindell frequently posted political commentary that sometimes questioned the results of the election.</p>\n\n<p>The suspension of Lindell’s Twitter account is the latest in actions taken against Trump and his supporters since the Jan. 6 riots at the U.S. Capitol that resulted violence and a breach of the building.</p>\n\n<p>Trump had repeatedly called for peace and condemned the violence that took place. Despite this, he was <a href=\"https://www.theepochtimes.com/twitter-removes-trump-from-its-platform_3649669.html\">banned from Twitter</a> and other social media platforms, including Twitter, and cut off by some banks, while some of his supporters have also been banned by Twitter and have been fired by employers.</p>\n\n<p><strong>Lindell recently made media headlines after having visited the White House to meet with Trump and was spotted holding some <a href=\"https://www.theepochtimes.com/mike-lindell-visits-trump-in-oval-office-carrying-mysterious-notes_3658971.html\">mysterious notes</a></strong> that, in part, appeared to refer to “martial law.” It was unclear what the notes were about. Lindell told The Epoch Times that the notes were not official and he was helping deliver them from a lawyer who said it was a suggestion for Trump.</p>\n\n<p><a data-image-external-href=\"\" data-image-href=\"/s3/files/inline-images/mike-lindell-1-600x400.jpg?itok=ToOt1Sqb\" data-link-option=\"0\" href=\"https://cms.zerohedge.com/s3/files/inline-images/mike-lindell-1-600x400.jpg?itok=ToOt1Sqb\"><picture><img alt=\"\" data-entity-type=\"file\" data-entity-uuid=\"45d704ec-a32e-4e73-807f-c8abe85cdbbc\" data-responsive-image-style=\"inline_images\" height=\"333\" src=\"https://zh-prod-1cc738ca-7d3b-4a72-b792-20bd8d8fa069.storage.googleapis.com/s3fs-public/styles/inline_image_mobile/public/inline-images/mike-lindell-1-600x400.jpg?itok=ToOt1Sqb\" typeof=\"foaf:Image\" width=\"500\" /></picture></a></p>\n\n<p><em>MyPillow CEO Mike Lindell waits outside the West Wing of the White House before entering in Washington, on Jan. 15, 2021. (Drew Angerer/Getty Images)</em></p>\n\n<p><strong>Lindell is known for his <a href=\"https://www.theepochtimes.com/it-was-divine-intervention-founder-of-mypillow-mike-lindell-went-from-crack-addict-to-ceo_3294836.html\">American dream story</a> of an ex-cocaine addict turning his life around and running a successful business, MyPillow.</strong></p>\n\n<p>Bed Bath & Beyond, Kohl’s, and Wayfair announced they would no longer carry products from MyPillow. Lindell said the actions came after groups such as Sleeping Giants pushed companies to stop doing business with him.</p>\n\n<p>Bed Bath & Beyond <a href=\"https://www.theepochtimes.com/my-pillow-ceo-says-bed-bath-and-beyond-kohls-to-stop-selling-his-products_3662460.html\">told The Epoch Times</a> via email that their decision to stop carrying MyPillow was “data-driven and customer-inspired.”</p>\n\n<p>Sleeping Giants, a leftist activist group, <a href=\"https://www.theepochtimes.com/my-pillow-ceo-says-bed-bath-and-beyond-kohls-to-stop-selling-his-products_3662460.html\">shared</a> the news on Twitter about the companies’ decision to discontinue stocking Lindell’s products. The group accused Lindell of having encouraged the breach of the Capitol by calling for election integrity. Sleeping Giants has ongoing campaigns to pressure companies to shun conservative and right-leaning entities. It also <a href=\"https://twitter.com/slpng_giants/status/1353920899397771264?s=20\">shared the news</a> of Lindell’s suspension from Twitter late on Monday.</p>\n\n<blockquote>\n<p>“These are groups that were hired to attack and crush my companies to cancel MyPillow out. And they’re attacking these people, like Bed Bath & Beyond,” Lindell <a href=\"https://www.theepochtimes.com/mike-lindell-on-cancel-culture-we-have-to-make-a-stand-and-not-back-down_3663266.html\">told NTD News</a> last week. “They succumb to the pressure. And you know, that’s their choice. But you know what, this is the time we all have to stand up against this.”</p>\n\n<p>“This is the time we have to make a stand. We have to make a stand and not back down to media and cancel culture,” he said. “We can’t live in fear this time. We got to all stand together. And I’m not talking politics. I’m talking people.”</p>\n</blockquote>\n\n<p>Lindell is also facing possible litigation from Dominion Voting Systems over his accusations that their machines and software contributed to election fraud in the general election. According to reports, Dominion sent a letter to Lindell last month warning of an “imminent” defamation lawsuit and telling Lindell to stop “making defamatory claims against Dominion.”</p>\n\n<p><strong>Lindell said he hopes Dominion will sue him so that he can present evidence.</strong></p>\n</div>\n      <span class=\"field field--name-uid field--type-entity-reference field--label-hidden\" rel=\"schema:author\"><a about=\"https://cms.zerohedge.com/users/tyler-durden\" class=\"username\" datatype=\"\" href=\"https://cms.zerohedge.com/users/tyler-durden\" lang=\"\" property=\"schema:name\" title=\"View user profile.\" typeof=\"schema:Person\" xml:lang=\"\">Tyler Durden</a></span>\n<span class=\"field field--name-created field--type-created field--label-hidden\" content=\"2021-01-26T12:38:09+00:00\" property=\"schema:dateCreated\">Tue, 01/26/2021 - 07:38</span><img alt=\"\" height=\"1\" src=\"http://feeds.feedburner.com/~r/zerohedge/feed/~4/2WITJx7ft70\" width=\"1\" />",
+       :published "2021-01-26T12:38:09Z",
+       :num 28,
+       :feed 83562883711106,
+       :title
+       "MyPillow CEO Mike Lindell Has Been Permanently Banned From Twitter"}
 
 #+end_example
-
-#+begin_src clojure :results pp
-(map first
-     (d/q '[:find (pull ?u [:user/id :user/styles {:user-feed/_user [:user-feed/num :user-feed/position :user-feed/feed]}])
-            :where [?u :user/id "georgy@kibardin.name"]]
-           (d/db s/db-conn)))
-#+end_src
-
-#+RESULTS:
-: (#:user{:id "georgy@kibardin.name",
-:         :styles
-:         ["arstechnica.com https://shashurup.github.io/feedcircuit-styles/arstechnica.css"
-:          "habr.com https://shashurup.github.io/feedcircuit-styles/img-data-src.js"]})
-: 
 
 #+begin_src clojure :results pp
 (d/q '[:find (pull ?e [*])

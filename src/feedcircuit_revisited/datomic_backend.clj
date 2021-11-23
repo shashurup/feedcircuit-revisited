@@ -110,6 +110,27 @@
   ([feed] (get-items feed nil true))
   ([feed start] (get-items feed start true)))
 
+(defn get-item [uid]
+  (let [item (d/pull (d/db conn)
+                     '[*]
+                     (u/as-int uid))
+        content (u/read-file (str content-dir
+                                  "/"
+                                  (:db/id item)))]
+    (merge (adapt-item item)
+           (when content {:item/content content}))))
+
+(defn known-ids [_ ids]
+  (->> (d/q '[:find (pull ?i [:item/source-id])
+              :in $ [?src-id ...]
+              :where [?i :item/source-id ?src-id]]
+            (d/db conn) ids)
+       (map first)
+       (map :item/source-id)
+       set))
+
+(defn item-id? [subj] (re-matches #"\d+" subj))
+
 (defn init! []
   (def content-dir (conf/param :datomic :content-dir))
   (when (not-empty content-dir)

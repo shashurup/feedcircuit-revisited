@@ -14,7 +14,9 @@
 
 (def append-items! b/append-items!)
 
-(def known-ids b/known-ids)
+(def active-feed-urls b/active-feed-urls)
+
+(def unknown-feeds b/unknown-feeds)
 
 
 (def get-items b/get-items)
@@ -23,11 +25,11 @@
 
 (def get-item b/get-item)
 
+(def known-ids b/known-ids)
+
 (def add-content! b/add-content!)
 
 (def item-id? b/item-id?)
-
-(def all-users b/all-users)
 
 (def get-user-data b/get-user-data)
 
@@ -38,10 +40,6 @@
 (def update-settings! b/update-settings!)
 
 (def update-positions! b/update-positions!)
-
-(def active-feed-urls b/active-feed-urls)
-
-(def unknown-feeds b/unknown-feeds)
 
 (defn get-feed-items [feed start]
   (let [feed-title (get-feed-attr-by-id feed :feed/title)]
