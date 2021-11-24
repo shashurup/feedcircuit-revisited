@@ -39,13 +39,20 @@
           :where [?e :feed/url ?url]]
         (d/db conn) url)))
 
+(defn get-feed-attr-by-int-id [id attr]
+  (let [id? (= attr :feed/id)
+        attr (if id? :db/id attr)
+        conv-fn (if id? str identity)]
+    (-> (d/pull (d/db conn) [attr] id)
+        first
+        second
+        conv-fn)))
+
 (defn get-feed-attr-by-id [id attr]
-  (-> (d/pull (d/db conn) [attr] id)
-      first
-      second))
+  (get-feed-attr-by-int-id (u/as-int id) attr))
 
 (defn get-feed-attr [url attr]
-  (get-feed-attr-by-id [:feed/url url] attr))
+  (get-feed-attr-by-int-id [:feed/url url] attr))
 
 
 (def item-attrs (conj (map :db/ident schema/item-schema) :db/id))
@@ -84,8 +91,8 @@
   (u/write-file (str content-dir "/" uid) content))
 
 (defn adapt-item [item]
-  (let [id (:db/id item)
-        feed-id (:db/id (:item/feed item))]
+  (let [id (str (:db/id item))
+        feed-id (str (:db/id (:item/feed item)))]
     (-> item
         (assoc :item/id id
                :item/feed feed-id)

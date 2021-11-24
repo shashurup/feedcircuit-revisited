@@ -2,7 +2,6 @@
   (:gen-class)
   (:require [feedcircuit-revisited.backend :as backend]
             [feedcircuit-revisited.conf :as conf]
-            [feedcircuit-revisited.content :as content]
             [feedcircuit-revisited.handler :as handler]
             [feedcircuit-revisited.feed :as feed]
             [feedcircuit-revisited.stat :as stat]
