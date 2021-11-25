@@ -20,61 +20,76 @@
 ))
 #+end_src
 
-#+begin_src clojure :results pp
-;(bda/get-feed-attr-by-id "83562883711106" :feed/id)
-(bda/get-feed-attr "http://feeds.feedburner.com/zerohedge/feed" :feed/id)
-#+end_src
-
 #+RESULTS:
-: "83562883711106"
+: 
 : 
 
 #+begin_src clojure :results pp
-(take 3 (bda/get-items "83562883711106" nil true))
+;(bda/get-feed-attr-by-id "83562883711106" :feed/id)
+(bda/get-feed-attr "http://sgolub.ru/feed/" :feed/id)
+#+end_src
+
+#+RESULTS:
+: "92358976733285"
+: 
+
+#+begin_src clojure :results pp
+(take 3 (bda/get-items "92358976733285" nil true))
 ;(take 3 (bda/get-items "79164837200001" nil true))
 #+end_src
 
 #+RESULTS:
 #+begin_example
 (#:item{:link
-        "https://www.zerohedge.com/political/wsj-editorial-board-says-choice-fed-chief-between-tweedledum-tweedledee",
-        :id "92358976735549",
-        :summary
-        "<span class=\"field field--name-title field--type-string field--label-hidden\" property=\"schema:name\">WSJ Editorial Board Says Choice For Fed Chief Is Between \"Tweedledum & Tweedledee\"</span>\n\n            <div class=\"clearfix text-formatted field field--name-body field--type-text-with-summary field--label-hidden field__item\" property=\"schema:text\"><p><a href=\"https://www.theepochtimes.com/wsj-editorial-board-says-choice-for-federal-reserve-chief-is-between-tweedledum-and-tweedledee_4111080.html?utm_source=partner&amp;utm_campaign=ZeroHedge\"><em>Authored by Katabella Roberts via The Epoch Times,</em></a></p>\n\n<p>The <a href=\"https://www.wsj.com/articles/tweedledum-and-tweedledee-at-the-federal-reserve-chairman-candidates-jerome-powell-lael-brainard-inflation-11637187137?mod=hp_opin_pos_1\">Wall Street Journal Editorial Board</a> said Wednesday that the choice between the next chair of the <a href=\"https://www.theepochtimes.com/t-federal-reserve\">Federal Reserve</a> is a choice between “Tweedledum and Tweedledee.”</p>\n\n<p><a data-image-external-href=\"\" data-image-href=\"/s3/files/inline-images/2021-11-19_10-41-11.jpg?itok=DoqMe8Jl\" data-link-option=\"0\" href=\"https://cms.zerohedge.com/s3/files/inline-images/2021-11-19_10-41-11.jpg?itok=DoqMe8Jl\"><picture><img alt=\"\" class=\"inline-images image-style-inline-images\" data-entity-type=\"file\" data-entity-uuid=\"d304538b-4af9-4a69-ad57-2a4f5f2fc497\" data-responsive-image-style=\"inline_images\" height=\"332\" src=\"https://assets.zerohedge.com/s3fs-public/styles/inline_image_mobile/public/inline-images/2021-11-19_10-41-11.jpg?itok=DoqMe8Jl\" typeof=\"foaf:Image\" width=\"500\" /></picture></a></p>\n\n<p>President Joe Biden last week met with the two leading candidates, current Chairman Jerome Powell and governor Lael Brainard, ahead of his decision to appoint one of them to a four-year term leading the central bank, beginning next February.</p>\n\n<p>Powell, 68, was appointed chair by former President Donald Trump and is<a href=\"https://www.reuters.com/world/us/powell-or-brainard-biden-weighs-his-pick-us-fed-chair-2021-11-11/\"> seen as a front-runner for the role</a>. His four-year term is set to end in early February. The current Fed chairman has backing from moderate Democrats as well as Republicans, and has notably helped to engineer a rapid and strong recovery from the pandemic recession, although inflation levels across the United States are currently at an all-time high.</p>\n\n<p>Brainard, 59, took office as a member of the </p></div>",
-        :source-id "719515 at https://www.zerohedge.com",
-        :has-content true,
-        :published "2021-11-20T15:30:00Z",
-        :num 2231,
-        :feed "83562883711106",
-        :title
-        "WSJ Editorial Board Says Choice For Fed Chief Is Between \"Tweedledum & Tweedledee\"",
-        :author ["Tyler Durden"]}
+        "http://sgolub.ru/publications/velikaya-kitajskaya-kriptobiryulka/",
+        :id "83562883713368",
+        :category ["Интернет" "Китай" "Публицистика" "цифровой юань"],
+        :summary "",
+        :source-id "http://sgolub.ru/?p=13530",
+        :published "2019-08-23T09:48:14Z",
+        :num 46,
+        :feed "92358976733285",
+        :title "Великая китайская криптобирюлька",
+        :author ["Сергей Голубицкий"],
+        :comments
+        "http://sgolub.ru/publications/velikaya-kitajskaya-kriptobiryulka/#respond"}
  #:item{:link
-        "https://www.zerohedge.com/political/rotterdam-transformed-war-zone-amid-new-covid-lockdown-protests",
-        :id "92358976735548",
-        :summary
-        "<span class=\"field field--name-title field--type-string field--label-hidden\" property=\"schema:name\">Rotterdam \"Transformed Into A War Zone\" Amid New COVID Lockdown Protests</span>\n\n            <div class=\"clearfix text-formatted field field--name-body field--type-text-with-summary field--label-hidden field__item\" property=\"schema:text\"><p>On Friday, social unrest flared up across Europe as governments reinstated strict COVID measures such as restrictions for unvaccinated, partial, and full lockdowns amid a wave of new infections. </p>\n\n<p><a data-image-external-href=\"\" data-image-href=\"/s3/files/inline-images/Snag_22dacb79.png?itok=4VQWIaRN\" data-link-option=\"0\" href=\"https://cms.zerohedge.com/s3/files/inline-images/Snag_22dacb79.png?itok=4VQWIaRN\"><picture><img alt=\"\" class=\"inline-images image-style-inline-images\" data-entity-type=\"file\" data-entity-uuid=\"61e0a194-508b-41f4-8174-13828df466be\" data-responsive-image-style=\"inline_images\" height=\"205\" src=\"https://assets.zerohedge.com/s3fs-public/styles/inline_image_mobile/public/inline-images/Snag_22dacb79.png?itok=4VQWIaRN\" typeof=\"foaf:Image\" width=\"500\" /></picture></a></p>\n\n<p>COVID-19 infections are surging in Germany, the Czech Republic, and Greece, and many of these countries are imposing strict public health measures to contain the spread. Austria has gone so far as to enact a nationwide lockdown beginning Monday. </p>\n\n<p><a data-image-external-href=\"\" data-image-href=\"/s3/files/inline-images/Snag_22aa0489.png?itok=HT-E90ro\" data-link-option=\"0\" href=\"https://cms.zerohedge.com/s3/files/inline-images/Snag_22aa0489.png?itok=HT-E90ro\"><picture><img alt=\"\" class=\"inline-images image-style-inline-images\" data-entity-type=\"file\" data-entity-uuid=\"6d35fdba-8dd5-4052-b04a-ac6ad3fd2125\" data-responsive-image-style=\"inline_images\" height=\"454\" src=\"https://assets.zerohedge.com/s3fs-public/styles/inline_image_mobile/public/inline-images/Snag_22aa0489.png?itok=HT-E90ro\" typeof=\"foaf:Image\" width=\"500\" /></picture></a></p>\n\n<p>Riots broke out in downtown Rotterdam during a demonstration against partial lockdowns Friday. Mayor Ahmed Aboutaleb told reporters it was \"an orgy of violence.\" He said, \"on several occasions, the police felt it necessary to draw their weapons to defend themselves\" as rioters set fires, torched cars, threw rocks and other blunt objects at police. </p>\n\n<blockquote>\n<p><em>\"They shot at protesters, and people were injured,\" Aboutaleb said. He couldn't provide an injury report but said police fired warning shots. </em></p></blockquote></div>",
-        :source-id "719565 at https://www.zerohedge.com",
-        :has-content true,
-        :published "2021-11-20T14:55:00Z",
-        :num 2230,
-        :feed "83562883711106",
+        "http://sgolub.ru/publications/v-samsung-sdelali-luchshij-v-mire-telefon-10-prichin-po-kotorym-on-vam-ne-nuzhen/",
+        :id "83562883713367",
+        :category
+        ["Samsung"
+         "Samsung Galaxy Note 10 Plus"
+         "Новая Газета"
+         "Публицистика"
+         "смартфоны"],
+        :summary "",
+        :source-id "http://sgolub.ru/?p=13534",
+        :published "2019-08-28T10:02:18Z",
+        :num 45,
+        :feed "92358976733285",
         :title
-        "Rotterdam \"Transformed Into A War Zone\" Amid New COVID Lockdown Protests",
-        :author ["Tyler Durden"]}
+        "В Samsung сделали лучший в мире телефон. 10 причин, по которым он вам не нужен",
+        :author ["Сергей Голубицкий"],
+        :comments
+        "http://sgolub.ru/publications/v-samsung-sdelali-luchshij-v-mire-telefon-10-prichin-po-kotorym-on-vam-ne-nuzhen/#respond"}
  #:item{:link
-        "https://www.zerohedge.com/medical/rise-uk-non-covid-deaths-set-continue-cancer-expert",
-        :id "92358976735547",
-        :summary
-        "<span class=\"field field--name-title field--type-string field--label-hidden\" property=\"schema:name\">Rise In UK Non-COVID Deaths Set To Continue: Cancer Expert</span>\n\n            <div class=\"clearfix text-formatted field field--name-body field--type-text-with-summary field--label-hidden field__item\" property=\"schema:text\"><p><a href=\"https://www.theepochtimes.com/rise-in-uk-non-covid-deaths-set-to-continue-cancer-expert_4113341.html?utm_source=partner&amp;utm_campaign=ZeroHedge\"><em>Authored by Owen Evans via The Epoch Times,</em></a></p>\n\n<p>One of the world’s foremost cancer experts has said that <strong>British lockdown policies are still having an impact on excess mortality, describing it as a “national scandal.”</strong></p>\n\n<p><a data-image-external-href=\"\" data-image-href=\"/s3/files/inline-images/ET-doctor12-700x420.jpg?itok=UIRwJPYs\" data-link-option=\"0\" href=\"https://cms.zerohedge.com/s3/files/inline-images/ET-doctor12-700x420.jpg?itok=UIRwJPYs\"><picture><img alt=\"\" class=\"inline-images image-style-inline-images\" data-entity-type=\"file\" data-entity-uuid=\"710600ec-7f1d-45f5-9954-102f27cdb2ac\" data-responsive-image-style=\"inline_images\" height=\"300\" src=\"https://assets.zerohedge.com/s3fs-public/styles/inline_image_mobile/public/inline-images/ET-doctor12-700x420.jpg?itok=UIRwJPYs\" typeof=\"foaf:Image\" width=\"500\" /></picture></a></p>\n\n<p>The Telegraph reported that 9,300 more people than usual died in the past four months from non-<a href=\"https://www.theepochtimes.com/mkt_app/giving-the-right-name-to-the-virus-causing-a-worldwide-pandemic-2_3277200.html\">CCP (Chinese Communist Party) virus</a> causes.</p>\n\n<p>The latest figures from the Office for National Statistics show that <strong>England and Wales registered 20,823 more deaths than the five-year average in the past 18 weeks. Only 11,531 deaths involved the CCP virus.</strong></p>\n\n<p>The increase prompted experts such as Professor Carl Heneghan, director of the Centre for Evidence-Based Medicine at the University of Oxford, to call for an urgent investigation.</p>\n\n<blockquote>\n<p>“We urgently need to understand what’s going wrong and an investigation of the root causes to determine those actions that can prevent further unnecessary deaths,” he told the publication.</p>\n</blockquote>\n\n<p><strong>The excess is likely to grow as more deaths are registered in the coming weeks.</strong></p></div>",
-        :source-id "719544 at https://www.zerohedge.com",
-        :has-content true,
-        :published "2021-11-20T14:20:00Z",
-        :num 2229,
-        :feed "83562883711106",
-        :title
-        "Rise In UK Non-COVID Deaths Set To Continue: Cancer Expert",
-        :author ["Tyler Durden"]})
+        "http://sgolub.ru/publications/brauzer-brave-platit-za-reklamu-tem-kto-ee-posmotrel/",
+        :id "83562883713366",
+        :category
+        ["Новая Газета"
+         "Публицистика"
+         "браузер Brave"
+         "браузеры"
+         "крипто"],
+        :summary "",
+        :source-id "http://sgolub.ru/?p=13538",
+        :published "2019-09-02T10:09:55Z",
+        :num 44,
+        :feed "92358976733285",
+        :title "Браузер Brave платит за рекламу тем, кто ее посмотрел",
+        :author ["Сергей Голубицкий"],
+        :comments
+        "http://sgolub.ru/publications/brauzer-brave-platit-za-reklamu-tem-kto-ee-posmotrel/#respond"})
 
 #+end_example
 
@@ -112,164 +127,16 @@
 #+end_example
 
 #+begin_src clojure :results pp
-(d/q '[:find (pull ?e [*])
-       :where (?e :feed/url _)]
-     (d/db s/db-conn))
+(ffirst (d/q '[:find (distinct ?url)
+       :where [_ :item/feed ?f]
+              [?f :feed/url ?url]
+       ]
+       (d/db bda/conn)))
 #+end_src
 
 #+RESULTS:
-#+begin_example
-[[{:db/id 79164837199971,
-   :feed/url "http://sgolub.ru/feed/",
-   :feed/title "АВТОРСКИЙ ПРОЕКТ СЕРГЕЯ ГОЛУБИЦКОГО",
-   :feed/summary "Авторский проект Сергея Голубицкого",
-   :feed/image
-   "http://sgolub.ru/wp-content/uploads/image/4/cropped-sgolub2014_sm2-32x32.jpg"}]
- [{:db/id 79164837209002,
-   :feed/url "https://www.archlinux.org/feeds/news/",
-   :feed/title "Arch Linux: Recent news updates",
-   :feed/summary
-   "The latest and greatest news from the Arch Linux distribution."}]
- [{:db/id 83562883714910,
-   :feed/url "http://feeds.feedburner.com/PythonInsider",
-   :feed/title "Python Insider",
-   :feed/published "2021-10-14T05:57:27.179-04:00"}]
- [{:db/id 83562883721314,
-   :feed/url "https://bikepost.ru/rss/index/",
-   :feed/title "БайкПост",
-   :feed/summary "БайкПост / RSS channel"}]
- [{:db/id 83562883726309,
-   :feed/url "https://exler.ru/films/rss.xml",
-   :feed/title "Exler.ru",
-   :feed/summary "Кинорецензии"}]
- [{:db/id 87960930222207,
-   :feed/url "https://news.ycombinator.com/rss",
-   :feed/title "Hacker News",
-   :feed/summary
-   "Links for the intellectually curious, ranked by readers."}]
- [{:db/id 87960930231160,
-   :feed/url "https://clojure.org/feed.xml",
-   :feed/title "Clojure News",
-   :feed/summary "Clojure News",
-   :feed/published "2021-10-14T16:47:17Z"}]
- [{:db/id 87960930232158,
-   :feed/url "http://blog.cleancoder.com/atom.xml",
-   :feed/title "The Clean Code Blog",
-   :feed/published "2021-09-25T15:47:52+00:00"}]
- [{:db/id 87960930232195,
-   :feed/url "https://www.kommersant.ru/RSS/Autopilot_on.xml",
-   :feed/title "Коммерсантъ Автопилот. Online и Новости",
-   :feed/summary
-   "ИД \"Коммерсантъ\" - Коммерсантъ Автопилот. Online и Новости",
-   :feed/image "https://im.kommersant.ru/pics/yatlogo.gif"}]
- [{:db/id 87960930239514,
-   :feed/url "https://www.kommersant.ru/RSS/section-world.xml",
-   :feed/title "\"Коммерсантъ\". В мире",
-   :feed/summary "Материалы раздела \"В мире\"",
-   :feed/image "http://www.kommersant.ru/pics/yatlogo.gif"}]
- [{:db/id 92358976737250,
-   :feed/url "https://www.kommersant.ru/RSS/section-politics.xml",
-   :feed/title "\"Коммерсантъ\". Политика",
-   :feed/summary "Материалы раздела \"Политика\"",
-   :feed/image "http://www.kommersant.ru/pics/yatlogo.gif"}]
- [{:db/id 92358976737503,
-   :feed/url "http://4pda.ru/feed/",
-   :feed/title "4PDA",
-   :feed/summary "RSS-лента 4PDA"}]
- [{:db/id 92358976743133,
-   :feed/url "https://www.kommersant.ru/RSS/section-hitech.xml",
-   :feed/title "\"Коммерсантъ Hi-Tech\"",
-   :feed/summary "Материалы раздела \"Hi-Tech\"",
-   :feed/image "http://www.kommersant.ru/pics/yatlogo.gif"}]
- [{:db/id 92358976746147,
-   :feed/url "http://feeds.arstechnica.com/arstechnica/index/",
-   :feed/title "Ars Technica",
-   :feed/summary
-   "Serving the Technologist for more than a decade. IT news, reviews, and analysis.",
-   :feed/image
-   "https://cdn.arstechnica.net/wp-content/uploads/2016/10/cropped-ars-logo-512_480-32x32.png"}]
- [{:db/id 92358976748901,
-   :feed/url "https://content.novayagazeta.ru/rss/all.xml",
-   :feed/title "Новая Газета",
-   :feed/summary
-   "Журналистские расследования о коррупции в бизнесе и во власти, специальные репортажи с событий политической и культурной жизни, главные новости, галереи, онлайн-кинотеатр, мнения и рецензии ведущих журналистов и экспертов страны",
-   :feed/image
-   "https://content.novayagazeta.ru/assets/rss-6b5763e8155006d9365b340599231d9eb0fa9418d847b50387c087918531804c.png"}]
- [{:db/id 96757023253490,
-   :feed/url "https://www.anandtech.com/rss/",
-   :feed/title "AnandTech",
-   :feed/summary
-   "This channel features the latest computer hardware related articles.",
-   :feed/image "http://www.anandtech.com/content/images/rss_logo.png"}]
- [{:db/id 96757023256601,
-   :feed/url "http://rss.slashdot.org/Slashdot/slashdotMain",
-   :feed/title "Slashdot",
-   :feed/summary "News for nerds, stuff that matters",
-   :feed/image ""}]
- [{:db/id 101155069759377,
-   :feed/url "http://www.opennet.ru/opennews/opennews_all.rss",
-   :feed/title "OpenNews.opennet.ru: Общая лента новостей",
-   :feed/summary
-   "OpenNews - Новости мира открытых систем (Общая лента новостей)"}]
- [{:db/id 101155069764563,
-   :feed/url "http://4pda.to/feed/",
-   :feed/title "4PDA",
-   :feed/summary "RSS-лента 4PDA"}]
- [{:db/id 101155069770926,
-   :feed/url "https://xkcd.com/atom.xml",
-   :feed/title "xkcd.com",
-   :feed/published "2021-10-13T00:00:00Z"}]
- [{:db/id 101155069787727,
-   :feed/url "https://kiwibyrd.org/feed/",
-   :feed/title "kiwi  arXiv",
-   :feed/summary
-   "СЮЖЕТЫ & РАССЛЕДОВАНИЯ: мемориально-футуристический склад им. Киви Бёрда (1998-2018)",
-   :feed/image "https://s0.wp.com/i/buttonw-com.png"}]
- [{:db/id 105553116280785,
-   :feed/url "https://www.computerra.ru/feed/",
-   :feed/title "Компьютерра",
-   :feed/summary
-   "Компьютерра — все новости про новые технологии, IT, инновации, интернет и науку.",
-   :feed/image
-   "https://www.computerra.ru/wp-content/uploads/2020/10/cropped-dummy.jpg"}]
- [{:db/id 105553116292313,
-   :feed/url "http://comicfeeds.chrisbenard.net/view/dilbert/default",
-   :feed/title "Dilbert Daily Strip",
-   :feed/published "2021-10-15T00:00:00-07:00"}]
- [{:db/id 105553116297227,
-   :feed/url "https://lenta.ru/rss",
-   :feed/title "Lenta.ru : Новости",
-   :feed/summary
-   "Новости, статьи, фотографии, видео. Семь дней в неделю, 24 часа в сутки.",
-   :feed/image "https://lenta.ru/images/small_logo.png"}]
- [{:db/id 105553116300794,
-   :feed/url "http://static.feed.rbc.ru/rbc/logical/footer/news.rss",
-   :feed/title "www.rbc.ru",
-   :feed/summary "",
-   :feed/published "2021-06-08T16:52:42Z",
-   :feed/image "http://pics.rbc.ru/img/fp_v4/skin/img/v6-logo.png"}]
- [{:db/id 114349209310844,
-   :feed/url "https://www.archlinux.org/feeds/packages/",
-   :feed/title "Arch Linux: Recent package updates",
-   :feed/summary
-   "Recently updated packages in the Arch Linux package repositories."}]
- [{:db/id 114349209312756,
-   :feed/url "https://habr.com/ru/rss/best/daily/",
-   :feed/title "Лучшие публикации за сутки",
-   :feed/summary "Лучшие публикации за последние 24 часа",
-   :feed/published "2021-10-15T13:13:11Z",
-   :feed/image
-   "https://habrastorage.org/webt/ym/el/wk/ymelwk3zy1gawz4nkejl_-ammtc.png"}]
- [{:db/id 114349209314888,
-   :feed/url "https://www.zerohedge.com/fullrss2.xml",
-   :feed/title "ZeroHedge News",
-   :feed/summary ""}]
- [{:db/id 114349209321077,
-   :feed/url "http://feeds.feedburner.com/zerohedge/feed",
-   :feed/title "ZeroHedge News",
-   :feed/summary ""}]]
-
-#+end_example
+: 30
+: 
 
 #+name: scratch
 #+begin_src clojure :results pp :wrap src clojure

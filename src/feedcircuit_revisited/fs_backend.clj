@@ -399,7 +399,7 @@
 (defn unknown-feeds [urls]
   (remove @feed-index urls))
 
-(defn init! []
+(defn init-impl! []
   (send feed-index init-feed-index! (conf/param :data-dir))
   (send content-index init-content-index!)
   (await feed-index))

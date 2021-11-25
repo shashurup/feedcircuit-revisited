@@ -17,8 +17,9 @@
                    :db/doc "News item id, usually url"}
 
                   {:db/ident :item/feed+id
-                   :db/valueType :db.type/tuple
-                   :db/tupleAttrs [:item/feed :item/source-id]
+                   :db/valueType :db.type/string
+                   ; :db/valueType :db.type/tuple
+                   ; :db/tupleAttrs [:item/feed :item/source-id]
                    :db/cardinality :db.cardinality/one
                    :db/unique :db.unique/identity}
 

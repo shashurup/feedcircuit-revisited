@@ -67,7 +67,7 @@
     (assoc item
            :db/id source-id
            :item/feed feed
-           :item/feed+id [feed source-id]
+           :item/feed+id (str feed "+" source-id)
            :item/has-content (boolean (not-empty content))
            :item/num (or (:item/num item)
                          (swap! cur-item-num inc)))))
@@ -118,12 +118,8 @@
   ([feed start] (get-items feed start true)))
 
 (defn get-item [uid]
-  (let [item (d/pull (d/db conn)
-                     '[*]
-                     (u/as-int uid))
-        content (u/read-file (str content-dir
-                                  "/"
-                                  (:db/id item)))]
+  (let [item (d/pull (d/db conn) '[*] (u/as-int uid))
+        content (u/read-file (str content-dir "/" (:db/id item)))]
     (merge (adapt-item item)
            (when content {:item/content content}))))
 
@@ -138,7 +134,7 @@
 
 (defn item-id? [subj] (re-matches #"\d+" subj))
 
-(defn init! []
+(defn init-impl! []
   (def content-dir (conf/param :datomic :content-dir))
   (when (not-empty content-dir)
     (fs/mkdirs content-dir))

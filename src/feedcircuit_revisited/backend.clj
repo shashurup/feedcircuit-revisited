@@ -1,45 +1,32 @@
 (ns feedcircuit-revisited.backend
   (:require [feedcircuit-revisited.conf :as conf]
-            [clojure.string :as cstr]))
+            [clojure.string :as cstr]
+            [feedcircuit-revisited.datomic-backend :as d-back]
+            [feedcircuit-revisited.fs-backend :as fs-back]))
 
-(require '[feedcircuit-revisited.fs-backend :as b])
+; === backend switching machinery ===
 
-(def get-feed-attr b/get-feed-attr)
+(defn stub [& args]
+  (throw (Exception. "Not implemented")))
 
-(def get-feed-attr-by-id b/get-feed-attr-by-id)
+(def backend-interface ['get-feed-attr 'get-feed-attr-by-id
+                        'add-feed! 'update-feed! 'append-items!
+                        'active-feed-urls 'unknown-feeds
+                        'get-items 'get-items-backwards 'get-item 'known-ids
+                        'add-content! 'item-id? 'get-user-data
+                        'selected-add! 'selected-remove!
+                        'update-settings! 'update-positions!
+                        'init-impl!])
 
-(def add-feed! b/add-feed!)
+(doseq [sym backend-interface]
+  (intern *ns* sym stub))
 
-(def update-feed! b/update-feed!)
+(defn map-backend-impl [impl]
+  (doseq [sym backend-interface]
+    (let [bfn (get (ns-interns impl) sym stub)]
+      (intern *ns* sym bfn))))
 
-(def append-items! b/append-items!)
-
-(def active-feed-urls b/active-feed-urls)
-
-(def unknown-feeds b/unknown-feeds)
-
-
-(def get-items b/get-items)
-
-(def get-items-backwards b/get-items-backwards)
-
-(def get-item b/get-item)
-
-(def known-ids b/known-ids)
-
-(def add-content! b/add-content!)
-
-(def item-id? b/item-id?)
-
-(def get-user-data b/get-user-data)
-
-(def selected-add! b/selected-add!)
-
-(def selected-remove! b/selected-remove!)
-
-(def update-settings! b/update-settings!)
-
-(def update-positions! b/update-positions!)
+; === common backend functions ===
 
 (defn get-feed-items [feed start]
   (let [feed-title (get-feed-attr-by-id feed :feed/title)]
@@ -103,4 +90,8 @@
                       (conj sources {:source/active true :source/feed url})
                       styles)))
 
-(def init! b/init!)
+(defn init! []
+  (if (conf/param :datomic)
+    (map-backend-impl 'feedcircuit-revisited.datomic-backend)
+    (map-backend-impl 'feedcircuit-revisited.fs-backend))
+  (init-impl!))
