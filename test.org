@@ -26,70 +26,66 @@
 
 #+begin_src clojure :results pp
 ;(bda/get-feed-attr-by-id "83562883711106" :feed/id)
-(bda/get-feed-attr "http://sgolub.ru/feed/" :feed/id)
+(bda/get-feed-attr  "https://exler.ru/films/rss.xml" :feed/id)
 #+end_src
 
 #+RESULTS:
-: "92358976733285"
+: "83562883711095"
 : 
 
 #+begin_src clojure :results pp
-(take 3 (bda/get-items "92358976733285" nil true))
+(take 3 (bda/get-items "83562883711095" nil true))
 ;(take 3 (bda/get-items "79164837200001" nil true))
 #+end_src
 
 #+RESULTS:
 #+begin_example
-(#:item{:link
-        "http://sgolub.ru/publications/velikaya-kitajskaya-kriptobiryulka/",
-        :id "83562883713368",
-        :category ["Интернет" "Китай" "Публицистика" "цифровой юань"],
-        :summary "",
-        :source-id "http://sgolub.ru/?p=13530",
-        :published "2019-08-23T09:48:14Z",
-        :num 46,
-        :feed "92358976733285",
-        :title "Великая китайская криптобирюлька",
-        :author ["Сергей Голубицкий"],
-        :comments
-        "http://sgolub.ru/publications/velikaya-kitajskaya-kriptobiryulka/#respond"}
- #:item{:link
-        "http://sgolub.ru/publications/v-samsung-sdelali-luchshij-v-mire-telefon-10-prichin-po-kotorym-on-vam-ne-nuzhen/",
-        :id "83562883713367",
+(#:item{:link "http://sgolub.ru/kulturpovidlo/anime-mea/",
+        :id "74766790688907",
         :category
-        ["Samsung"
-         "Samsung Galaxy Note 10 Plus"
-         "Новая Газета"
-         "Публицистика"
-         "смартфоны"],
+        ["Без рубрики" "Компьютерра" "Культурповидло" "аниме"],
         :summary "",
-        :source-id "http://sgolub.ru/?p=13534",
-        :published "2019-08-28T10:02:18Z",
-        :num 45,
-        :feed "92358976733285",
-        :title
-        "В Samsung сделали лучший в мире телефон. 10 причин, по которым он вам не нужен",
+        :source-id "http://sgolub.ru/?p=13701",
+        :published "2021-01-24T10:31:10Z",
+        :num 27,
+        :feed "101155069755493",
+        :title "Anime Mea",
         :author ["Сергей Голубицкий"],
-        :comments
-        "http://sgolub.ru/publications/v-samsung-sdelali-luchshij-v-mire-telefon-10-prichin-po-kotorym-on-vam-ne-nuzhen/#respond"}
+        :comments "http://sgolub.ru/kulturpovidlo/anime-mea/#respond"}
  #:item{:link
-        "http://sgolub.ru/publications/brauzer-brave-platit-za-reklamu-tem-kto-ee-posmotrel/",
-        :id "83562883713366",
+        "http://sgolub.ru/vcollege/alphaleaks-defi-odnodnevnyj-prakticheskij-kurs-po-decentralizovannym-finansam-s-nulya-do-polnocennogo-primeneniya/",
+        :id "74766790688908",
         :category
-        ["Новая Газета"
-         "Публицистика"
-         "браузер Brave"
-         "браузеры"
+        ["DeFi"
+         "Decentralized Finance"
+         "vCollege"
+         "Криптошкола"
+         "децентрализованные финансы"
          "крипто"],
         :summary "",
-        :source-id "http://sgolub.ru/?p=13538",
-        :published "2019-09-02T10:09:55Z",
-        :num 44,
-        :feed "92358976733285",
-        :title "Браузер Brave платит за рекламу тем, кто ее посмотрел",
+        :source-id "http://sgolub.ru/?p=13684",
+        :published "2020-12-02T18:15:23Z",
+        :num 28,
+        :feed "101155069755493",
+        :title
+        "ALPHALEAKS DEFI: Однодневный практический курс по децентрализованным финансам с нуля до полноценного применения",
         :author ["Сергей Голубицкий"],
         :comments
-        "http://sgolub.ru/publications/brauzer-brave-platit-za-reklamu-tem-kto-ee-posmotrel/#respond"})
+        "http://sgolub.ru/vcollege/alphaleaks-defi-odnodnevnyj-prakticheskij-kurs-po-decentralizovannym-finansam-s-nulya-do-polnocennogo-primeneniya/#respond"}
+ #:item{:link
+        "http://sgolub.ru/shkola-zhurnalistiki/journalism-minoa-teenagers/",
+        :id "74766790688909",
+        :category ["МИНОА" "Школа журналистики"],
+        :summary "",
+        :source-id "http://sgolub.ru/?p=13654",
+        :published "2020-09-02T09:20:04Z",
+        :num 29,
+        :feed "101155069755493",
+        :title
+        "Школа журналистики для подростков: работаем с поколением Z",
+        :author ["Анастасия Бондаренко"],
+        :comments
+        "http://sgolub.ru/shkola-zhurnalistiki/journalism-minoa-teenagers/#respond"})
 
 #+end_example
 
@@ -104,38 +100,38 @@
 : 
 
 #+begin_src clojure :results pp
-(bda/get-item "92358976733381")
+(bda/get-item "74766790688902")
 #+end_src
 
 #+RESULTS:
 #+begin_example
 #:item{:link
-       "http://feedproxy.google.com/~r/zerohedge/feed/~3/2WITJx7ft70/mypillow-ceo-mike-lindell-has-been-permanently-banned-twitter",
-       :id "92358976733381",
+       "http://sgolub.ru/publications/istoriya-unikalnogo-otechestvennogo-opyta-kontrolya-nad-internetom/?utm_source=rss&utm_medium=rss&utm_campaign=istoriya-unikalnogo-otechestvennogo-opyta-kontrolya-nad-internetom",
+       :id "74766790688902",
+       :category ["Публицистика" "социальная мифология"],
        :summary
-       "<p><a href=\"https://www.theepochtimes.com/twitter-suspends-account-of-mike-lindell-ceo-of-mypillow_3671721.html\"><em>Authored by Mimi Nguyen Ly via The Epoch Times,</em></a></p>\n\n<p><a href=\"https://www.theepochtimes.com/t-twitter\">Twitter</a> late Monday suspended the account of MyPillow founder and CEO <a href=\"https://www.theepochtimes.com/t-mike-lindell\">Mike Lindell</a> on its platform.</p>\n\n<p>Users were faced with an error message,<strong> “You’re trying to follow user that doesn’t exist,” </strong>before the account page simply said that Lindell’s account has been suspended for having violated Twitter rules.</p>",
-       :source-id "686872 at https://www.zerohedge.com",
-       :has-content true,
-       :content
-       "<span class=\"field field--name-title field--type-string field--label-hidden\" property=\"schema:name\">MyPillow CEO Mike Lindell Has Been Permanently Banned From Twitter</span>\n\n            <div class=\"clearfix text-formatted field field--name-body field--type-text-with-summary field--label-hidden field__item\" property=\"schema:text\"><p><a href=\"https://www.theepochtimes.com/twitter-suspends-account-of-mike-lindell-ceo-of-mypillow_3671721.html\"><em>Authored by Mimi Nguyen Ly via The Epoch Times,</em></a></p>\n\n<p><a href=\"https://www.theepochtimes.com/t-twitter\">Twitter</a> late Monday suspended the account of MyPillow founder and CEO <a href=\"https://www.theepochtimes.com/t-mike-lindell\">Mike Lindell</a> on its platform.</p>\n\n<p>Users were faced with an error message,<strong> “You’re trying to follow user that doesn’t exist,” </strong>before the account page simply said that Lindell’s account has been suspended for having violated Twitter rules.</p>\n\n<p>Lindell’s personal Twitter account had over half a million followers before being suspended.</p>\n\n<p><a data-image-external-href=\"\" data-image-href=\"/s3/files/inline-images/mypillow-ceo-mike-lindell-600x721.jpg?itok=kL8eWzDE\" data-link-option=\"0\" href=\"https://cms.zerohedge.com/s3/files/inline-images/mypillow-ceo-mike-lindell-600x721.jpg?itok=kL8eWzDE\"><picture><img alt=\"\" data-entity-type=\"file\" data-entity-uuid=\"505f7387-73aa-4ae9-9188-f777030e1822\" data-responsive-image-style=\"inline_images\" height=\"601\" src=\"https://zh-prod-1cc738ca-7d3b-4a72-b792-20bd8d8fa069.storage.googleapis.com/s3fs-public/styles/inline_image_mobile/public/inline-images/mypillow-ceo-mike-lindell-600x721.jpg?itok=kL8eWzDE\" typeof=\"foaf:Image\" width=\"500\" /></picture></a></p>\n\n<p>The Twitter account of MyPillow CEO Mike Lindell just moments after it was suspended. (Twitter/realMikeLindell/Screenshot)</p>\n\n<p><a data-image-external-href=\"\" data-image-href=\"/s3/files/inline-images/mike-lindell-600x540.jpg?itok=RzTfqjc8\" data-link-option=\"0\" href=\"https://cms.zerohedge.com/s3/files/inline-images/mike-lindell-600x540.jpg?itok=RzTfqjc8\"><picture><img alt=\"\" data-entity-type=\"file\" data-entity-uuid=\"0e9367ec-5c8d-4fa6-994b-df377607feb7\" data-responsive-image-style=\"inline_images\" height=\"450\" src=\"https://zh-prod-1cc738ca-7d3b-4a72-b792-20bd8d8fa069.storage.googleapis.com/s3fs-public/styles/inline_image_mobile/public/inline-images/mike-lindell-600x540.jpg?itok=RzTfqjc8\" typeof=\"foaf:Image\" width=\"500\" /></picture></a></p>\n\n<p>The Twitter account of MyPillow CEO Mike Lindell just moments after it was suspended. (Twitter/realMikeLindell/Screenshot)</p>\n\n<p><strong>Lindell repeatedly violated the company’s civic integrity policy, due to which he was suspended, according to a Twitter spokesperson. </strong>The policy says, in part: “You may not use Twitter’s services for the purpose of manipulating or interfering in elections or other civic processes. This includes posting or sharing content that may suppress participation or mislead people about when, where, or how to participate in a civic process. In addition, we may label and reduce the visibility of Tweets containing false or misleading information about civic processes in order to provide additional context.”</p>\n\n<p>“The public conversation occurring on Twitter is never more important than during elections and other civic events. Any attempts to undermine the integrity of our service is antithetical to our fundamental rights and undermines the core tenets of freedom of expression, the value upon which our company is based.”</p>\n\n<p>Lindell did not immediately respond to a request for comment from The Epoch Times.</p>\n\n<p><strong>A supporter of former President Donald Trump, Lindell was advocating for election integrity amid allegations of widespread voting irregularities and election fraud in the aftermath of the November 2020 general election, which put him under the media spotlight.</strong> Lindell frequently posted political commentary that sometimes questioned the results of the election.</p>\n\n<p>The suspension of Lindell’s Twitter account is the latest in actions taken against Trump and his supporters since the Jan. 6 riots at the U.S. Capitol that resulted violence and a breach of the building.</p>\n\n<p>Trump had repeatedly called for peace and condemned the violence that took place. Despite this, he was <a href=\"https://www.theepochtimes.com/twitter-removes-trump-from-its-platform_3649669.html\">banned from Twitter</a> and other social media platforms, including Twitter, and cut off by some banks, while some of his supporters have also been banned by Twitter and have been fired by employers.</p>\n\n<p><strong>Lindell recently made media headlines after having visited the White House to meet with Trump and was spotted holding some <a href=\"https://www.theepochtimes.com/mike-lindell-visits-trump-in-oval-office-carrying-mysterious-notes_3658971.html\">mysterious notes</a></strong> that, in part, appeared to refer to “martial law.” It was unclear what the notes were about. Lindell told The Epoch Times that the notes were not official and he was helping deliver them from a lawyer who said it was a suggestion for Trump.</p>\n\n<p><a data-image-external-href=\"\" data-image-href=\"/s3/files/inline-images/mike-lindell-1-600x400.jpg?itok=ToOt1Sqb\" data-link-option=\"0\" href=\"https://cms.zerohedge.com/s3/files/inline-images/mike-lindell-1-600x400.jpg?itok=ToOt1Sqb\"><picture><img alt=\"\" data-entity-type=\"file\" data-entity-uuid=\"45d704ec-a32e-4e73-807f-c8abe85cdbbc\" data-responsive-image-style=\"inline_images\" height=\"333\" src=\"https://zh-prod-1cc738ca-7d3b-4a72-b792-20bd8d8fa069.storage.googleapis.com/s3fs-public/styles/inline_image_mobile/public/inline-images/mike-lindell-1-600x400.jpg?itok=ToOt1Sqb\" typeof=\"foaf:Image\" width=\"500\" /></picture></a></p>\n\n<p><em>MyPillow CEO Mike Lindell waits outside the West Wing of the White House before entering in Washington, on Jan. 15, 2021. (Drew Angerer/Getty Images)</em></p>\n\n<p><strong>Lindell is known for his <a href=\"https://www.theepochtimes.com/it-was-divine-intervention-founder-of-mypillow-mike-lindell-went-from-crack-addict-to-ceo_3294836.html\">American dream story</a> of an ex-cocaine addict turning his life around and running a successful business, MyPillow.</strong></p>\n\n<p>Bed Bath & Beyond, Kohl’s, and Wayfair announced they would no longer carry products from MyPillow. Lindell said the actions came after groups such as Sleeping Giants pushed companies to stop doing business with him.</p>\n\n<p>Bed Bath & Beyond <a href=\"https://www.theepochtimes.com/my-pillow-ceo-says-bed-bath-and-beyond-kohls-to-stop-selling-his-products_3662460.html\">told The Epoch Times</a> via email that their decision to stop carrying MyPillow was “data-driven and customer-inspired.”</p>\n\n<p>Sleeping Giants, a leftist activist group, <a href=\"https://www.theepochtimes.com/my-pillow-ceo-says-bed-bath-and-beyond-kohls-to-stop-selling-his-products_3662460.html\">shared</a> the news on Twitter about the companies’ decision to discontinue stocking Lindell’s products. The group accused Lindell of having encouraged the breach of the Capitol by calling for election integrity. Sleeping Giants has ongoing campaigns to pressure companies to shun conservative and right-leaning entities. It also <a href=\"https://twitter.com/slpng_giants/status/1353920899397771264?s=20\">shared the news</a> of Lindell’s suspension from Twitter late on Monday.</p>\n\n<blockquote>\n<p>“These are groups that were hired to attack and crush my companies to cancel MyPillow out. And they’re attacking these people, like Bed Bath & Beyond,” Lindell <a href=\"https://www.theepochtimes.com/mike-lindell-on-cancel-culture-we-have-to-make-a-stand-and-not-back-down_3663266.html\">told NTD News</a> last week. “They succumb to the pressure. And you know, that’s their choice. But you know what, this is the time we all have to stand up against this.”</p>\n\n<p>“This is the time we have to make a stand. We have to make a stand and not back down to media and cancel culture,” he said. “We can’t live in fear this time. We got to all stand together. And I’m not talking politics. I’m talking people.”</p>\n</blockquote>\n\n<p>Lindell is also facing possible litigation from Dominion Voting Systems over his accusations that their machines and software contributed to election fraud in the general election. According to reports, Dominion sent a letter to Lindell last month warning of an “imminent” defamation lawsuit and telling Lindell to stop “making defamatory claims against Dominion.”</p>\n\n<p><strong>Lindell said he hopes Dominion will sue him so that he can present evidence.</strong></p>\n</div>\n      <span class=\"field field--name-uid field--type-entity-reference field--label-hidden\" rel=\"schema:author\"><a about=\"https://cms.zerohedge.com/users/tyler-durden\" class=\"username\" datatype=\"\" href=\"https://cms.zerohedge.com/users/tyler-durden\" lang=\"\" property=\"schema:name\" title=\"View user profile.\" typeof=\"schema:Person\" xml:lang=\"\">Tyler Durden</a></span>\n<span class=\"field field--name-created field--type-created field--label-hidden\" content=\"2021-01-26T12:38:09+00:00\" property=\"schema:dateCreated\">Tue, 01/26/2021 - 07:38</span><img alt=\"\" height=\"1\" src=\"http://feeds.feedburner.com/~r/zerohedge/feed/~4/2WITJx7ft70\" width=\"1\" />",
-       :published "2021-01-26T12:38:09Z",
-       :num 28,
-       :feed "83562883711106",
+       "<p>Коды и котики История уникального отечественного опыта контроля над Интернетом Сегодня разговор пойдет о контроле государства над Интернетом. Актуальность темы</p>\n<p>Запись <a href=\"http://sgolub.ru/publications/istoriya-unikalnogo-otechestvennogo-opyta-kontrolya-nad-internetom/\" rel=\"nofollow\">История уникального отечественного опыта контроля над Интернетом</a> впервые появилась <a href=\"http://sgolub.ru\" rel=\"nofollow\">АВТОРСКИЙ ПРОЕКТ СЕРГЕЯ ГОЛУБИЦКОГО</a>.</p>\n",
+       :source-id "http://sgolub.ru/?p=13505",
+       :published "2019-07-05T16:30:21Z",
+       :num 2,
+       :feed "101155069755493",
        :title
-       "MyPillow CEO Mike Lindell Has Been Permanently Banned From Twitter"}
+       "История уникального отечественного опыта контроля над Интернетом",
+       :comments
+       "http://sgolub.ru/publications/istoriya-unikalnogo-otechestvennogo-opyta-kontrolya-nad-internetom/#respond"}
 
 #+end_example
 
 #+begin_src clojure :results pp
-(ffirst (d/q '[:find (distinct ?url)
-       :where [_ :item/feed ?f]
+(d/q '[:find (distinct ?url)
+       :where [_  :source/feed ?f]
               [?f :feed/url ?url]
        ]
-       (d/db bda/conn)))
+       (d/db bda/conn))
 #+end_src
 
 #+RESULTS:
-: 30
+: []
 : 
 
 #+name: scratch

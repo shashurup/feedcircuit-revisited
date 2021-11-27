@@ -1,10 +1,4 @@
-(ns feedcircuit-revisited.schema
-  (:require [clojure.set :as set]
-            [clojure.string :as string]
-            [feedcircuit-revisited.backend :as backend]
-            [feedcircuit-revisited.feed :as feed]
-            [feedcircuit-revisited.content :as content]
-            [datomic.client.api :as d]))
+(ns feedcircuit-revisited.schema)
 
 (def item-schema [{:db/ident :item/feed
                    :db/valueType :db.type/ref
@@ -173,69 +167,3 @@
                         :comments :item/comments})
 
 (def schema (vec (concat feed-schema item-schema user-schema source-schema)))
-
-; (defn remove-nils [subj]
-;   (into {} (remove (fn [[_ v]] (nil? v)) subj)))
-; 
-; (defn convert-keys [subj keymap]
-;   (->> subj
-;        (filter #(keymap (first %)))
-;        (map (fn [[k v]] [(keymap k) v]))
-;        (remove #(nil? (second %)))
-;        (mapcat (fn [[k v]]
-;                  (let [vals (if (vector? v) v [v])]
-;                    (for [val vals] [k val]))))))
-; 
-; (defn convert-item [item]
-;   (convert-keys item item-key-mappings))
-; 
-; (defn convert-feed [feed]
-;   (convert-keys feed feed-key-mappings))
-; 
-; (defn prepare-feed-tx-data [feed]
-;   (map #(into [:db/add "feed"] %) (convert-feed feed)))
-; 
-; (defn prepare-items-tx-data [feed-url items]
-;   (->> 
-;    (for [item items
-;          :let [tmpid (str (:num item))]]
-;      (into (list [:db/add tmpid :item/feed [:feed/url feed-url]])
-;            (map #(into [:db/add tmpid] %) (convert-item item))))
-;    (partition-all 1024)
-;    (map #(apply concat %))))
-; 
-; (defn import-feed [db-conn feed-url]
-;   (let [feed  (backend/get-feed-attrs feed-url)
-;         items (map #(feed/fix-summary-and-content % nil) ; apply hard summary limit - 4096
-;                    (backend/get-items feed-url 0))]
-;     (concat 
-;      (d/transact db-conn {:tx-data (prepare-feed-tx-data feed)})
-;      (for [data (prepare-items-tx-data feed-url items)]
-;        (d/transact db-conn {:tx-data data})))))
-; 
-; (defn parse-feed-expr [expr]
-;   (let [active (not= (first expr) \#)
-;         [feed filters] (string/split expr #"\s+" 2)]
-;     [active
-;      (if active feed (subs feed 1))
-;      filters]))
-; 
-; (defn prepare-user-tx-data [user-attrs]
-;   (concat
-;          (list [:db/add "user" :user/id (:id user-attrs)])
-;          (for [[k v] (:styles user-attrs)]
-;            [:db/add "user" :user/styles (str k " " v)])
-;          (for [[num feed] (map-indexed #(vector %1 %2) (:feeds user-attrs))]
-;            (let [[active feed filters] (parse-feed-expr feed)
-;                  pos ((:positions user-attrs) feed)]
-;              (merge 
-;               {:source/user "user"
-;                :source/feed [:feed/url feed]
-;                :source/num num
-;                :source/active active}
-;               (if filters {:source/filters filters} {})
-;               (if pos {:source/position pos} {}))
-;              ))))
-; 
-; (defn import-user [db-conn e-mail]
-;   (d/transact db-conn {:tx-data (prepare-user-tx-data (backend/get-user-attrs e-mail))}))

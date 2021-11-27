@@ -96,7 +96,7 @@
     (-> item
         (assoc :item/id id
                :item/feed feed-id)
-        (dissoc :db/id :item/feed+id))))
+        (dissoc :db/id))))
 
 (defn get-items
   ([feed start]
@@ -104,14 +104,19 @@
   ([feed start reverse]
    (let [start (if start
                  [:item/num start]
-                 [:item/num])]
+                 [:item/num])
+         feed-id (u/as-int feed)]
      (->> (d/index-pull (d/db conn)
                         {:index :avet
-                         :selector '[*]
+                         :selector '[:db/id :item/feed]
                          :start start
                          :reverse reverse})
-          (map adapt-item)
-          (filter #(= (:item/feed %) feed))))))
+          (filter #(= (get-in % [:item/feed :db/id]) feed-id))
+          (map #(d/pull (d/db conn)
+                        '[:db/id :item/link :item/title
+                          :item/summary :item/num :item/feed]
+                        (:db/id %)))
+          (map adapt-item)))))
 
 (defn get-items-backwards
   ([feed] (get-items feed nil true))
@@ -133,6 +138,9 @@
        set))
 
 (defn item-id? [subj] (re-matches #"\d+" subj))
+
+(defn active-feed-urls []
+  )
 
 (defn init-impl! []
   (def content-dir (conf/param :datomic :content-dir))
