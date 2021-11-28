@@ -9,7 +9,7 @@
 (def page-size 16)
 
 (defn get-next-positions [user-items]
-  (into {} (map #(vector (:item/feed %) (inc (:item/num %))) user-items)))
+  (into {} (map #(vector (:item/source %) (inc (:item/num %))) user-items)))
 
 (defn bookmark-icon-svg []
   [:svg {:viewBox "-3 -3 66 99"}
@@ -301,7 +301,7 @@
                         (filter :source/active))]
        (for [source sources]
          [:div.fcr-news-item 
-          [:a.fcr-link {:href (str "feed?url=" (:feed/url source))}
+          [:a.fcr-link {:href (str "feed?url=" (:source/feed source))}
            [:h1 (:feed/title source)]]
           (if-let [image-url (not-empty (:feed/image source))]
             [:img.fcr-feed-logo {:src image-url}]
@@ -317,7 +317,7 @@
 
 (defn serialize-source [subj]
   (str (when-not (:source/active subj) "#")
-       (:source/feed subj)
+       (:feed/url subj)
        (when (:source/filters subj) " ")
        (:source/filters subj)))
 

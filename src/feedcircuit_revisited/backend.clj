@@ -67,13 +67,15 @@
 (defn get-unread-items [sources]
   (apply concat
          (for [{feed :source/feed
+                src :source/id
                 filters :source/filters
                 pos :source/position
                 feed-title :feed/title} (filter :source/active sources)
                :let [exprs (parse-filters filters)]]
            (->> (get-items feed pos)
                 (filter #(item-matches % exprs))
-                (map #(assoc % :feed/title feed-title))))))
+                (map #(assoc % :feed/title feed-title
+                               :item/source src))))))
 
 (defn get-selected-items
   "Lazy sequence of items user marked for later reading."

@@ -351,6 +351,7 @@
                                     :source/active active
                                     :source/id url
                                     :source/feed url
+                                    :feed/url url
                                     :source/filters filters
                                     :source/position (get positions url)}
                                    (when (some #{:sources/feed-title} opts)

@@ -155,7 +155,11 @@
   (let [feed (-> (:source/feed subj)
                  (update :db/id str)
                  (rename-keys {:db/id :source/feed}))]
-    (merge (dissoc subj :source/feed) feed)))
+    (-> subj
+        (dissoc :source/feed)
+        (rename-keys {:db/id :source/id})
+        (update :source/id str)
+        (merge feed))))
 
 (defn get-user-data [user-id & opts]
   (let [selected-attrs (if (some #{:selected/details} opts)
@@ -164,14 +168,14 @@
                          [:db/id])
         feed-attrs (cond
                      (some #{:sources/feed-details} opts) '[*]
-                     (some #{:sources/feed-title} opts) [:db/id :feed/title])
-        source-attrs (if feed-attrs
-                       [{:source/feed feed-attrs}
-                        :source/num
-                        :source/active
-                        :source/filters
-                        :source/position]
-                       [:source/feed :source/num])]
+                     (some #{:sources/feed-title} opts) [:db/id :feed/url :feed/title]
+                     :else [:db/id :feed/url])
+        source-attrs [:db/id
+                      {:source/feed feed-attrs}
+                      :source/num
+                      :source/active
+                      :source/filters
+                      :source/position]]
     (-> (d/pull (d/db conn)
                 [:user/id
                  :user/styles
@@ -184,6 +188,24 @@
 
 (defn update-settings! [user-id sources styles]
   )
+
+(defn update-positions! [user-id positions]
+  (let [txdata (vec (for [[src pos] positions]
+                      [:db/add (u/as-int src) :source/position pos]))]
+    (d/transact conn {:tx-data txdata})))
+
+(defn selected-change! [user-id ids op]
+  (let [txdata (vec (for [id ids]
+                      [op [:user/id user-id] :user/selected (u/as-int id)]))]
+    (when-not (empty? txdata)
+      (d/transact conn {:tx-data txdata}))))
+
+(defn selected-add! [user-id ids]
+  ; todo handle item by value
+  (selected-change! user-id ids :db/add))
+
+(defn selected-remove! [user-id ids]
+  (selected-change! user-id ids :db/retract))
 
 (defn init-impl! []
   (def content-dir (conf/param :datomic :content-dir))
