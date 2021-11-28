@@ -103,22 +103,19 @@
                       :item/num])
 
 (defn get-items
+  ([feed]
+   (get-items feed nil nil))
   ([feed start]
    (get-items feed start nil))
   ([feed start reverse]
-   (let [start (if start
-                 [:item/num start]
-                 [:item/num])
-         feed-id (u/as-int feed)]
+   (let [feed-id (u/as-int feed)
+         start (or start (when reverse Long/MAX_VALUE))]
      (->> (d/index-pull (d/db conn)
                         {:index :avet
-                         :selector [:db/id :item/feed]
-                         :start start
+                         :selector (conj item-list-attrs :item/feed)
+                         :start [:item/feed+num [feed-id start]]
                          :reverse reverse})
-          (filter #(= (get-in % [:item/feed :db/id]) feed-id))
-          (map #(d/pull (d/db conn)
-                        (conj item-list-attrs :item/feed)
-                        (:db/id %)))
+          (take-while #(= (get-in % [:item/feed :db/id]) feed-id))
           (map adapt-item)))))
 
 (defn get-items-backwards

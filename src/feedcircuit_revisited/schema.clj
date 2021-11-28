@@ -22,6 +22,11 @@
                    :db/cardinality :db.cardinality/one
                    :db/doc "Item order number"}
 
+                  {:db/ident :item/feed+num
+                   :db/valueType :db.type/tuple
+                   :db/tupleAttrs [:item/feed :item/num]
+                   :db/cardinality :db.cardinality/one}
+
                   {:db/ident :item/link
                    :db/valueType :db.type/string
                    :db/cardinality :db.cardinality/one
