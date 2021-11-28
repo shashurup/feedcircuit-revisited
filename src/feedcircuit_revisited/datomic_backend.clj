@@ -34,20 +34,12 @@
 
 (def update-feed! add-feed!)
 
-(defn get-feed-attrs [url]
-  (ffirst
-   (d/q '[:find (pull ?e [*])
-          :in $ ?url
-          :where [?e :feed/url ?url]]
-        (d/db conn) url)))
-
 (defn get-feed-attr-by-int-id [id attr]
   (let [id? (= attr :feed/id)
         attr (if id? :db/id attr)
         conv-fn (if id? str identity)]
     (-> (d/pull (d/db conn) [attr] id)
-        first
-        second
+        (get attr)
         conv-fn)))
 
 (defn get-feed-attr-by-id [id attr]
@@ -65,7 +57,7 @@
 
 (defn augment [item feed]
   (let [{content :item/content
-         source-id :item/source-id} item]
+         source-id :item/id} item]
     (assoc item
            :db/id source-id
            :item/feed feed
@@ -79,13 +71,15 @@
 
 (defn append-items! [url items]
   (let [feed (get-feed-attr url :db/id)
-        items (map #(augment % feed) items)
+        items (map #(augment % feed)
+                   (u/distinct-by :item/id items))
         txdata (vec (map clean items))]
     (let [tempids (:tempids (d/transact conn {:tx-data txdata}))]
-      (doseq [{tempid :item/source-id
+      (doseq [{tempid :item/id
                content :item/content} (filter :item/has-content items)
               :let [fname (get tempids tempid)]]
-        (u/write-file (str content-dir "/" fname) content)))))
+        (u/write-file (str content-dir "/" fname) content)))
+    (count items)))
 
 (defn add-content! [uid content]
   (d/transact conn {:tx-data [{:db/id (u/as-int uid)

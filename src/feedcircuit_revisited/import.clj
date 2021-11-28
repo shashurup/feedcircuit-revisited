@@ -1,5 +1,6 @@
 (ns feedcircuit-revisited.import
   (:require [datomic.client.api :as d]
+            [clojure.set :refer (rename-keys)]
             [feedcircuit-revisited.schema :as schema]
             [feedcircuit-revisited.fs-backend :as fs-back]
             [feedcircuit-revisited.feed :as feed]
@@ -9,13 +10,6 @@
   (let [feeds (map fs-back/get-feed-attrs
                    (keys @fs-back/feed-index))]
     (map #(d-back/add-feed! (:feed/url %) %) feeds)))
-
-(defn remove-dups [items]
-  (->> items
-       (map #(vector (:item/source-id %) %))
-       (into {})
-       vals
-       (sort-by :item/num)))
 
 (defn fix-link [item]
   (update item
@@ -30,7 +24,7 @@
 (defn import-items [url]
   (let [items (->> (fs-back/get-items url 0)
                    (map (comp fix-link fix-summary))
-                   remove-dups)]
+                   (map #(rename-keys % {:item/source-id :item/id})))]
     (doseq [chunk (partition-all 1024 items)]
       (d-back/append-items! url chunk))
     (reset! d-back/cur-item-num (d-back/find-max-num))))

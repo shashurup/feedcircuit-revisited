@@ -29,3 +29,15 @@
   (if (fs/exists? filename)
     (with-open [r (java.io.PushbackReader. (io/reader filename))]
       (edn/read r))))
+
+(defn distinct-by [f coll]
+  "Similar to distinct except that duplicates of (f element) are removed"
+  (let [step (fn step [xs seen]
+               (lazy-seq
+                ((fn [[v :as xs] seen]
+                   (when-let [s (seq xs)]
+                     (if (contains? seen (f v))
+                       (recur (rest s) seen)
+                       (cons v (step (rest s) (conj seen (f v)))))))
+                 xs seen)))]
+    (step coll #{})))
