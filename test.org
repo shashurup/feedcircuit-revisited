@@ -20,18 +20,178 @@
 ))
 #+end_src
 
-#+RESULTS:
-: 
-: 
-
 #+begin_src clojure :results pp
-;(bda/get-feed-attr-by-id "83562883711106" :feed/id)
-(bda/get-feed-attr  "https://exler.ru/films/rss.xml" :feed/id)
+(bda/get-user-data "georgy@kibardin.name" :sources/feed-title)
 #+end_src
 
 #+RESULTS:
-: "83562883711095"
-: 
+: class clojure.lang.ExceptionInfo
+
+#+begin_src clojure :results pp
+(d/pull (d/db bda/conn)
+        [:user/id
+         :user/styles
+         ;{:user/selected [:db/id
+         ;                 :item/link
+         ;                 :item/title
+         ;                 :item/summary
+         ;                 :item/num
+         ;                 {:item/feed [:db/id
+         ;                              :feed/title]}]}
+         {[:source/_user :as :user/sources] [:db/id
+                                             :source/feed
+                                             :source/num
+                                             :source/active
+                                             :source/filters
+                                             :source/position]}]
+        [:user/id "georgy@kibardin.name"])
+#+end_src
+
+#+RESULTS:
+#+begin_example
+#:user{:id "georgy@kibardin.name",
+       :styles
+       ["arstechnica.com https://shashurup.github.io/feedcircuit-styles/arstechnica.css"
+        "habr.com https://shashurup.github.io/feedcircuit-styles/img-data-src.js"],
+       :sources
+       [{:db/id 131941395396489,
+         :source/feed #:db{:id 83562883711099},
+         :source/num 0,
+         :source/active true,
+         :source/position 190}
+        {:db/id 131941395396490,
+         :source/feed #:db{:id 101155069755520},
+         :source/num 1,
+         :source/active true,
+         :source/position 4091}
+        {:db/id 131941395396491,
+         :source/feed #:db{:id 96757023244418},
+         :source/num 2,
+         :source/active true,
+         :source/position 2207}
+        {:db/id 131941395396492,
+         :source/feed #:db{:id 79164837199974},
+         :source/num 3,
+         :source/active true,
+         :source/position 4178}
+        {:db/id 131941395396493,
+         :source/feed #:db{:id 96757023244404},
+         :source/num 4,
+         :source/active true,
+         :source/position 807}
+        {:db/id 131941395396494,
+         :source/feed #:db{:id 83562883711096},
+         :source/num 5,
+         :source/active true,
+         :source/position 198}
+        {:db/id 131941395396495,
+         :source/feed #:db{:id 87960930222206},
+         :source/num 6,
+         :source/active true,
+         :source/position 399}
+        {:db/id 131941395396496,
+         :source/feed #:db{:id 83562883711095},
+         :source/num 7,
+         :source/active true,
+         :source/position 217}
+        {:db/id 131941395396497,
+         :source/feed #:db{:id 74766790688897},
+         :source/num 8,
+         :source/active true,
+         :source/position 47}
+        {:db/id 131941395396498,
+         :source/feed #:db{:id 101155069755493},
+         :source/num 9,
+         :source/active true,
+         :source/position 47}
+        {:db/id 131941395396499,
+         :source/feed #:db{:id 101155069755507},
+         :source/num 10,
+         :source/active true,
+         :source/position 2115}
+        {:db/id 131941395396500,
+         :source/feed #:db{:id 83562883711080},
+         :source/num 11,
+         :source/active true,
+         :source/position 286}
+        {:db/id 131941395396501,
+         :source/feed #:db{:id 101155069755517},
+         :source/num 12,
+         :source/active true,
+         :source/position 766}
+        {:db/id 131941395396502,
+         :source/feed #:db{:id 79164837199982},
+         :source/num 13,
+         :source/active true,
+         :source/position 199}
+        {:db/id 131941395396503,
+         :source/feed #:db{:id 92358976733302},
+         :source/num 14,
+         :source/active true,
+         :source/position 886}
+        {:db/id 131941395396504,
+         :source/feed #:db{:id 92358976733296},
+         :source/num 15,
+         :source/active true,
+         :source/position 103}
+        {:db/id 131941395396505,
+         :source/feed #:db{:id 87960930222194},
+         :source/num 16,
+         :source/active true,
+         :source/position 184}
+        {:db/id 131941395396506,
+         :source/feed #:db{:id 92358976733305},
+         :source/num 17,
+         :source/active true,
+         :source/filters "!Новости",
+         :source/position 921}
+        {:db/id 131941395396507,
+         :source/feed #:db{:id 79164837199994},
+         :source/num 18,
+         :source/active false,
+         :source/position 4088}
+        {:db/id 131941395396508,
+         :source/feed #:db{:id 83562883711081},
+         :source/num 19,
+         :source/active true,
+         :source/position 147}
+        {:db/id 131941395396509,
+         :source/feed #:db{:id 74766790688881},
+         :source/num 20,
+         :source/active true,
+         :source/position 32}
+        {:db/id 131941395396510,
+         :source/feed #:db{:id 79164837199996},
+         :source/num 21,
+         :source/active false,
+         :source/position 50}
+        {:db/id 131941395396511,
+         :source/feed #:db{:id 79164837199981},
+         :source/num 22,
+         :source/active true,
+         :source/position 34}
+        {:db/id 131941395396512,
+         :source/feed #:db{:id 79164837199979},
+         :source/num 23,
+         :source/active true,
+         :source/position 26}
+        {:db/id 131941395396513,
+         :source/feed #:db{:id 92358976733295},
+         :source/num 24,
+         :source/active true,
+         :source/position 563}
+        {:db/id 131941395396514,
+         :source/feed #:db{:id 101155069755509},
+         :source/num 25,
+         :source/active true,
+         :source/position 710}
+        {:db/id 131941395396515,
+         :source/feed #:db{:id 101155069755495},
+         :source/num 26,
+         :source/active true,
+         :source/position 25}]}
+
+#+end_example
 
 #+begin_src clojure :results pp
 (take 3 (bda/get-items "83562883711095" nil true))
@@ -40,52 +200,29 @@
 
 #+RESULTS:
 #+begin_example
-(#:item{:link "http://sgolub.ru/kulturpovidlo/anime-mea/",
-        :id "74766790688907",
-        :category
-        ["Без рубрики" "Компьютерра" "Культурповидло" "аниме"],
-        :summary "",
-        :source-id "http://sgolub.ru/?p=13701",
-        :published "2021-01-24T10:31:10Z",
-        :num 27,
-        :feed "101155069755493",
-        :title "Anime Mea",
-        :author ["Сергей Голубицкий"],
-        :comments "http://sgolub.ru/kulturpovidlo/anime-mea/#respond"}
+(#:item{:link
+        "https://www.exler.ru/films/koshachi-miry-luisa-uejna.htm",
+        :title "Кошачьи миры Луиса Уэйна",
+        :summary
+        "<p align=\"left\"><a class=\"fancybox\" rel=\"media\" src=\"https://www.exler.ru/img/films/25-11-2021/big/1.jpg\"><img align=\"left\" alt=\"\" border=\"0\" class=\"align-left\" src=\"https://www.exler.ru/img/films/25-11-2021/1.jpg\" /></a>Луис Уэйн (Бенедикт Камбербэтч) родился 5 августа 1860 года. Он был старшим ребенком в семье, в которой кроме Луиса было еще пять девочек. Когда Луису было 20 лет, умер его отец, и Луису пришлось содержать свою мать и пятерых сестер - в дальнейшем, старых дев, ни одна из которых так и не вышла замуж. </p>\r\n\r\n<p align=\"left\">Луис, у которого с детства был талант художника, изображал английскую сельскую жизнь - дома, усадьбы, животных, - и эти иллюстрации покупали некоторые издания, включая одну из самых популярных газет Викторианской Англии \"Illustrated London News\": ее издавал  сэр Уильям Ингрэм (Тоби Джонс).</p>",
+        :num 23519,
+        :feed "83562883711095",
+        :id "118747255863175"}
+ #:item{:link "https://www.exler.ru/films/shou-poshlo-ne-tak.htm",
+        :title "Шоу пошло не так",
+        :summary
+        "<p><a class=\"fancybox\" rel=\"media\" src=\"https://www.exler.ru/img/films/18-11-2021/big/1.jpg\"><img align=\"left\" alt=\"\" border=\"0\" class=\"align-left\" src=\"https://www.exler.ru/img/films/18-11-2021/1.jpg\" /></a>Члены драматического сообщества <span>Политехнического университета города Корнли каждую неделю в каждой серии разыгрывают в прямом телевизионном эфире перед зрителями, сидящими в зале, театрализованное шоу на определенную тему. </span></p>\r\n\r\n<p><span><b>Серия первая - \"Дух Рождества\"</b> </span></p>\r\n\r\n<p><span>Родители девушки Бэлль поссорились в канун Рождества, после чего глава семьи надел пальто и ушел из дома. Теперь Бэлль сидит на диване и грустит. И даже визит самого Санты-Клауса ее не развеселил, хотя Санта и его подручные эльфы старались как могли. Санта даже оживил снеговика, чтобы Бэлль с ним могла поиграть. </span></p>",
+        :num 218,
+        :feed "83562883711095",
+        :id "109951162794844"}
  #:item{:link
-        "http://sgolub.ru/vcollege/alphaleaks-defi-odnodnevnyj-prakticheskij-kurs-po-decentralizovannym-finansam-s-nulya-do-polnocennogo-primeneniya/",
-        :id "74766790688908",
-        :category
-        ["DeFi"
-         "Decentralized Finance"
-         "vCollege"
-         "Криптошкола"
-         "децентрализованные финансы"
-         "крипто"],
-        :summary "",
-        :source-id "http://sgolub.ru/?p=13684",
-        :published "2020-12-02T18:15:23Z",
-        :num 28,
-        :feed "101155069755493",
-        :title
-        "ALPHALEAKS DEFI: Однодневный практический курс по децентрализованным финансам с нуля до полноценного применения",
-        :author ["Сергей Голубицкий"],
-        :comments
-        "http://sgolub.ru/vcollege/alphaleaks-defi-odnodnevnyj-prakticheskij-kurs-po-decentralizovannym-finansam-s-nulya-do-polnocennogo-primeneniya/#respond"}
- #:item{:link
-        "http://sgolub.ru/shkola-zhurnalistiki/journalism-minoa-teenagers/",
-        :id "74766790688909",
-        :category ["МИНОА" "Школа журналистики"],
-        :summary "",
-        :source-id "http://sgolub.ru/?p=13654",
-        :published "2020-09-02T09:20:04Z",
-        :num 29,
-        :feed "101155069755493",
-        :title
-        "Школа журналистики для подростков: работаем с поколением Z",
-        :author ["Анастасия Бондаренко"],
-        :comments
-        "http://sgolub.ru/shkola-zhurnalistiki/journalism-minoa-teenagers/#respond"})
+        "https://www.exler.ru/films/shan-chi-i-legenda-desyati-kolec.htm",
+        :title "Шан-Чи и легенда десяти колец",
+        :summary
+        "<p><a class=\"fancybox\" rel=\"media\" src=\"https://www.exler.ru/img/films/15-11-2021/big/1.jpg\"><img align=\"left\" alt=\"\" border=\"0\" class=\"align-left\" src=\"https://www.exler.ru/img/films/15-11-2021/1.jpg\" /></a>Наши дни. Тридцатилетний китаец Шан-Чи (Симу Лю) живет в Сан-Франциско, где работает парковщиком вместе со своей подругой Кэти (Аквафина). Они дружат еще со времен учебы  в колледже, вместе работают и вместе развлекаются по вечерам в караоке, однако Кэти понятия не имеет, кто такой Шан-Чи, тем более что она его знает под именем Шон. </p>",
+        :num 217,
+        :feed "83562883711095",
+        :id "109951162794843"})
 
 #+end_example
 
@@ -112,6 +249,7 @@
        :summary
        "<p>Коды и котики История уникального отечественного опыта контроля над Интернетом Сегодня разговор пойдет о контроле государства над Интернетом. Актуальность темы</p>\n<p>Запись <a href=\"http://sgolub.ru/publications/istoriya-unikalnogo-otechestvennogo-opyta-kontrolya-nad-internetom/\" rel=\"nofollow\">История уникального отечественного опыта контроля над Интернетом</a> впервые появилась <a href=\"http://sgolub.ru\" rel=\"nofollow\">АВТОРСКИЙ ПРОЕКТ СЕРГЕЯ ГОЛУБИЦКОГО</a>.</p>\n",
        :source-id "http://sgolub.ru/?p=13505",
+       :feed+id "101155069755493+http://sgolub.ru/?p=13505",
        :published "2019-07-05T16:30:21Z",
        :num 2,
        :feed "101155069755493",

@@ -147,23 +147,4 @@
                      :db/cardinality :db.cardinality/one
                      :db/doc "Source filters"}])
 
-(def feed-key-mappings {:url :feed/url
-                        :title :feed/title
-                        :summary :feed/summary
-                        :published :feed/published
-                        :image :feed/image})
-
-(def item-key-mappings {:id :item/id
-                        :num :item/num
-                        :link :item/link
-                        :title :item/title
-                        :summary :item/summary
-                        ; do not store content in datomic
-                        ; :content :item/content 
-                        :author :item/author
-                        :contributor :item/contributor
-                        :category :item/category
-                        :published :item/published
-                        :comments :item/comments})
-
 (def schema (vec (concat feed-schema item-schema user-schema source-schema)))

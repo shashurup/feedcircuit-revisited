@@ -3,6 +3,8 @@
             [feedcircuit-revisited.schema :as schema]
             [feedcircuit-revisited.utils :as u]
             [datomic.client.api :as d]
+            [clojure.set :refer (rename-keys)]
+            [clojure.string :refer (split)]
             [me.raynes.fs :as fs]))
 
 (def content-dir)
@@ -92,11 +94,19 @@
 
 (defn adapt-item [item]
   (let [id (str (:db/id item))
-        feed-id (str (:db/id (:item/feed item)))]
+        {feed-id :db/id
+         feed-title :feed/title} (:item/feed item)]
     (-> item
-        (assoc :item/id id
-               :item/feed feed-id)
+        (assoc :item/id id)
+        (merge (when feed-title {:feed/title feed-title}))
+        (merge (when feed-id {:item/feed (str feed-id)}))
         (dissoc :db/id))))
+
+(def item-list-attrs [:db/id
+                      :item/link
+                      :item/title
+                      :item/summary
+                      :item/num])
 
 (defn get-items
   ([feed start]
@@ -108,13 +118,12 @@
          feed-id (u/as-int feed)]
      (->> (d/index-pull (d/db conn)
                         {:index :avet
-                         :selector '[:db/id :item/feed]
+                         :selector [:db/id :item/feed]
                          :start start
                          :reverse reverse})
           (filter #(= (get-in % [:item/feed :db/id]) feed-id))
           (map #(d/pull (d/db conn)
-                        '[:db/id :item/link :item/title
-                          :item/summary :item/num :item/feed]
+                        (conj item-list-attrs :item/feed)
                         (:db/id %)))
           (map adapt-item)))))
 
@@ -140,6 +149,46 @@
 (defn item-id? [subj] (re-matches #"\d+" subj))
 
 (defn active-feed-urls []
+  (ffirst 
+   (d/q '[:find (distinct ?url)
+          :where [_ :source/feed ?f]
+          [?f :feed/url ?url]]
+        (d/db conn))))
+
+(defn parse-style [subj] (split subj #" " 2))
+
+(defn adapt-source [subj]
+  (let [feed (-> (:source/feed subj)
+                 (update :db/id str)
+                 (rename-keys {:db/id :source/feed}))]
+    (merge (dissoc subj :source/feed) feed)))
+
+(defn get-user-data [user-id & opts]
+  (let [selected-attrs (if (some #{:selected/details} opts)
+                         (conj item-list-attrs
+                               {:item/feed [:db/id :feed/title]})
+                         [:db/id])
+        feed-attrs (cond
+                     (some #{:sources/feed-details} opts) '[*]
+                     (some #{:sources/feed-title} opts) [:db/id :feed/title])
+        source-attrs (if feed-attrs
+                       [{:source/feed feed-attrs}
+                        :source/num
+                        :source/active
+                        :source/filters
+                        :source/position]
+                       [:source/feed :source/num])]
+    (-> (d/pull (d/db conn)
+                [:user/id
+                 :user/styles
+                 {:user/selected selected-attrs}
+                 {[:source/_user :as :user/sources] source-attrs}]
+                [:user/id user-id])
+        (update :user/selected #(map adapt-item %))
+        (update :user/styles #(map parse-style %))
+        (update :user/sources #(map adapt-source %)))))
+
+(defn update-settings! [user-id sources styles]
   )
 
 (defn init-impl! []
