@@ -22,9 +22,10 @@
   (intern *ns* sym stub))
 
 (defn map-backend-impl [impl]
-  (doseq [sym backend-interface]
-    (let [bfn (get (ns-interns impl) sym stub)]
-      (intern *ns* sym bfn))))
+  (let [impl-ns (ns-interns impl)]
+    (doseq [sym backend-interface]
+      (let [bfn (get impl-ns sym stub)]
+        (intern 'feedcircuit-revisited.backend sym bfn)))))
 
 ; === common backend functions ===
 
