@@ -14,10 +14,18 @@
   data)
 
 (defn get-block [dir block-num]
-  (get-data (str dir "/" block-num)))
+  (lazy-seq
+   (get-data (str dir "/" block-num))))
+
+(defn get-block-dont-check [dir block-num]
+  (lazy-seq
+   (get-data (str dir "/" block-num) true)))
 
 (defn set-block [dir block-num data]
   (set-data (str dir "/" block-num) data))
+
+(defn block-exists? [dir block-num]
+  (fs/exists? (str dir "/" block-num)))
 
 (defn get-last-block-num [dir]
   (->> (fs/list-dir dir)
@@ -35,8 +43,8 @@
   [dir start]
   (let [start-block (quot start block-size)
         start-offset (rem start block-size)
-        items (apply concat (take-while not-empty
-                                        (map #(get-block dir %)
+        items (apply concat (map #(get-block-dont-check dir %)
+                                 (take-while #(block-exists? dir %)
                                              (iterate inc start-block))))]
     (drop start-offset items)))
 
@@ -52,8 +60,9 @@
            (drop (- (count first-block) (inc start-offset))
                  (reverse first-block))
            (take-while not-empty
-                       (map #(reverse (get-block dir %))
-                            (iterate dec (dec start-block)))))))
+                       (map #(reverse (get-block-dont-check dir %))
+                            (take-while #(block-exists? dir %)
+                                        (iterate dec (dec start-block))))))))
 
 
 (defn write-items!

@@ -25,10 +25,13 @@
       (binding [*out* w] (pr data)))
     (fs/rename tempfilename filename)))
 
-(defn read-file [filename]
-  (if (fs/exists? filename)
-    (with-open [r (java.io.PushbackReader. (io/reader filename))]
-      (edn/read r))))
+(defn read-file
+  ([filename]
+   (read-file filename false))
+  ([filename dont-check]
+   (if (or dont-check (fs/exists? filename))
+     (with-open [r (java.io.PushbackReader. (io/reader filename))]
+       (edn/read r)))))
 
 (defn distinct-by [f coll]
   "Similar to distinct except that duplicates of (f element) are removed"
