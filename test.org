@@ -8,6 +8,7 @@
             [feedcircuit-revisited.fs-backend :as f-b]
             [feedcircuit-revisited.content :as c]
             [feedcircuit-revisited.ui :as u]
+            [feedcircuit-revisited.utils :as ut]
             [feedcircuit-revisited.handler :as h]
             [feedcircuit-revisited.conf :as conf]
             [feedcircuit-revisited.schema :as s]
@@ -80,187 +81,204 @@
 #+RESULTS:
 #+begin_example
 #:user{:id "georgy@kibardin.name",
+       :styles
+       (["arstechnica.com"
+         "https://shashurup.github.io/feedcircuit-styles/arstechnica.css"]
+        ["habr.com"
+         "https://shashurup.github.io/feedcircuit-styles/img-data-src.js"]),
+       :selected
+       (#:item{:id "74766790692963"}
+        #:item{:id "74766790692972"}
+        #:item{:id "87960930239335"}
+        #:item{:id "92358976734550"}
+        #:item{:id "92358976734562"}
+        #:item{:id "92358976734580"}
+        #:item{:id "101155069794021"}
+        #:item{:id "101155069794032"}
+        #:item{:id "105553116279554"}
+        #:item{:id "105553116293676"}
+        #:item{:id "105553116293718"}
+        #:item{:id "105553116294025"}
+        #:item{:id "105553116305986"}
+        #:item{:id "105553116306212"}
+        #:item{:id "105553116306258"}
+        #:item{:id "105553116306262"}
+        #:item{:id "114349209323653"}
+        #:item{:id "114349209324589"}),
        :sources
-       ({:source/feed "https://news.mail.ru/rss/90/",
-         :source/filters ,
-         :source/position 250,
+       ({:source/feed "79164837199996",
+         :feed/last-num 25603,
+         :source/position 25604,
          :source/num 0,
          :feed/title "Новости Mail.ru",
          :feed/url "https://news.mail.ru/rss/90/",
          :source/seen true,
          :source/active true,
-         :source/id "https://news.mail.ru/rss/90/"}
-        {:source/feed "https://lenta.ru/rss",
-         :source/filters ,
-         :source/position 4691,
+         :source/id "136339441907608"}
+        {:source/feed "83562883711105",
+         :feed/last-num 25879,
+         :source/position 25880,
          :source/num 1,
          :feed/title "Lenta.ru : Новости",
          :feed/url "https://lenta.ru/rss",
-         :source/seen false,
+         :source/seen true,
          :source/active true,
-         :source/id "https://lenta.ru/rss"}
-        {:source/feed "http://feeds.feedburner.com/zerohedge/feed",
-         :source/filters ,
-         :source/position 2267,
+         :source/id "136339441907609"}
+        {:source/feed "96757023244419",
+         :feed/last-num 25914,
+         :source/position 25915,
          :source/num 2,
          :feed/title "ZeroHedge News",
          :feed/url "http://feeds.feedburner.com/zerohedge/feed",
-         :source/seen false,
+         :source/seen true,
          :source/active true,
-         :source/id "http://feeds.feedburner.com/zerohedge/feed"}
-        {:source/feed "https://news.ycombinator.com/rss",
-         :source/filters ,
-         :source/position 4178,
+         :source/id "136339441907610"}
+        {:source/feed "79164837199975",
+         :feed/last-num 25160,
+         :source/position 25161,
          :source/num 3,
          :feed/title "Hacker News",
          :feed/url "https://news.ycombinator.com/rss",
-         :source/seen false,
+         :source/seen true,
          :source/active true,
-         :source/id "https://news.ycombinator.com/rss"}
-        {:source/feed "http://rss.slashdot.org/Slashdot/slashdotMain",
-         :source/filters ,
-         :source/position 807,
+         :source/id "136339441907611"}
+        {:source/feed "87960930222197",
+         :feed/last-num 25446,
+         :source/position 25447,
          :source/num 4,
          :feed/title "Slashdot",
          :feed/url "http://rss.slashdot.org/Slashdot/slashdotMain",
-         :source/seen false,
+         :source/seen true,
          :source/active true,
-         :source/id "http://rss.slashdot.org/Slashdot/slashdotMain"}
-        {:source/feed "https://xkcd.com/atom.xml",
-         :source/filters ,
-         :source/position 198,
+         :source/id "136339441907612"}
+        {:source/feed "74766790688889",
+         :feed/last-num 25500,
+         :source/position 25501,
          :source/num 5,
          :feed/title "xkcd.com",
          :feed/url "https://xkcd.com/atom.xml",
-         :source/seen false,
+         :source/seen true,
          :source/active true,
-         :source/id "https://xkcd.com/atom.xml"}
-        {:source/feed
-         "http://comicfeeds.chrisbenard.net/view/dilbert/default",
-         :source/filters ,
-         :source/position 399,
+         :source/id "136339441907613"}
+        {:source/feed "83562883711103",
+         :feed/last-num 25680,
+         :source/position 25681,
          :source/num 6,
          :feed/title "Dilbert Daily Strip",
          :feed/url
          "http://comicfeeds.chrisbenard.net/view/dilbert/default",
-         :source/seen false,
+         :source/seen true,
          :source/active true,
-         :source/id
-         "http://comicfeeds.chrisbenard.net/view/dilbert/default"}
-        {:source/feed "https://exler.ru/films/rss.xml",
-         :source/filters ,
-         :source/position 217,
+         :source/id "136339441907614"}
+        {:source/feed "83562883711096",
+         :feed/last-num 25496,
+         :source/position 25497,
          :source/num 7,
          :feed/title "Exler.ru",
          :feed/url "https://exler.ru/films/rss.xml",
-         :source/seen false,
+         :source/seen true,
          :source/active true,
-         :source/id "https://exler.ru/films/rss.xml"}
-        {:source/feed "https://kiwibyrd.org/feed/",
-         :source/filters ,
-         :source/position 47,
+         :source/id "136339441907615"}
+        {:source/feed "87960930222210",
+         :feed/last-num 25889,
+         :source/position 25890,
          :source/num 8,
          :feed/title "kiwi  arXiv",
          :feed/url "https://kiwibyrd.org/feed/",
          :source/seen true,
          :source/active true,
-         :source/id "https://kiwibyrd.org/feed/"}
-        {:source/feed "http://sgolub.ru/feed/",
-         :source/filters ,
-         :source/position 47,
+         :source/id "136339441907616"}
+        {:source/feed "96757023244390",
+         :feed/last-num 25130,
+         :source/position 25131,
          :source/num 9,
          :feed/title "АВТОРСКИЙ ПРОЕКТ СЕРГЕЯ ГОЛУБИЦКОГО",
          :feed/url "http://sgolub.ru/feed/",
          :source/seen true,
          :source/active true,
-         :source/id "http://sgolub.ru/feed/"}
-        {:source/feed "https://bikepost.ru/rss/index/",
-         :source/filters ,
-         :source/position 2115,
+         :source/id "136339441907617"}
+        {:source/feed "92358976733300",
+         :feed/last-num 25431,
+         :source/position 25432,
          :source/num 10,
          :feed/title "БайкПост",
          :feed/url "https://bikepost.ru/rss/index/",
-         :source/seen false,
+         :source/seen true,
          :source/active true,
-         :source/id "https://bikepost.ru/rss/index/"}
-        {:source/feed
-         "http://www.opennet.ru/opennews/opennews_all.rss",
-         :source/filters ,
-         :source/position 286,
+         :source/id "136339441907618"}
+        {:source/feed "74766790688873",
+         :feed/last-num 25225,
+         :source/position 25226,
          :source/num 11,
          :feed/title "OpenNews.opennet.ru: Общая лента новостей",
          :feed/url "http://www.opennet.ru/opennews/opennews_all.rss",
-         :source/seen false,
+         :source/seen true,
          :source/active true,
-         :source/id "http://www.opennet.ru/opennews/opennews_all.rss"}
-        {:source/feed "https://habr.com/ru/rss/best/daily/",
-         :source/filters ,
-         :source/position 766,
+         :source/id "136339441907619"}
+        {:source/feed "96757023244414",
+         :feed/last-num 25673,
+         :source/position 1244,
          :source/num 12,
          :feed/title "Лучшие публикации за сутки",
          :feed/url "https://habr.com/ru/rss/best/daily/",
          :source/seen false,
          :source/active true,
-         :source/id "https://habr.com/ru/rss/best/daily/"}
-        {:source/feed "http://4pda.to/feed/",
-         :source/filters ,
+         :source/id "136339441907620"}
+        {:source/feed "101155069755503",
+         :feed/last-num 25341,
          :source/position 199,
          :source/num 13,
          :feed/title "4PDA",
          :feed/url "http://4pda.to/feed/",
          :source/seen false,
          :source/active true,
-         :source/id "http://4pda.to/feed/"}
-        {:source/feed "https://www.computerra.ru/feed/",
-         :source/filters ,
+         :source/id "136339441907621"}
+        {:source/feed "96757023244407",
+         :feed/last-num 25486,
          :source/position 886,
          :source/num 14,
          :feed/title "Компьютерра",
          :feed/url "https://www.computerra.ru/feed/",
          :source/seen false,
          :source/active true,
-         :source/id "https://www.computerra.ru/feed/"}
-        {:source/feed
-         "https://www.kommersant.ru/RSS/section-hitech.xml",
-         :source/filters ,
+         :source/id "136339441907622"}
+        {:source/feed "74766790688881",
+         :feed/last-num 25374,
          :source/position 103,
          :source/num 15,
          :feed/title "\"Коммерсантъ Hi-Tech\"",
          :feed/url "https://www.kommersant.ru/RSS/section-hitech.xml",
          :source/seen false,
          :source/active true,
-         :source/id "https://www.kommersant.ru/RSS/section-hitech.xml"}
-        {:source/feed "https://www.kommersant.ru/RSS/Autopilot_on.xml",
-         :source/filters ,
+         :source/id "136339441907623"}
+        {:source/feed "96757023244403",
+         :feed/last-num 25399,
          :source/position 184,
          :source/num 16,
          :feed/title "Коммерсантъ Автопилот. Online и Новости",
          :feed/url "https://www.kommersant.ru/RSS/Autopilot_on.xml",
          :source/seen false,
          :source/active true,
-         :source/id "https://www.kommersant.ru/RSS/Autopilot_on.xml"}
-        {:source/feed "https://content.novayagazeta.ru/rss/all.xml",
+         :source/id "136339441907624"}
+        {:source/num 17,
+         :source/active true,
          :source/filters "!Новости",
          :source/position 921,
-         :source/num 17,
-         :feed/title "Новая Газета",
+         :source/id "136339441907625",
          :feed/url "https://content.novayagazeta.ru/rss/all.xml",
-         :source/seen false,
-         :source/active true,
-         :source/id "https://content.novayagazeta.ru/rss/all.xml"}
-        {:source/feed
-         "https://www.kommersant.ru/RSS/section-world.xml",
-         :source/filters ,
+         :feed/title "Новая Газета",
+         :source/feed "79164837199994"}
+        {:source/feed "96757023244411",
+         :feed/last-num 25583,
          :source/position 4088,
          :source/num 18,
          :feed/title "\"Коммерсантъ\". В мире",
          :feed/url "https://www.kommersant.ru/RSS/section-world.xml",
          :source/seen false,
          :source/active false,
-         :source/id "https://www.kommersant.ru/RSS/section-world.xml"}
-        {:source/feed
-         "https://www.kommersant.ru/RSS/section-politics.xml",
-         :source/filters ,
+         :source/id "136339441907626"}
+        {:source/feed "96757023244394",
+         :feed/last-num 25246,
          :source/position 147,
          :source/num 19,
          :feed/title "\"Коммерсантъ\". Политика",
@@ -268,97 +286,69 @@
          "https://www.kommersant.ru/RSS/section-politics.xml",
          :source/seen false,
          :source/active true,
-         :source/id
-         "https://www.kommersant.ru/RSS/section-politics.xml"}
-        {:source/feed "http://blog.cleancoder.com/atom.xml",
-         :source/filters ,
+         :source/id "136339441907627"}
+        {:source/feed "83562883711090",
+         :feed/last-num 25394,
          :source/position 32,
          :source/num 20,
          :feed/title "The Clean Code Blog",
          :feed/url "http://blog.cleancoder.com/atom.xml",
          :source/seen false,
          :source/active true,
-         :source/id "http://blog.cleancoder.com/atom.xml"}
-        {:source/feed "https://www.archlinux.org/feeds/packages/",
-         :source/filters ,
+         :source/id "136339441907628"}
+        {:source/feed "83562883711101",
+         :feed/last-num 25653,
          :source/position 50,
          :source/num 21,
          :feed/title "Arch Linux: Recent package updates",
          :feed/url "https://www.archlinux.org/feeds/packages/",
          :source/seen false,
          :source/active false,
-         :source/id "https://www.archlinux.org/feeds/packages/"}
-        {:source/feed "https://www.archlinux.org/feeds/news/",
-         :source/filters ,
+         :source/id "136339441907629"}
+        {:source/feed "87960930222190",
+         :feed/last-num 25311,
          :source/position 34,
          :source/num 22,
          :feed/title "Arch Linux: Recent news updates",
          :feed/url "https://www.archlinux.org/feeds/news/",
          :source/seen false,
          :source/active true,
-         :source/id "https://www.archlinux.org/feeds/news/"}
-        {:source/feed "https://clojure.org/feed.xml",
-         :source/filters ,
+         :source/id "136339441907630"}
+        {:source/feed "87960930222188",
+         :feed/last-num 25301,
          :source/position 26,
          :source/num 23,
          :feed/title "Clojure News",
          :feed/url "https://clojure.org/feed.xml",
          :source/seen false,
          :source/active true,
-         :source/id "https://clojure.org/feed.xml"}
-        {:source/feed "https://www.anandtech.com/rss/",
-         :source/filters ,
+         :source/id "136339441907631"}
+        {:source/feed "92358976733296",
+         :feed/last-num 25371,
          :source/position 563,
          :source/num 24,
          :feed/title "AnandTech",
          :feed/url "https://www.anandtech.com/rss/",
          :source/seen false,
          :source/active true,
-         :source/id "https://www.anandtech.com/rss/"}
-        {:source/feed
-         "http://feeds.arstechnica.com/arstechnica/index/",
-         :source/filters ,
+         :source/id "136339441907632"}
+        {:source/feed "79164837199990",
+         :feed/last-num 25466,
          :source/position 710,
          :source/num 25,
          :feed/title "Ars Technica",
          :feed/url "http://feeds.arstechnica.com/arstechnica/index/",
          :source/seen false,
          :source/active true,
-         :source/id "http://feeds.arstechnica.com/arstechnica/index/"}
-        {:source/feed "http://feeds.feedburner.com/PythonInsider",
-         :source/filters ,
+         :source/id "136339441907633"}
+        {:source/feed "87960930222184",
+         :feed/last-num 25185,
          :source/position 25,
          :source/num 26,
          :feed/title "Python Insider",
          :feed/url "http://feeds.feedburner.com/PythonInsider",
          :source/seen false,
          :source/active true,
-         :source/id "http://feeds.feedburner.com/PythonInsider"}),
-       :selected
-       (#:item{:id "577,https://habr.com/ru/rss/best/daily/"}
-        #:item{:id "2022,https://lenta.ru/rss"}
-        #:item{:id "1081,https://lenta.ru/rss"}
-        #:item{:id "4035,https://news.ycombinator.com/rss"}
-        #:item{:id "4044,https://news.ycombinator.com/rss"}
-        #:item{:id "203,https://exler.ru/films/rss.xml"}
-        #:item{:id "2020,http://feeds.feedburner.com/zerohedge/feed"}
-        #:item{:id
-               "https://www.exler.ru/ezhe/kardona-zloveshie-tajny-drevnego-zamka-i-solyanaya-peshera.htm"}
-        #:item{:id "2024,http://feeds.feedburner.com/zerohedge/feed"}
-        #:item{:id "1974,http://feeds.feedburner.com/zerohedge/feed"}
-        #:item{:id "1748,http://feeds.feedburner.com/zerohedge/feed"}
-        #:item{:id "1236,https://news.ycombinator.com/rss"}
-        #:item{:id "1218,https://news.ycombinator.com/rss"}
-        #:item{:id "1206,https://news.ycombinator.com/rss"}
-        #:item{:id "898,http://feeds.feedburner.com/zerohedge/feed"}
-        #:item{:id "887,http://feeds.feedburner.com/zerohedge/feed"}
-        #:item{:id "270,https://habr.com/ru/rss/best/daily/"}
-        #:item{:id "228,https://habr.com/ru/rss/best/daily/"}
-        #:item{:id "1544,https://bikepost.ru/rss/index/"}),
-       :styles
-       (["arstechnica.com"
-         "https://shashurup.github.io/feedcircuit-styles/arstechnica.css"]
-        ["habr.com"
-         "https://shashurup.github.io/feedcircuit-styles/img-data-src.js"])}
+         :source/id "136339441907634"})}
 
 #+end_example

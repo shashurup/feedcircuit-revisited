@@ -4,6 +4,7 @@
             [feedcircuit-revisited.feed :as feed]
             [feedcircuit-revisited.content :as content]
             [feedcircuit-revisited.auth :as auth]
+            [feedcircuit-revisited.utils :as u]
             [clojure.tools.logging :as log]))
 
 (def page-size 16)
@@ -115,7 +116,8 @@
 (defn build-item-list [items class icon source checked]
   (if (empty? items)
     [:p.fcr-no-more-items "No more items"]
-    (for [[idx {title :item/title
+    (for [[idx {link :item/link
+                title :item/title
                 summary :item/summary
                 content :item/content
                 uid :item/id
@@ -132,8 +134,10 @@
                        (list
                         " |&nbsp;"
                         [:a.fcr-link.fcr-item-footer
-                         {:href (str "feed?url=" feed)}
-                         feed-title]
+                         {:href (if feed
+                                  (str "feed?url=" feed)
+                                  (u/get-url-base link))}
+                         (or feed-title (u/get-url-host link))]
                         " "
                         [:label {:class "item-check"
                                  :for (ch-id idx)} icon]

@@ -44,3 +44,10 @@
                        (cons v (step (rest s) (conj seen (f v)))))))
                  xs seen)))]
     (step coll #{})))
+
+(defn get-url-host [url]
+  (.getHost (java.net.URL. url)))
+
+(defn get-url-base [url]
+  (let [jnu (java.net.URL. url)]
+    (str (.getProtocol jnu) "://" (.getHost jnu))))

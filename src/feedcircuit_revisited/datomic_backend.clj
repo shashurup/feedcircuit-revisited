@@ -55,26 +55,31 @@
   (let [nil-keys (remove #(get subj %) (keys subj))]
     (apply dissoc subj nil-keys)))
 
-(defn augment [item feed]
-  (let [{content :item/content
-         source-id :item/id} item]
-    (assoc item
-           :db/id source-id
-           :item/feed feed
-           :item/feed+id (str feed "+" source-id)
-           :item/has-content (boolean (not-empty content))
-           :item/num (or (:item/num item)
-                         (swap! cur-item-num inc)))))
+(defn prepare-item-content [item]
+  (let [content (:item/content item)]
+    (-> item
+        (assoc :item/has-content (boolean (not-empty content)))
+        (dissoc :item/content))))
 
-(defn clean [item]
+(defn clean-item [item]
   (remove-nils (select-keys item item-attrs)))
+
+(defn prepare-item [item feed]
+  (let [source-id (:item/id item)]
+    (-> item
+        prepare-item-content
+        (assoc :db/id source-id
+               :item/feed feed
+               :item/feed+id (str feed "+" source-id)
+               :item/num (or (:item/num item)
+                             (swap! cur-item-num inc)))
+        clean-item)))
 
 (defn append-items! [url items]
   (let [feed (get-feed-attr url :db/id)
         items (->> items
                    (u/distinct-by :item/id)
-                   (map #(augment % feed))
-                   (map clean)
+                   (map #(prepare-item % feed))
                    vec)
         txdata (when-let [ln (:item/num (last items))]
                  (conj items [:db/add feed :feed/last-num ln]))]
@@ -206,18 +211,42 @@
                       [:db/add (u/as-int src) :source/position pos]))]
     (d/transact conn {:tx-data txdata})))
 
-(defn selected-change! [user-id ids op]
-  (let [txdata (vec (for [id ids]
-                      [op [:user/id user-id] :user/selected (u/as-int id)]))]
-    (when-not (empty? txdata)
-      (d/transact conn {:tx-data txdata}))))
+(defn selected-op [op user-id id]
+  [op [:user/id user-id] :user/selected id])
+
+(defn selected-ops [id user-id]
+  (if (map? id)
+    (let [tempid (:item/link id)]
+      [(-> id
+           prepare-item-content
+           (assoc :db/id tempid))
+       (selected-op :db/add user-id tempid)])
+    [(selected-op :db/add user-id (u/as-int id))]))
+
+(defn content-map [ids]
+  (->> ids
+       (filter map?)
+       (map #(vector (:item/link %) (:item/content %)))
+       (filter second)
+       (into {})))
 
 (defn selected-add! [user-id ids]
-  ; todo handle item by value
-  (selected-change! user-id ids :db/add))
+  (let [cmap (content-map ids)
+        res (d/transact conn {:tx-data
+                              (->> (for [id ids]
+                                     (selected-ops id user-id))
+                                   (apply concat)
+                                   vec)})]
+    (doseq [[url content] cmap]
+      (u/write-file (str content-dir "/"
+                         (get (:tempids res) url)) content))))
 
 (defn selected-remove! [user-id ids]
-  (selected-change! user-id ids :db/retract))
+  (d/transact conn {:tx-data
+                    (vec (for [id ids]
+                           (selected-op :db/retract
+                                        user-id
+                                        (u/as-int id))))}))
 
 (defn init-impl! []
   (def content-dir (conf/param :datomic :content-dir))
