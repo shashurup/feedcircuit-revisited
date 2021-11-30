@@ -71,9 +71,13 @@
 
 (defn append-items! [url items]
   (let [feed (get-feed-attr url :db/id)
-        items (map #(augment % feed)
-                   (u/distinct-by :item/id items))
-        txdata (vec (map clean items))]
+        items (->> items
+                   (u/distinct-by :item/id)
+                   (map #(augment % feed))
+                   (map clean)
+                   vec)
+        txdata (when-let [ln (:item/num (last items))]
+                 (conj items [:db/add feed :feed/last-num ln]))]
     (let [tempids (:tempids (d/transact conn {:tx-data txdata}))]
       (doseq [{tempid :item/id
                content :item/content} (filter :item/has-content items)
@@ -148,6 +152,13 @@
 
 (defn parse-style [subj] (split subj #" " 2))
 
+(defn set-seen [subj]
+  (let [{pos :source/position
+         last :feed/last-num} subj]
+    (if last
+      (assoc subj :source/seen (> pos last))
+      subj)))
+
 (defn adapt-source [subj]
   (let [feed (-> (:source/feed subj)
                  (update :db/id str)
@@ -156,7 +167,8 @@
         (dissoc :source/feed)
         (rename-keys {:db/id :source/id})
         (update :source/id str)
-        (merge feed))))
+        (merge feed)
+        set-seen)))
 
 (defn get-user-data [user-id & opts]
   (let [selected-attrs (if (some #{:selected/details} opts)
@@ -165,7 +177,10 @@
                          [:db/id])
         feed-attrs (cond
                      (some #{:sources/feed-details} opts) '[*]
-                     (some #{:sources/feed-title} opts) [:db/id :feed/url :feed/title]
+                     (some #{:sources/feed-title} opts) [:db/id
+                                                         :feed/url
+                                                         :feed/title
+                                                         :feed/last-num]
                      :else [:db/id :feed/url])
         source-attrs [:db/id
                       {:source/feed feed-attrs}

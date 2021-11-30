@@ -14,12 +14,10 @@
   data)
 
 (defn get-block [dir block-num]
-  (lazy-seq
-   (get-data (str dir "/" block-num))))
+  (get-data (str dir "/" block-num)))
 
 (defn get-block-dont-check [dir block-num]
-  (lazy-seq
-   (get-data (str dir "/" block-num) true)))
+  (get-data (str dir "/" block-num) true))
 
 (defn set-block [dir block-num data]
   (set-data (str dir "/" block-num) data))
@@ -43,7 +41,7 @@
   [dir start]
   (let [start-block (quot start block-size)
         start-offset (rem start block-size)
-        items (apply concat (map #(get-block-dont-check dir %)
+        items (apply concat (map #(lazy-seq (get-block-dont-check dir %))
                                  (take-while #(block-exists? dir %)
                                              (iterate inc start-block))))]
     (drop start-offset items)))
@@ -60,7 +58,10 @@
            (drop (- (count first-block) (inc start-offset))
                  (reverse first-block))
            (take-while not-empty
-                       (map #(reverse (get-block-dont-check dir %))
+                                        ; lazy-seq is essential here, it prevents concat
+                                        ; from prematurely consuming items from get-block
+                                        ; thus causing reading items from disk
+                      (map #(lazy-seq (reverse (get-block-dont-check dir %)))
                             (take-while #(block-exists? dir %)
                                         (iterate dec (dec start-block))))))))
 
@@ -355,18 +356,22 @@
                           feeds)]
     {:user/id id
      :user/sources (map-indexed (fn [idx [url filters active]]
-                                  (merge 
-                                   {:source/num idx
-                                    :source/active active
-                                    :source/id url
-                                    :source/feed url
-                                    :feed/url url
-                                    :source/filters filters
-                                    :source/position (get positions url)}
-                                   (when (some #{:sources/feed-title} opts)
-                                     {:feed/title (get-in @feed-index [url :title])})
-                                   (when (some #{:sources/feed-details} opts)
-                                     (get-feed-attrs url))))
+                                  (let [pos (get positions url)
+                                        cnt (get-in @feed-index [url :item-count])]
+                                    (merge 
+                                     {:source/num idx
+                                      :source/active active
+                                      :source/id url
+                                      :source/feed url
+                                      :feed/url url
+                                      :source/filters filters
+                                      :source/position pos}
+                                     (when (and pos cnt)
+                                       {:source/seen (> pos (dec cnt))})
+                                     (when (some #{:sources/feed-title} opts)
+                                       {:feed/title (get-in @feed-index [url :title])})
+                                     (when (some #{:sources/feed-details} opts)
+                                       (get-feed-attrs url)))))
                                 parsed-feeds)
      :user/selected (if (some #{:selected/details} opts)
                       (map add-uid-and-feed-title selected)

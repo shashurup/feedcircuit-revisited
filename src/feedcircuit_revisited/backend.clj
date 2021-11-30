@@ -18,8 +18,8 @@
                         'update-settings! 'update-positions!
                         'init-impl!])
 
-(doseq [sym backend-interface]
-  (intern *ns* sym stub))
+(defonce _ (doseq [sym backend-interface]
+             (intern *ns* sym stub)))
 
 (defn map-backend-impl [impl]
   (let [impl-ns (ns-interns impl)]
@@ -71,9 +71,14 @@
                 src :source/id
                 filters :source/filters
                 pos :source/position
-                feed-title :feed/title} (filter :source/active sources)
+                feed-title :feed/title} (->> sources
+                                             (filter :source/active)
+                                             (remove :source/seen))
                :let [exprs (parse-filters filters)]]
-           (->> (get-items feed pos)
+                                        ; lazy-seq is essential here, it prevents concat
+                                        ; from prematurely consuming items from get-items
+                                        ; thus causing reading items from disk
+           (->> (lazy-seq (get-items feed pos))
                 (filter #(item-matches % exprs))
                 (map #(assoc % :feed/title feed-title
                                :item/source src))))))

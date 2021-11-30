@@ -4,12 +4,11 @@
             [feedcircuit-revisited.feed :as f]
             [feedcircuit-revisited.backend :as b]
             [feedcircuit-revisited.schema :as schema]
-            [feedcircuit-revisited.datomic-backend :as bda]
-            [feedcircuit-revisited.fs-backend :as bfs]
+            [feedcircuit-revisited.datomic-backend :as d-b]
+            [feedcircuit-revisited.fs-backend :as f-b]
             [feedcircuit-revisited.content :as c]
             [feedcircuit-revisited.ui :as u]
-            [feedcircuit-revisited.handler :as handler]
-            [feedcircuit-revisited.storage :as storage]
+            [feedcircuit-revisited.handler :as h]
             [feedcircuit-revisited.conf :as conf]
             [feedcircuit-revisited.schema :as s]
             [datomic.client.api :as d]
@@ -20,746 +19,346 @@
 ))
 #+end_src
 
+#+RESULTS:
+: 
+: 
+
 #+begin_src clojure :results pp
-(bda/get-user-data "georgy@kibardin.name" :sources/feed-title)
+(d/q '[:find (pull ?f [
+                       :feed/url
+                       ;:feed/title
+                       ;:feed/last-num
+                       ;*
+                       ])
+       :where [?f :feed/url _]]
+     (d/db d-b/conn))
 #+end_src
 
 #+RESULTS:
-: class clojure.lang.ExceptionInfo
+#+begin_example
+[[#:feed{:url "http://www.opennet.ru/opennews/opennews_all.rss"}]
+ [#:feed{:url "https://www.kommersant.ru/RSS/section-hitech.xml"}]
+ [#:feed{:url "https://xkcd.com/atom.xml"}]
+ [#:feed{:url "https://www.zerohedge.com/fullrss2.xml"}]
+ [#:feed{:url "https://news.ycombinator.com/rss"}]
+ [#:feed{:url "http://feeds.arstechnica.com/arstechnica/index/"}]
+ [#:feed{:url "https://content.novayagazeta.ru/rss/all.xml"}]
+ [#:feed{:url "https://news.mail.ru/rss/90/"}]
+ [#:feed{:url "http://static.feed.rbc.ru/rbc/logical/footer/news.rss"}]
+ [#:feed{:url "https://www.exler.ru/rss.xml"}]
+ [#:feed{:url "http://blog.cleancoder.com/atom.xml"}]
+ [#:feed{:url "https://exler.ru/films/rss.xml"}]
+ [#:feed{:url "https://www.archlinux.org/feeds/packages/"}]
+ [#:feed{:url
+         "http://comicfeeds.chrisbenard.net/view/dilbert/default"}]
+ [#:feed{:url "https://lenta.ru/rss"}]
+ [#:feed{:url "http://feeds.feedburner.com/PythonInsider"}]
+ [#:feed{:url "https://clojure.org/feed.xml"}]
+ [#:feed{:url "https://www.archlinux.org/feeds/news/"}]
+ [#:feed{:url "http://rss.slashdot.org/Slashdot/slashdotMain"}]
+ [#:feed{:url "https://kiwibyrd.org/feed/"}]
+ [#:feed{:url "http://4pda.ru/feed/"}]
+ [#:feed{:url "https://www.anandtech.com/rss/"}]
+ [#:feed{:url "https://bikepost.ru/rss/index/"}]
+ [#:feed{:url "http://sgolub.ru/feed/"}]
+ [#:feed{:url "https://www.kommersant.ru/RSS/section-politics.xml"}]
+ [#:feed{:url "https://www.kommersant.ru/RSS/Autopilot_on.xml"}]
+ [#:feed{:url "https://www.computerra.ru/feed/"}]
+ [#:feed{:url "https://www.kommersant.ru/RSS/section-world.xml"}]
+ [#:feed{:url "https://habr.com/ru/rss/best/daily/"}]
+ [#:feed{:url "http://feeds.feedburner.com/zerohedge/feed"}]
+ [#:feed{:url "http://4pda.to/feed/"}]]
+
+#+end_example
 
 #+begin_src clojure :results pp
-(d/pull (d/db bda/conn)
-        [:user/id
-         :user/styles
-         ;{:user/selected [:db/id
-         ;                 :item/link
-         ;                 :item/title
-         ;                 :item/summary
-         ;                 :item/num
-         ;                 {:item/feed [:db/id
-         ;                              :feed/title]}]}
-         {[:source/_user :as :user/sources] [:db/id
-                                             :source/feed
-                                             :source/num
-                                             :source/active
-                                             :source/filters
-                                             :source/position]}]
-        [:user/id "georgy@kibardin.name"])
+(b/get-user-data "georgy@kibardin.name"
+                   :sources/feed-title
+)
 #+end_src
 
 #+RESULTS:
 #+begin_example
 #:user{:id "georgy@kibardin.name",
-       :styles
-       ["arstechnica.com https://shashurup.github.io/feedcircuit-styles/arstechnica.css"
-        "habr.com https://shashurup.github.io/feedcircuit-styles/img-data-src.js"],
        :sources
-       [{:db/id 131941395396489,
-         :source/feed #:db{:id 83562883711099},
+       ({:source/feed "https://news.mail.ru/rss/90/",
+         :source/filters ,
+         :source/position 250,
          :source/num 0,
+         :feed/title "Новости Mail.ru",
+         :feed/url "https://news.mail.ru/rss/90/",
+         :source/seen true,
          :source/active true,
-         :source/position 190}
-        {:db/id 131941395396490,
-         :source/feed #:db{:id 101155069755520},
+         :source/id "https://news.mail.ru/rss/90/"}
+        {:source/feed "https://lenta.ru/rss",
+         :source/filters ,
+         :source/position 4691,
          :source/num 1,
+         :feed/title "Lenta.ru : Новости",
+         :feed/url "https://lenta.ru/rss",
+         :source/seen false,
          :source/active true,
-         :source/position 4091}
-        {:db/id 131941395396491,
-         :source/feed #:db{:id 96757023244418},
+         :source/id "https://lenta.ru/rss"}
+        {:source/feed "http://feeds.feedburner.com/zerohedge/feed",
+         :source/filters ,
+         :source/position 2267,
          :source/num 2,
+         :feed/title "ZeroHedge News",
+         :feed/url "http://feeds.feedburner.com/zerohedge/feed",
+         :source/seen false,
          :source/active true,
-         :source/position 2207}
-        {:db/id 131941395396492,
-         :source/feed #:db{:id 79164837199974},
+         :source/id "http://feeds.feedburner.com/zerohedge/feed"}
+        {:source/feed "https://news.ycombinator.com/rss",
+         :source/filters ,
+         :source/position 4178,
          :source/num 3,
+         :feed/title "Hacker News",
+         :feed/url "https://news.ycombinator.com/rss",
+         :source/seen false,
          :source/active true,
-         :source/position 4178}
-        {:db/id 131941395396493,
-         :source/feed #:db{:id 96757023244404},
+         :source/id "https://news.ycombinator.com/rss"}
+        {:source/feed "http://rss.slashdot.org/Slashdot/slashdotMain",
+         :source/filters ,
+         :source/position 807,
          :source/num 4,
+         :feed/title "Slashdot",
+         :feed/url "http://rss.slashdot.org/Slashdot/slashdotMain",
+         :source/seen false,
          :source/active true,
-         :source/position 807}
-        {:db/id 131941395396494,
-         :source/feed #:db{:id 83562883711096},
+         :source/id "http://rss.slashdot.org/Slashdot/slashdotMain"}
+        {:source/feed "https://xkcd.com/atom.xml",
+         :source/filters ,
+         :source/position 198,
          :source/num 5,
+         :feed/title "xkcd.com",
+         :feed/url "https://xkcd.com/atom.xml",
+         :source/seen false,
          :source/active true,
-         :source/position 198}
-        {:db/id 131941395396495,
-         :source/feed #:db{:id 87960930222206},
+         :source/id "https://xkcd.com/atom.xml"}
+        {:source/feed
+         "http://comicfeeds.chrisbenard.net/view/dilbert/default",
+         :source/filters ,
+         :source/position 399,
          :source/num 6,
+         :feed/title "Dilbert Daily Strip",
+         :feed/url
+         "http://comicfeeds.chrisbenard.net/view/dilbert/default",
+         :source/seen false,
          :source/active true,
-         :source/position 399}
-        {:db/id 131941395396496,
-         :source/feed #:db{:id 83562883711095},
+         :source/id
+         "http://comicfeeds.chrisbenard.net/view/dilbert/default"}
+        {:source/feed "https://exler.ru/films/rss.xml",
+         :source/filters ,
+         :source/position 217,
          :source/num 7,
+         :feed/title "Exler.ru",
+         :feed/url "https://exler.ru/films/rss.xml",
+         :source/seen false,
          :source/active true,
-         :source/position 217}
-        {:db/id 131941395396497,
-         :source/feed #:db{:id 74766790688897},
+         :source/id "https://exler.ru/films/rss.xml"}
+        {:source/feed "https://kiwibyrd.org/feed/",
+         :source/filters ,
+         :source/position 47,
          :source/num 8,
+         :feed/title "kiwi  arXiv",
+         :feed/url "https://kiwibyrd.org/feed/",
+         :source/seen true,
          :source/active true,
-         :source/position 47}
-        {:db/id 131941395396498,
-         :source/feed #:db{:id 101155069755493},
+         :source/id "https://kiwibyrd.org/feed/"}
+        {:source/feed "http://sgolub.ru/feed/",
+         :source/filters ,
+         :source/position 47,
          :source/num 9,
+         :feed/title "АВТОРСКИЙ ПРОЕКТ СЕРГЕЯ ГОЛУБИЦКОГО",
+         :feed/url "http://sgolub.ru/feed/",
+         :source/seen true,
          :source/active true,
-         :source/position 47}
-        {:db/id 131941395396499,
-         :source/feed #:db{:id 101155069755507},
+         :source/id "http://sgolub.ru/feed/"}
+        {:source/feed "https://bikepost.ru/rss/index/",
+         :source/filters ,
+         :source/position 2115,
          :source/num 10,
+         :feed/title "БайкПост",
+         :feed/url "https://bikepost.ru/rss/index/",
+         :source/seen false,
          :source/active true,
-         :source/position 2115}
-        {:db/id 131941395396500,
-         :source/feed #:db{:id 83562883711080},
+         :source/id "https://bikepost.ru/rss/index/"}
+        {:source/feed
+         "http://www.opennet.ru/opennews/opennews_all.rss",
+         :source/filters ,
+         :source/position 286,
          :source/num 11,
+         :feed/title "OpenNews.opennet.ru: Общая лента новостей",
+         :feed/url "http://www.opennet.ru/opennews/opennews_all.rss",
+         :source/seen false,
          :source/active true,
-         :source/position 286}
-        {:db/id 131941395396501,
-         :source/feed #:db{:id 101155069755517},
+         :source/id "http://www.opennet.ru/opennews/opennews_all.rss"}
+        {:source/feed "https://habr.com/ru/rss/best/daily/",
+         :source/filters ,
+         :source/position 766,
          :source/num 12,
+         :feed/title "Лучшие публикации за сутки",
+         :feed/url "https://habr.com/ru/rss/best/daily/",
+         :source/seen false,
          :source/active true,
-         :source/position 766}
-        {:db/id 131941395396502,
-         :source/feed #:db{:id 79164837199982},
+         :source/id "https://habr.com/ru/rss/best/daily/"}
+        {:source/feed "http://4pda.to/feed/",
+         :source/filters ,
+         :source/position 199,
          :source/num 13,
+         :feed/title "4PDA",
+         :feed/url "http://4pda.to/feed/",
+         :source/seen false,
          :source/active true,
-         :source/position 199}
-        {:db/id 131941395396503,
-         :source/feed #:db{:id 92358976733302},
+         :source/id "http://4pda.to/feed/"}
+        {:source/feed "https://www.computerra.ru/feed/",
+         :source/filters ,
+         :source/position 886,
          :source/num 14,
+         :feed/title "Компьютерра",
+         :feed/url "https://www.computerra.ru/feed/",
+         :source/seen false,
          :source/active true,
-         :source/position 886}
-        {:db/id 131941395396504,
-         :source/feed #:db{:id 92358976733296},
+         :source/id "https://www.computerra.ru/feed/"}
+        {:source/feed
+         "https://www.kommersant.ru/RSS/section-hitech.xml",
+         :source/filters ,
+         :source/position 103,
          :source/num 15,
+         :feed/title "\"Коммерсантъ Hi-Tech\"",
+         :feed/url "https://www.kommersant.ru/RSS/section-hitech.xml",
+         :source/seen false,
          :source/active true,
-         :source/position 103}
-        {:db/id 131941395396505,
-         :source/feed #:db{:id 87960930222194},
+         :source/id "https://www.kommersant.ru/RSS/section-hitech.xml"}
+        {:source/feed "https://www.kommersant.ru/RSS/Autopilot_on.xml",
+         :source/filters ,
+         :source/position 184,
          :source/num 16,
+         :feed/title "Коммерсантъ Автопилот. Online и Новости",
+         :feed/url "https://www.kommersant.ru/RSS/Autopilot_on.xml",
+         :source/seen false,
          :source/active true,
-         :source/position 184}
-        {:db/id 131941395396506,
-         :source/feed #:db{:id 92358976733305},
-         :source/num 17,
-         :source/active true,
+         :source/id "https://www.kommersant.ru/RSS/Autopilot_on.xml"}
+        {:source/feed "https://content.novayagazeta.ru/rss/all.xml",
          :source/filters "!Новости",
-         :source/position 921}
-        {:db/id 131941395396507,
-         :source/feed #:db{:id 79164837199994},
+         :source/position 921,
+         :source/num 17,
+         :feed/title "Новая Газета",
+         :feed/url "https://content.novayagazeta.ru/rss/all.xml",
+         :source/seen false,
+         :source/active true,
+         :source/id "https://content.novayagazeta.ru/rss/all.xml"}
+        {:source/feed
+         "https://www.kommersant.ru/RSS/section-world.xml",
+         :source/filters ,
+         :source/position 4088,
          :source/num 18,
+         :feed/title "\"Коммерсантъ\". В мире",
+         :feed/url "https://www.kommersant.ru/RSS/section-world.xml",
+         :source/seen false,
          :source/active false,
-         :source/position 4088}
-        {:db/id 131941395396508,
-         :source/feed #:db{:id 83562883711081},
+         :source/id "https://www.kommersant.ru/RSS/section-world.xml"}
+        {:source/feed
+         "https://www.kommersant.ru/RSS/section-politics.xml",
+         :source/filters ,
+         :source/position 147,
          :source/num 19,
+         :feed/title "\"Коммерсантъ\". Политика",
+         :feed/url
+         "https://www.kommersant.ru/RSS/section-politics.xml",
+         :source/seen false,
          :source/active true,
-         :source/position 147}
-        {:db/id 131941395396509,
-         :source/feed #:db{:id 74766790688881},
+         :source/id
+         "https://www.kommersant.ru/RSS/section-politics.xml"}
+        {:source/feed "http://blog.cleancoder.com/atom.xml",
+         :source/filters ,
+         :source/position 32,
          :source/num 20,
+         :feed/title "The Clean Code Blog",
+         :feed/url "http://blog.cleancoder.com/atom.xml",
+         :source/seen false,
          :source/active true,
-         :source/position 32}
-        {:db/id 131941395396510,
-         :source/feed #:db{:id 79164837199996},
+         :source/id "http://blog.cleancoder.com/atom.xml"}
+        {:source/feed "https://www.archlinux.org/feeds/packages/",
+         :source/filters ,
+         :source/position 50,
          :source/num 21,
+         :feed/title "Arch Linux: Recent package updates",
+         :feed/url "https://www.archlinux.org/feeds/packages/",
+         :source/seen false,
          :source/active false,
-         :source/position 50}
-        {:db/id 131941395396511,
-         :source/feed #:db{:id 79164837199981},
+         :source/id "https://www.archlinux.org/feeds/packages/"}
+        {:source/feed "https://www.archlinux.org/feeds/news/",
+         :source/filters ,
+         :source/position 34,
          :source/num 22,
+         :feed/title "Arch Linux: Recent news updates",
+         :feed/url "https://www.archlinux.org/feeds/news/",
+         :source/seen false,
          :source/active true,
-         :source/position 34}
-        {:db/id 131941395396512,
-         :source/feed #:db{:id 79164837199979},
+         :source/id "https://www.archlinux.org/feeds/news/"}
+        {:source/feed "https://clojure.org/feed.xml",
+         :source/filters ,
+         :source/position 26,
          :source/num 23,
+         :feed/title "Clojure News",
+         :feed/url "https://clojure.org/feed.xml",
+         :source/seen false,
          :source/active true,
-         :source/position 26}
-        {:db/id 131941395396513,
-         :source/feed #:db{:id 92358976733295},
+         :source/id "https://clojure.org/feed.xml"}
+        {:source/feed "https://www.anandtech.com/rss/",
+         :source/filters ,
+         :source/position 563,
          :source/num 24,
+         :feed/title "AnandTech",
+         :feed/url "https://www.anandtech.com/rss/",
+         :source/seen false,
          :source/active true,
-         :source/position 563}
-        {:db/id 131941395396514,
-         :source/feed #:db{:id 101155069755509},
+         :source/id "https://www.anandtech.com/rss/"}
+        {:source/feed
+         "http://feeds.arstechnica.com/arstechnica/index/",
+         :source/filters ,
+         :source/position 710,
          :source/num 25,
+         :feed/title "Ars Technica",
+         :feed/url "http://feeds.arstechnica.com/arstechnica/index/",
+         :source/seen false,
          :source/active true,
-         :source/position 710}
-        {:db/id 131941395396515,
-         :source/feed #:db{:id 101155069755495},
+         :source/id "http://feeds.arstechnica.com/arstechnica/index/"}
+        {:source/feed "http://feeds.feedburner.com/PythonInsider",
+         :source/filters ,
+         :source/position 25,
          :source/num 26,
+         :feed/title "Python Insider",
+         :feed/url "http://feeds.feedburner.com/PythonInsider",
+         :source/seen false,
          :source/active true,
-         :source/position 25}]}
+         :source/id "http://feeds.feedburner.com/PythonInsider"}),
+       :selected
+       (#:item{:id "577,https://habr.com/ru/rss/best/daily/"}
+        #:item{:id "2022,https://lenta.ru/rss"}
+        #:item{:id "1081,https://lenta.ru/rss"}
+        #:item{:id "4035,https://news.ycombinator.com/rss"}
+        #:item{:id "4044,https://news.ycombinator.com/rss"}
+        #:item{:id "203,https://exler.ru/films/rss.xml"}
+        #:item{:id "2020,http://feeds.feedburner.com/zerohedge/feed"}
+        #:item{:id
+               "https://www.exler.ru/ezhe/kardona-zloveshie-tajny-drevnego-zamka-i-solyanaya-peshera.htm"}
+        #:item{:id "2024,http://feeds.feedburner.com/zerohedge/feed"}
+        #:item{:id "1974,http://feeds.feedburner.com/zerohedge/feed"}
+        #:item{:id "1748,http://feeds.feedburner.com/zerohedge/feed"}
+        #:item{:id "1236,https://news.ycombinator.com/rss"}
+        #:item{:id "1218,https://news.ycombinator.com/rss"}
+        #:item{:id "1206,https://news.ycombinator.com/rss"}
+        #:item{:id "898,http://feeds.feedburner.com/zerohedge/feed"}
+        #:item{:id "887,http://feeds.feedburner.com/zerohedge/feed"}
+        #:item{:id "270,https://habr.com/ru/rss/best/daily/"}
+        #:item{:id "228,https://habr.com/ru/rss/best/daily/"}
+        #:item{:id "1544,https://bikepost.ru/rss/index/"}),
+       :styles
+       (["arstechnica.com"
+         "https://shashurup.github.io/feedcircuit-styles/arstechnica.css"]
+        ["habr.com"
+         "https://shashurup.github.io/feedcircuit-styles/img-data-src.js"])}
 
 #+end_example
-
-#+begin_src clojure :results pp
-(take 3 (bda/get-items "83562883711095" nil true))
-;(take 3 (bda/get-items "79164837200001" nil true))
-#+end_src
-
-#+RESULTS:
-#+begin_example
-(#:item{:link
-        "https://www.exler.ru/films/koshachi-miry-luisa-uejna.htm",
-        :title "Кошачьи миры Луиса Уэйна",
-        :summary
-        "<p align=\"left\"><a class=\"fancybox\" rel=\"media\" src=\"https://www.exler.ru/img/films/25-11-2021/big/1.jpg\"><img align=\"left\" alt=\"\" border=\"0\" class=\"align-left\" src=\"https://www.exler.ru/img/films/25-11-2021/1.jpg\" /></a>Луис Уэйн (Бенедикт Камбербэтч) родился 5 августа 1860 года. Он был старшим ребенком в семье, в которой кроме Луиса было еще пять девочек. Когда Луису было 20 лет, умер его отец, и Луису пришлось содержать свою мать и пятерых сестер - в дальнейшем, старых дев, ни одна из которых так и не вышла замуж. </p>\r\n\r\n<p align=\"left\">Луис, у которого с детства был талант художника, изображал английскую сельскую жизнь - дома, усадьбы, животных, - и эти иллюстрации покупали некоторые издания, включая одну из самых популярных газет Викторианской Англии \"Illustrated London News\": ее издавал  сэр Уильям Ингрэм (Тоби Джонс).</p>",
-        :num 23519,
-        :feed "83562883711095",
-        :id "118747255863175"}
- #:item{:link "https://www.exler.ru/films/shou-poshlo-ne-tak.htm",
-        :title "Шоу пошло не так",
-        :summary
-        "<p><a class=\"fancybox\" rel=\"media\" src=\"https://www.exler.ru/img/films/18-11-2021/big/1.jpg\"><img align=\"left\" alt=\"\" border=\"0\" class=\"align-left\" src=\"https://www.exler.ru/img/films/18-11-2021/1.jpg\" /></a>Члены драматического сообщества <span>Политехнического университета города Корнли каждую неделю в каждой серии разыгрывают в прямом телевизионном эфире перед зрителями, сидящими в зале, театрализованное шоу на определенную тему. </span></p>\r\n\r\n<p><span><b>Серия первая - \"Дух Рождества\"</b> </span></p>\r\n\r\n<p><span>Родители девушки Бэлль поссорились в канун Рождества, после чего глава семьи надел пальто и ушел из дома. Теперь Бэлль сидит на диване и грустит. И даже визит самого Санты-Клауса ее не развеселил, хотя Санта и его подручные эльфы старались как могли. Санта даже оживил снеговика, чтобы Бэлль с ним могла поиграть. </span></p>",
-        :num 218,
-        :feed "83562883711095",
-        :id "109951162794844"}
- #:item{:link
-        "https://www.exler.ru/films/shan-chi-i-legenda-desyati-kolec.htm",
-        :title "Шан-Чи и легенда десяти колец",
-        :summary
-        "<p><a class=\"fancybox\" rel=\"media\" src=\"https://www.exler.ru/img/films/15-11-2021/big/1.jpg\"><img align=\"left\" alt=\"\" border=\"0\" class=\"align-left\" src=\"https://www.exler.ru/img/films/15-11-2021/1.jpg\" /></a>Наши дни. Тридцатилетний китаец Шан-Чи (Симу Лю) живет в Сан-Франциско, где работает парковщиком вместе со своей подругой Кэти (Аквафина). Они дружат еще со времен учебы  в колледже, вместе работают и вместе развлекаются по вечерам в караоке, однако Кэти понятия не имеет, кто такой Шан-Чи, тем более что она его знает под именем Шон. </p>",
-        :num 217,
-        :feed "83562883711095",
-        :id "109951162794843"})
-
-#+end_example
-
-#+begin_src clojure :results pp
-(bda/known-ids nil ["http://kiwibyrd.org/?p=4056" "http://kiwibyrd.org/?p=4068" "1" "blabla" "http://kiwibyrd.org/?p=4050"])
-#+end_src
-
-#+RESULTS:
-: #{"http://kiwibyrd.org/?p=4068"
-:   "http://kiwibyrd.org/?p=4050"
-:   "http://kiwibyrd.org/?p=4056"}
-: 
-
-#+begin_src clojure :results pp
-(bda/get-item "74766790688902")
-#+end_src
-
-#+RESULTS:
-#+begin_example
-#:item{:link
-       "http://sgolub.ru/publications/istoriya-unikalnogo-otechestvennogo-opyta-kontrolya-nad-internetom/?utm_source=rss&utm_medium=rss&utm_campaign=istoriya-unikalnogo-otechestvennogo-opyta-kontrolya-nad-internetom",
-       :id "74766790688902",
-       :category ["Публицистика" "социальная мифология"],
-       :summary
-       "<p>Коды и котики История уникального отечественного опыта контроля над Интернетом Сегодня разговор пойдет о контроле государства над Интернетом. Актуальность темы</p>\n<p>Запись <a href=\"http://sgolub.ru/publications/istoriya-unikalnogo-otechestvennogo-opyta-kontrolya-nad-internetom/\" rel=\"nofollow\">История уникального отечественного опыта контроля над Интернетом</a> впервые появилась <a href=\"http://sgolub.ru\" rel=\"nofollow\">АВТОРСКИЙ ПРОЕКТ СЕРГЕЯ ГОЛУБИЦКОГО</a>.</p>\n",
-       :source-id "http://sgolub.ru/?p=13505",
-       :feed+id "101155069755493+http://sgolub.ru/?p=13505",
-       :published "2019-07-05T16:30:21Z",
-       :num 2,
-       :feed "101155069755493",
-       :title
-       "История уникального отечественного опыта контроля над Интернетом",
-       :comments
-       "http://sgolub.ru/publications/istoriya-unikalnogo-otechestvennogo-opyta-kontrolya-nad-internetom/#respond"}
-
-#+end_example
-
-#+begin_src clojure :results pp
-(d/q '[:find (distinct ?url)
-       :where [_  :source/feed ?f]
-              [?f :feed/url ?url]
-       ]
-       (d/db bda/conn))
-#+end_src
-
-#+RESULTS:
-: []
-: 
-
-#+name: scratch
-#+begin_src clojure :results pp :wrap src clojure
-(letfn [(safe-parse [xml]
-         (try
-           (xml/parse xml)
-           (catch Exception e nil)))]
-  (->> (fs/list-dir (fs/expand-home "~/devel/fc-stat/rss"))
-       (take 1024)
-       (map #(do (println (str %)) %))
-       (map safe-parse)
-       (filter some?)
-       ;(map f/extract-rss-items)
-       ;(map #(map f/parse-rss-item %))
-       count
-))
-#+end_src
-
-#+RESULTS: scratch
-#+begin_src clojure
-13
-#+end_src
-
-
-#+begin_src clojure :results pp :wrap src clojure
-(send f/feed-index f/init-feed-index "fc-data")
-#+end_src
-
-#+RESULTS:
-#+begin_src clojure
-#<Agent@775609e6: 
-  {"http://sgolub.ru/feed/"
-   {:dir
-    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/sgolub.ru.feed.",
-    :item-count 26,
-    :known-ids
-    #{"http://sgolub.ru/?p=13463" "http://sgolub.ru/?p=13611"
-      "http://sgolub.ru/?p=13654" "http://sgolub.ru/?p=13520"
-      "http://sgolub.ru/?p=13558" "http://sgolub.ru/?p=13684"
-      "http://sgolub.ru/?p=13551" "http://sgolub.ru/?p=13458"
-      "http://sgolub.ru/?p=13505" "http://sgolub.ru/?p=13511"
-      "http://sgolub.ru/?p=13564" "http://sgolub.ru/?p=13584"
-      "http://sgolub.ru/?p=13546" "http://sgolub.ru/?p=13580"
-      "http://sgolub.ru/?p=13515" "http://sgolub.ru/?p=13473"
-      "http://sgolub.ru/?p=13526" "http://sgolub.ru/?p=13538"
-      "http://sgolub.ru/?p=13477" "http://sgolub.ru/?p=13643"
-      "http://sgolub.ru/?p=13530" "http://sgolub.ru/?p=13571"
-      "http://sgolub.ru/?p=13576" "http://sgolub.ru/?p=13595"
-      "http://sgolub.ru/?p=13602" "http://sgolub.ru/?p=13534"}},
-   "https://news.ycombinator.com/rss"
-   {:dir
-    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/news.ycombinator.com.rss"},
-   "http://www.opennet.ru/opennews/opennews_all.rss"
-   {:dir
-    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.opennet.ru.opennews.opennews_all.rss"},
-   "https://www.kommersant.ru/RSS/section-politics.xml"
-   {:dir
-    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.section-politics.xml"},
-   "http://4pda.ru/feed/"
-   {:dir
-    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/4pda.ru.feed."},
-   "https://clojure.org/feed.xml"
-   {:dir
-    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/clojure.org.feed.xml",
-    :item-count 25,
-    :known-ids
-    #{"news/2011/07/22/introducing-clojurescript"
-      "news/2014/08/06/transducers-are-coming"
-      "news/2012/05/08/reducers" "news/2012/02/17/clojure-governance"
-      "news/2016/01/19/clojure18"
-      "news/2018/03/19/state-of-clojure-2018"
-      "news/2013/06/28/clojure-clore-async-channels"
-      "news/2019/02/04/state-of-clojure-2019"
-      "news/2012/05/15/anatomy-of-reducer"
-      "news/2020/01/07/clojure-2020-survey" "news/2018/01/05/git-deps"
-      "news/2019/06/06/clojure1-10-1"
-      "news/2019/01/07/clojure-2019-survey"
-      "news/2015/06/30/clojure-17"
-      "news/2016/01/28/state-of-clojure-2015"
-      "news/2016/05/23/introducing-clojure-spec"
-      "news/2019/07/25/clojure-forum"
-      "news/2020/07/23/cognitect-joins-nubank"
-      "news/2017/12/08/clojure19" "news/2019/05/16/jira-migration"
-      "news/2020/02/28/clojure-tap"
-      "news/2020/02/20/state-of-clojure-2020"
-      "news/2017/01/31/state-of-clojure-2016"
-      "news/2018/12/17/clojure110"
-      "news/2016/01/14/clojure-org-live"}},
-   "https://www.archlinux.org/feeds/news/"
-   {:dir
-    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.archlinux.org.feeds.news."},
-   "https://www.anandtech.com/rss/"
-   {:dir
-    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.anandtech.com.rss."},
-   "https://www.kommersant.ru/RSS/section-hitech.xml"
-   {:dir
-    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.section-hitech.xml"},
-   "http://blog.cleancoder.com/atom.xml"
-   {:dir
-    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/blog.cleancoder.com.atom.xml"},
-   "https://www.kommersant.ru/RSS/Autopilot_on.xml"
-   {:dir
-    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.Autopilot_on.xml"},
-   "https://bikepost.ru/rss/index/"
-   {:dir
-    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/bikepost.ru.rss.index."},
-   "http://rss.slashdot.org/Slashdot/slashdotMain"
-   {:dir
-    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/rss.slashdot.org.Slashdot.slashdotMain"},
-   "http://feeds.arstechnica.com/arstechnica/index/"
-   {:dir
-    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/feeds.arstechnica.com.arstechnica.index."},
-   "https://www.computerra.ru/feed/"
-   {:dir
-    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.computerra.ru.feed."},
-   "https://exler.ru/films/rss.xml"
-   {:dir
-    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/exler.ru.films.rss.xml"},
-   "https://xkcd.com/atom.xml"
-   {:dir
-    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/xkcd.com.atom.xml"},
-   "https://content.novayagazeta.ru/rss/all.xml"
-   {:dir
-    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/content.novayagazeta.ru.rss.all.xml"},
-   "https://www.kommersant.ru/RSS/section-world.xml"
-   {:dir
-    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.section-world.xml"},
-   "https://www.archlinux.org/feeds/packages/"
-   {:dir
-    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.archlinux.org.feeds.packages."},
-   "https://habr.com/ru/rss/best/daily/"
-   {:dir
-    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/habr.com.ru.rss.best.daily."},
-   "http://comicfeeds.chrisbenard.net/view/dilbert/default"
-   {:dir
-    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/comicfeeds.chrisbenard.net.view.dilbert.default"},
-   "https://www.zerohedge.com/fullrss2.xml"
-   {:dir
-    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.zerohedge.com.fullrss2.xml"},
-   "https://lenta.ru/rss"
-   {:dir
-    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/lenta.ru.rss"},
-   "https://kiwibyrd.org/feed/"
-   {:dir
-    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/kiwibyrd.org.feed.",
-    :item-count 27,
-    :known-ids
-    #{"http://kiwibyrd.org/?p=3987" "http://kiwibyrd.org/?p=4020"
-      "http://kiwibyrd.org/?p=4075" "http://kiwibyrd.org/?p=4102"
-      "http://kiwibyrd.org/?p=4081" "http://kiwibyrd.org/?p=4093"
-      "http://kiwibyrd.org/?p=4068" "http://kiwibyrd.org/?p=3994"
-      "http://kiwibyrd.org/?p=4175" "http://kiwibyrd.org/?p=4041"
-      "http://kiwibyrd.org/?p=4152" "http://kiwibyrd.org/?p=4165"
-      "http://kiwibyrd.org/?p=3989" "http://kiwibyrd.org/?p=4181"
-      "http://kiwibyrd.org/?p=3964" "http://kiwibyrd.org/?p=3977"
-      "http://kiwibyrd.org/?p=4003" "http://kiwibyrd.org/?p=4233"
-      "http://kiwibyrd.org/?p=4144" "http://kiwibyrd.org/?p=4210"
-      "http://kiwibyrd.org/?p=4028" "http://kiwibyrd.org/?p=4136"
-      "http://kiwibyrd.org/?p=4113" "http://kiwibyrd.org/?p=4222"
-      "http://kiwibyrd.org/?p=4050" "http://kiwibyrd.org/?p=4056"
-      "http://kiwibyrd.org/?p=3970"}},
-   "http://static.feed.rbc.ru/rbc/logical/footer/news.rss"
-   {:dir
-    "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/static.feed.rbc.ru.rbc.logical.footer.news.rss"}}>
-#+end_src
-
-#+begin_src clojure :results pp :wrap src clojure
-@f/feed-index
-#+end_src
-
-#+RESULTS:
-#+begin_src clojure
-{"http://sgolub.ru/feed/"
- {:dir
-  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/sgolub.ru.feed.",
-  :item-count 26,
-  :known-ids
-  #{"http://sgolub.ru/?p=13463" "http://sgolub.ru/?p=13611"
-    "http://sgolub.ru/?p=13654" "http://sgolub.ru/?p=13520"
-    "http://sgolub.ru/?p=13558" "http://sgolub.ru/?p=13684"
-    "http://sgolub.ru/?p=13551" "http://sgolub.ru/?p=13458"
-    "http://sgolub.ru/?p=13505" "http://sgolub.ru/?p=13511"
-    "http://sgolub.ru/?p=13564" "http://sgolub.ru/?p=13584"
-    "http://sgolub.ru/?p=13546" "http://sgolub.ru/?p=13580"
-    "http://sgolub.ru/?p=13515" "http://sgolub.ru/?p=13473"
-    "http://sgolub.ru/?p=13526" "http://sgolub.ru/?p=13538"
-    "http://sgolub.ru/?p=13477" "http://sgolub.ru/?p=13643"
-    "http://sgolub.ru/?p=13530" "http://sgolub.ru/?p=13571"
-    "http://sgolub.ru/?p=13576" "http://sgolub.ru/?p=13595"
-    "http://sgolub.ru/?p=13602" "http://sgolub.ru/?p=13534"}},
- "https://news.ycombinator.com/rss"
- {:dir
-  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/news.ycombinator.com.rss"},
- "http://www.opennet.ru/opennews/opennews_all.rss"
- {:dir
-  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.opennet.ru.opennews.opennews_all.rss"},
- "https://www.kommersant.ru/RSS/section-politics.xml"
- {:dir
-  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.section-politics.xml"},
- "http://4pda.ru/feed/"
- {:dir
-  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/4pda.ru.feed."},
- "https://clojure.org/feed.xml"
- {:dir
-  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/clojure.org.feed.xml",
-  :item-count 25,
-  :known-ids
-  #{"news/2011/07/22/introducing-clojurescript"
-    "news/2014/08/06/transducers-are-coming" "news/2012/05/08/reducers"
-    "news/2012/02/17/clojure-governance" "news/2016/01/19/clojure18"
-    "news/2018/03/19/state-of-clojure-2018"
-    "news/2013/06/28/clojure-clore-async-channels"
-    "news/2019/02/04/state-of-clojure-2019"
-    "news/2012/05/15/anatomy-of-reducer"
-    "news/2020/01/07/clojure-2020-survey" "news/2018/01/05/git-deps"
-    "news/2019/06/06/clojure1-10-1"
-    "news/2019/01/07/clojure-2019-survey" "news/2015/06/30/clojure-17"
-    "news/2016/01/28/state-of-clojure-2015"
-    "news/2016/05/23/introducing-clojure-spec"
-    "news/2019/07/25/clojure-forum"
-    "news/2020/07/23/cognitect-joins-nubank"
-    "news/2017/12/08/clojure19" "news/2019/05/16/jira-migration"
-    "news/2020/02/28/clojure-tap"
-    "news/2020/02/20/state-of-clojure-2020"
-    "news/2017/01/31/state-of-clojure-2016"
-    "news/2018/12/17/clojure110" "news/2016/01/14/clojure-org-live"}},
- "https://www.archlinux.org/feeds/news/"
- {:dir
-  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.archlinux.org.feeds.news."},
- "https://www.anandtech.com/rss/"
- {:dir
-  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.anandtech.com.rss."},
- "https://www.kommersant.ru/RSS/section-hitech.xml"
- {:dir
-  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.section-hitech.xml"},
- "http://blog.cleancoder.com/atom.xml"
- {:dir
-  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/blog.cleancoder.com.atom.xml"},
- "https://www.kommersant.ru/RSS/Autopilot_on.xml"
- {:dir
-  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.Autopilot_on.xml"},
- "https://bikepost.ru/rss/index/"
- {:dir
-  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/bikepost.ru.rss.index."},
- "http://rss.slashdot.org/Slashdot/slashdotMain"
- {:dir
-  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/rss.slashdot.org.Slashdot.slashdotMain"},
- "http://feeds.arstechnica.com/arstechnica/index/"
- {:dir
-  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/feeds.arstechnica.com.arstechnica.index."},
- "https://www.computerra.ru/feed/"
- {:dir
-  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.computerra.ru.feed."},
- "https://exler.ru/films/rss.xml"
- {:dir
-  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/exler.ru.films.rss.xml"},
- "https://xkcd.com/atom.xml"
- {:dir
-  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/xkcd.com.atom.xml"},
- "https://content.novayagazeta.ru/rss/all.xml"
- {:dir
-  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/content.novayagazeta.ru.rss.all.xml"},
- "https://www.kommersant.ru/RSS/section-world.xml"
- {:dir
-  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.section-world.xml"},
- "https://www.archlinux.org/feeds/packages/"
- {:dir
-  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.archlinux.org.feeds.packages."},
- "https://habr.com/ru/rss/best/daily/"
- {:dir
-  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/habr.com.ru.rss.best.daily."},
- "http://comicfeeds.chrisbenard.net/view/dilbert/default"
- {:dir
-  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/comicfeeds.chrisbenard.net.view.dilbert.default"},
- "https://www.zerohedge.com/fullrss2.xml"
- {:dir
-  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.zerohedge.com.fullrss2.xml"},
- "https://lenta.ru/rss"
- {:dir
-  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/lenta.ru.rss"},
- "https://kiwibyrd.org/feed/"
- {:dir
-  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/kiwibyrd.org.feed.",
-  :item-count 27,
-  :known-ids
-  #{"http://kiwibyrd.org/?p=3987" "http://kiwibyrd.org/?p=4020"
-    "http://kiwibyrd.org/?p=4075" "http://kiwibyrd.org/?p=4102"
-    "http://kiwibyrd.org/?p=4081" "http://kiwibyrd.org/?p=4093"
-    "http://kiwibyrd.org/?p=4068" "http://kiwibyrd.org/?p=3994"
-    "http://kiwibyrd.org/?p=4175" "http://kiwibyrd.org/?p=4041"
-    "http://kiwibyrd.org/?p=4152" "http://kiwibyrd.org/?p=4165"
-    "http://kiwibyrd.org/?p=3989" "http://kiwibyrd.org/?p=4181"
-    "http://kiwibyrd.org/?p=3964" "http://kiwibyrd.org/?p=3977"
-    "http://kiwibyrd.org/?p=4003" "http://kiwibyrd.org/?p=4233"
-    "http://kiwibyrd.org/?p=4144" "http://kiwibyrd.org/?p=4210"
-    "http://kiwibyrd.org/?p=4028" "http://kiwibyrd.org/?p=4136"
-    "http://kiwibyrd.org/?p=4113" "http://kiwibyrd.org/?p=4222"
-    "http://kiwibyrd.org/?p=4050" "http://kiwibyrd.org/?p=4056"
-    "http://kiwibyrd.org/?p=3970"}},
- "http://static.feed.rbc.ru/rbc/logical/footer/news.rss"
- {:dir
-  "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/static.feed.rbc.ru.rbc.logical.footer.news.rss"}}
-#+end_src
-
-
-#+begin_src clojure :results output
-(m/_run-srv)
-#+end_src
-
-#+RESULTS:
-#+begin_example
-нояб. 24, 2020 6:46:22 PM feedcircuit-revisited.stat invoke
-INFO: Starting statistics collection
-нояб. 24, 2020 6:46:22 PM feedcircuit-revisited.feed invoke
-INFO: Starting sync by the timer
-нояб. 24, 2020 6:46:22 PM feedcircuit-revisited.stat invoke
-INFO: Collecting statistics for  http://sgolub.ru/feed/
-2020-11-24 18:46:22.990:INFO:oejs.Server:nREPL-session-9db53d66-b7e8-484c-bcf6-7b4aa9030059: jetty-9.4.22.v20191022; built: 2019-10-22T13:37:13.455Z; git: b1e6b55512e008f7fbdf1cbea4ff8a6446d1073b; jvm 11.0.8+10
-нояб. 24, 2020 6:46:22 PM feedcircuit-revisited.feed invoke
-INFO: Getting news from http://sgolub.ru/feed/
-2020-11-24 18:46:23.020:INFO:oejs.AbstractConnector:nREPL-session-9db53d66-b7e8-484c-bcf6-7b4aa9030059: Started ServerConnector@52bb0385{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
-2020-11-24 18:46:23.020:INFO:oejs.Server:nREPL-session-9db53d66-b7e8-484c-bcf6-7b4aa9030059: Started @15808ms
-#+end_example
-
-#+begin_src clojure :results pp
-(m/_restart-srv)
-#+end_src
-
-#+RESULTS:
-: #'feedcircuit-revisited.main/_srv
-: 2020-10-10 15:54:02.952:INFO:oejs.AbstractConnector:nREPL-session-88bac6bb-a57c-4f63-a4d4-aa7c092e07f1: Stopped ServerConnector@43a4a014{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
-: 2020-10-10 15:54:02.954:INFO:oejs.Server:nREPL-session-88bac6bb-a57c-4f63-a4d4-aa7c092e07f1: jetty-9.4.22.v20191022; built: 2019-10-22T13:37:13.455Z; git: b1e6b55512e008f7fbdf1cbea4ff8a6446d1073b; jvm 11.0.8+10
-: 2020-10-10 15:54:02.956:INFO:oejs.AbstractConnector:nREPL-session-88bac6bb-a57c-4f63-a4d4-aa7c092e07f1: Started ServerConnector@da12376{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
-: 2020-10-10 15:54:02.956:INFO:oejs.Server:nREPL-session-88bac6bb-a57c-4f63-a4d4-aa7c092e07f1: Started @13293357ms
-
-#+begin_src clojure :results pp :wrap src clojure
-(f/sync!)
-#+end_src
-
-#+RESULTS:
-#+BEGIN_src clojure
-(["https://news.ycombinator.com/rss" 30]
- ["https://clojure.org/feed.xml" 0]
- ["https://www.archlinux.org/feeds/news/" 0]
- ["https://www.anandtech.com/rss/" 0]
- ["http://blog.cleancoder.com/atom.xml" 0]
- ["http://rss.slashdot.org/Slashdot/slashdotMain" 15]
- ["http://feeds.arstechnica.com/arstechnica/index/" 0]
- ["https://www.computerra.ru/feed/" 1]
- ["https://xkcd.com/atom.xml" 0]
- ["https://www.kommersant.ru/RSS/section-world.xml" 3]
- ["https://www.zerohedge.com/fullrss2.xml" 1]
- ["http://static.feed.rbc.ru/rbc/logical/footer/news.rss" 1])
-июн. 08, 2020 9:56:03 AM feedcircuit-revisited.feed invoke
-INFO: Getting news from https://news.ycombinator.com/rss
-июн. 08, 2020 9:56:04 AM feedcircuit-revisited.feed invoke
-INFO: Got 30 item from https://news.ycombinator.com/rss
-июн. 08, 2020 9:56:04 AM feedcircuit-revisited.feed invoke
-INFO: Getting news from https://clojure.org/feed.xml
-июн. 08, 2020 9:56:05 AM feedcircuit-revisited.feed invoke
-INFO: Got 0 item from https://clojure.org/feed.xml
-июн. 08, 2020 9:56:05 AM feedcircuit-revisited.feed invoke
-INFO: Getting news from https://www.archlinux.org/feeds/news/
-июн. 08, 2020 9:56:05 AM feedcircuit-revisited.feed invoke
-INFO: Got 0 item from https://www.archlinux.org/feeds/news/
-июн. 08, 2020 9:56:05 AM feedcircuit-revisited.feed invoke
-INFO: Getting news from https://www.anandtech.com/rss/
-июн. 08, 2020 9:56:07 AM feedcircuit-revisited.feed invoke
-INFO: Got 0 item from https://www.anandtech.com/rss/
-июн. 08, 2020 9:56:07 AM feedcircuit-revisited.feed invoke
-INFO: Getting news from http://blog.cleancoder.com/atom.xml
-июн. 08, 2020 9:56:08 AM feedcircuit-revisited.feed invoke
-INFO: Got 0 item from http://blog.cleancoder.com/atom.xml
-июн. 08, 2020 9:56:08 AM feedcircuit-revisited.feed invoke
-INFO: Getting news from http://rss.slashdot.org/Slashdot/slashdotMain
-июн. 08, 2020 9:56:08 AM feedcircuit-revisited.feed invoke
-INFO: Got 15 item from http://rss.slashdot.org/Slashdot/slashdotMain
-июн. 08, 2020 9:56:08 AM feedcircuit-revisited.feed invoke
-INFO: Getting news from http://feeds.arstechnica.com/arstechnica/index/
-июн. 08, 2020 9:56:08 AM feedcircuit-revisited.feed invoke
-INFO: Got 0 item from http://feeds.arstechnica.com/arstechnica/index/
-июн. 08, 2020 9:56:08 AM feedcircuit-revisited.feed invoke
-INFO: Getting news from https://www.computerra.ru/feed/
-июн. 08, 2020 9:56:09 AM feedcircuit-revisited.feed invoke
-INFO: Got 1 item from https://www.computerra.ru/feed/
-июн. 08, 2020 9:56:09 AM feedcircuit-revisited.feed invoke
-INFO: Getting news from https://xkcd.com/atom.xml
-июн. 08, 2020 9:56:09 AM feedcircuit-revisited.feed invoke
-INFO: Got 0 item from https://xkcd.com/atom.xml
-июн. 08, 2020 9:56:09 AM feedcircuit-revisited.feed invoke
-INFO: Getting news from https://www.kommersant.ru/RSS/section-world.xml
-июн. 08, 2020 9:56:10 AM feedcircuit-revisited.feed invoke
-INFO: Got 3 item from https://www.kommersant.ru/RSS/section-world.xml
-июн. 08, 2020 9:56:10 AM feedcircuit-revisited.feed invoke
-INFO: Getting news from https://www.zerohedge.com/fullrss2.xml
-июн. 08, 2020 9:56:13 AM feedcircuit-revisited.feed invoke
-INFO: Got 1 item from https://www.zerohedge.com/fullrss2.xml
-июн. 08, 2020 9:56:13 AM feedcircuit-revisited.feed invoke
-INFO: Getting news from http://static.feed.rbc.ru/rbc/logical/footer/news.rss
-июн. 08, 2020 9:56:13 AM feedcircuit-revisited.feed invoke
-INFO: Got 1 item from http://static.feed.rbc.ru/rbc/logical/footer/news.rss
-#+END_src
-
-#+begin_src clojure :results pp :wrap src clojure
-@f/feed-dir
-#+end_src
-
-#+RESULTS:
-#+BEGIN_src clojure
-{"http://sgolub.ru/feed/"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/sgolub.ru.feed.",
- "https://news.ycombinator.com/rss"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/news.ycombinator.com.rss",
- "http://www.opennet.ru/opennews/opennews_all.rss"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.opennet.ru.opennews.opennews_all.rss",
- "https://www.kommersant.ru/RSS/section-politics.xml"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.section-politics.xml",
- "http://4pda.ru/feed/"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/4pda.ru.feed.",
- "https://clojure.org/feed.xml"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/clojure.org.feed.xml",
- "https://www.archlinux.org/feeds/news/"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.archlinux.org.feeds.news.",
- "https://www.anandtech.com/rss/"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.anandtech.com.rss.",
- "https://www.kommersant.ru/RSS/section-hitech.xml"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.section-hitech.xml",
- "http://blog.cleancoder.com/atom.xml"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/blog.cleancoder.com.atom.xml",
- "https://www.kommersant.ru/RSS/Autopilot_on.xml"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.Autopilot_on.xml",
- "https://bikepost.ru/rss/index/"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/bikepost.ru.rss.index.",
- "http://rss.slashdot.org/Slashdot/slashdotMain"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/rss.slashdot.org.Slashdot.slashdotMain",
- "http://feeds.arstechnica.com/arstechnica/index/"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/feeds.arstechnica.com.arstechnica.index.",
- "https://www.computerra.ru/feed/"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.computerra.ru.feed.",
- "https://exler.ru/films/rss.xml"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/exler.ru.films.rss.xml",
- "https://xkcd.com/atom.xml"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/xkcd.com.atom.xml",
- "https://content.novayagazeta.ru/rss/all.xml"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/content.novayagazeta.ru.rss.all.xml",
- "https://www.kommersant.ru/RSS/section-world.xml"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.kommersant.ru.RSS.section-world.xml",
- "https://www.archlinux.org/feeds/packages/"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.archlinux.org.feeds.packages.",
- "http://comicfeeds.chrisbenard.net/view/dilbert/default"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/comicfeeds.chrisbenard.net.view.dilbert.default",
- "https://www.zerohedge.com/fullrss2.xml"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/www.zerohedge.com.fullrss2.xml",
- "https://lenta.ru/rss"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/lenta.ru.rss",
- "https://kiwibyrd.org/feed/"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/kiwibyrd.org.feed.",
- "http://static.feed.rbc.ru/rbc/logical/footer/news.rss"
- "/home/georgy/devel/feedcircuit-revisited/fc-data/feeds/static.feed.rbc.ru.rbc.logical.footer.news.rss"}
-#+END_src
-
-#+begin_src clojure :results pp :wrap src clojure
-(c/detect (c/retrieve-and-parse "https://bikepost.ru/blog/91216/Ocherednoj-raz-vokrug-Ladogi.html") "https://bikepost.ru" nil)
-#+end_src
-
-#+RESULTS:
-#+BEGIN_src clojure
-class java.net.MalformedURLExceptionclass java.lang.NullPointerExceptionExecution error (NullPointerException) at java.net.URL/<init> (URL.java:585).
-null
-#+END_src
-
-#+begin_src restclient
-POST http://localhost:8080/selected
-Cookie: sessionid=bqn1psy1rdw0lt2ky1gj25b246j4pmaf; ring-session=6nzW7ugyC7mtjrvf0cEPl8p0YuPdp2v5TrpOkGH0ktuoLFZ5vLYjE3OPKBlUthOcpE9qs%2B8IrAhrwI5rCVH7RoGnj3WCKvbSr81U0jtQvw5TD8XAXXVvw2tPdxzIN79D--UbgPoufD0NaRHjlahfABuco0LfEV31LEkJWGLjOyCl8%3D
-Content-Type: application/x-www-form-urlencoded
-
-id=https://www.exler.ru/films/vampiry-srednej-polosy.htm
-#+end_src
-
-#+RESULTS:
-#+BEGIN_SRC js
-// POST http://localhost:8080/selected
-// HTTP/1.1 200 OK
-// Date: Sat, 29 May 2021 17:18:47 GMT
-// Content-Type: application/octet-stream
-// X-XSS-Protection: 1; mode=block
-// X-Frame-Options: SAMEORIGIN
-// X-Content-Type-Options: nosniff
-// Content-Length: 0
-// Server: Jetty(9.4.22.v20191022)
-// Request duration: 1.246895s
-#+END_SRC

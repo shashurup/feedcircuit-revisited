@@ -99,6 +99,11 @@
                    :db/cardinality :db.cardinality/one
                    :db/doc "Feed icon"}
 
+                  {:db/ident :feed/last-num
+                   :db/valueType :db.type/long
+                   :db/cardinality :db.cardinality/one
+                   :db/doc "Last synced item number"}
+
                   {:db/ident :feed/content-to-summary-ratio
                    :db/valueType :db.type/double
                    :db/cardinality :db.cardinality/one
