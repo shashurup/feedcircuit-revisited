@@ -138,7 +138,7 @@
                                   (str "feed?url=" feed)
                                   (u/get-url-base link))}
                          (or feed-title (u/get-url-host link))]
-                        " "
+                        "&nbsp;~ "
                         [:label {:class "item-check"
                                  :for (ch-id idx)} icon]
                         ))))))
