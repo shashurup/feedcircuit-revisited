@@ -58,9 +58,9 @@
            (drop (- (count first-block) (inc start-offset))
                  (reverse first-block))
            (take-while not-empty
-                                        ; lazy-seq is essential here, it prevents concat
-                                        ; from prematurely consuming items from get-block
-                                        ; thus causing reading items from disk
+                       ;; lazy-seq is essential here, it prevents concat
+                       ;; from prematurely consuming items from get-block
+                       ;; thus causing reading items from disk
                       (map #(lazy-seq (reverse (get-block-dont-check dir %)))
                             (take-while #(block-exists? dir %)
                                         (iterate dec (dec start-block))))))))

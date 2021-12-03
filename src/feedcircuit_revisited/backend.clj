@@ -75,9 +75,9 @@
                                              (filter :source/active)
                                              (remove :source/seen))
                :let [exprs (parse-filters filters)]]
-                                        ; lazy-seq is essential here, it prevents concat
-                                        ; from prematurely consuming items from get-items
-                                        ; thus causing reading items from disk
+           ;; lazy-seq is essential here, it prevents concat
+           ;; from prematurely consuming items from get-items
+           ;; thus causing reading items from disk
            (->> (lazy-seq (get-items feed pos))
                 (filter #(item-matches % exprs))
                 (map #(assoc % :feed/title feed-title

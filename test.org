@@ -26,10 +26,10 @@
 
 #+begin_src clojure :results pp
 (d/q '[:find (pull ?f [
-                       :feed/url
-                       ;:feed/title
-                       ;:feed/last-num
-                       ;*
+                       ; :feed/url
+                       ; :feed/title
+                       ; :feed/last-num
+                       *
                        ])
        :where [?f :feed/url _]]
      (d/db d-b/conn))
@@ -37,38 +37,217 @@
 
 #+RESULTS:
 #+begin_example
-[[#:feed{:url "http://www.opennet.ru/opennews/opennews_all.rss"}]
- [#:feed{:url "https://www.kommersant.ru/RSS/section-hitech.xml"}]
- [#:feed{:url "https://xkcd.com/atom.xml"}]
- [#:feed{:url "https://www.zerohedge.com/fullrss2.xml"}]
- [#:feed{:url "https://news.ycombinator.com/rss"}]
- [#:feed{:url "http://feeds.arstechnica.com/arstechnica/index/"}]
- [#:feed{:url "https://content.novayagazeta.ru/rss/all.xml"}]
- [#:feed{:url "https://news.mail.ru/rss/90/"}]
- [#:feed{:url "http://static.feed.rbc.ru/rbc/logical/footer/news.rss"}]
- [#:feed{:url "https://www.exler.ru/rss.xml"}]
- [#:feed{:url "http://blog.cleancoder.com/atom.xml"}]
- [#:feed{:url "https://exler.ru/films/rss.xml"}]
- [#:feed{:url "https://www.archlinux.org/feeds/packages/"}]
- [#:feed{:url
-         "http://comicfeeds.chrisbenard.net/view/dilbert/default"}]
- [#:feed{:url "https://lenta.ru/rss"}]
- [#:feed{:url "http://feeds.feedburner.com/PythonInsider"}]
- [#:feed{:url "https://clojure.org/feed.xml"}]
- [#:feed{:url "https://www.archlinux.org/feeds/news/"}]
- [#:feed{:url "http://rss.slashdot.org/Slashdot/slashdotMain"}]
- [#:feed{:url "https://kiwibyrd.org/feed/"}]
- [#:feed{:url "http://4pda.ru/feed/"}]
- [#:feed{:url "https://www.anandtech.com/rss/"}]
- [#:feed{:url "https://bikepost.ru/rss/index/"}]
- [#:feed{:url "http://sgolub.ru/feed/"}]
- [#:feed{:url "https://www.kommersant.ru/RSS/section-politics.xml"}]
- [#:feed{:url "https://www.kommersant.ru/RSS/Autopilot_on.xml"}]
- [#:feed{:url "https://www.computerra.ru/feed/"}]
- [#:feed{:url "https://www.kommersant.ru/RSS/section-world.xml"}]
- [#:feed{:url "https://habr.com/ru/rss/best/daily/"}]
- [#:feed{:url "http://feeds.feedburner.com/zerohedge/feed"}]
- [#:feed{:url "http://4pda.to/feed/"}]]
+[[{:db/id 74766790688873,
+   :feed/url "http://www.opennet.ru/opennews/opennews_all.rss",
+   :feed/title "OpenNews.opennet.ru: Общая лента новостей",
+   :feed/summary
+   "OpenNews - Новости мира открытых систем (Общая лента новостей)",
+   :feed/last-num 25225}]
+ [{:db/id 74766790688881,
+   :feed/url "https://www.kommersant.ru/RSS/section-hitech.xml",
+   :feed/title "\"Коммерсантъ Hi-Tech\"",
+   :feed/summary "Материалы раздела \"Hi-Tech\"",
+   :feed/image "http://www.kommersant.ru/pics/yatlogo.gif",
+   :feed/content-to-summary-ratio 3.0380700081586838,
+   :feed/last-num 25374}]
+ [{:db/id 74766790688889,
+   :feed/url "https://xkcd.com/atom.xml",
+   :feed/title "xkcd.com",
+   :feed/published "2021-11-29T00:00:00Z",
+   :feed/last-num 25500}]
+ [{:db/id 74766790688896,
+   :feed/url "https://www.zerohedge.com/fullrss2.xml",
+   :feed/title "ZeroHedge News",
+   :feed/summary ""}]
+ [{:db/id 79164837199975,
+   :feed/url "https://news.ycombinator.com/rss",
+   :feed/title "Hacker News",
+   :feed/summary
+   "Links for the intellectually curious, ranked by readers.",
+   :feed/last-num 25160}]
+ [{:db/id 79164837199990,
+   :feed/url "http://feeds.arstechnica.com/arstechnica/index/",
+   :feed/title "Ars Technica",
+   :feed/summary
+   "Serving the Technologist for more than a decade. IT news, reviews, and analysis.",
+   :feed/image
+   "https://cdn.arstechnica.net/wp-content/uploads/2016/10/cropped-ars-logo-512_480-32x32.png",
+   :feed/content-to-summary-ratio 71.52285499572754,
+   :feed/last-num 25466}]
+ [{:db/id 79164837199994,
+   :feed/url "https://content.novayagazeta.ru/rss/all.xml",
+   :feed/title "Новая Газета",
+   :feed/summary
+   "Журналистские расследования о коррупции в бизнесе и во власти, специальные репортажи с событий политической и культурной жизни, главные новости, галереи, онлайн-кинотеатр, мнения и рецензии ведущих журналистов и экспертов страны",
+   :feed/image
+   "https://content.novayagazeta.ru/assets/rss-6b5763e8155006d9365b340599231d9eb0fa9418d847b50387c087918531804c.png"}]
+ [{:db/id 79164837199996,
+   :feed/url "https://news.mail.ru/rss/90/",
+   :feed/title "Новости Mail.ru",
+   :feed/summary
+   "Оперативная информация и аналитика на страницах проекта «Новости Mail.ru»",
+   :feed/image "https://news.mail.ru/img/logo/news/news_web.png",
+   :feed/content-to-summary-ratio 37.672595256253295,
+   :feed/last-num 25603}]
+ [{:db/id 79164837200004,
+   :feed/url "http://static.feed.rbc.ru/rbc/logical/footer/news.rss",
+   :feed/title "www.rbc.ru",
+   :feed/summary "",
+   :feed/published "2021-06-08T16:52:42Z",
+   :feed/image "http://pics.rbc.ru/img/fp_v4/skin/img/v6-logo.png",
+   :feed/content-to-summary-ratio 10.290082754759952}]
+ [{:db/id 83562883711085,
+   :feed/url "https://www.exler.ru/rss.xml",
+   :feed/title "Exler.ru",
+   :feed/summary "Авторский проект Алекса Экслера"}]
+ [{:db/id 83562883711090,
+   :feed/url "http://blog.cleancoder.com/atom.xml",
+   :feed/title "The Clean Code Blog",
+   :feed/published "2021-11-28T19:13:20+00:00",
+   :feed/last-num 25394}]
+ [{:db/id 83562883711096,
+   :feed/url "https://exler.ru/films/rss.xml",
+   :feed/title "Exler.ru",
+   :feed/summary "Кинорецензии",
+   :feed/content-to-summary-ratio 15.737945461273194,
+   :feed/last-num 25496}]
+ [{:db/id 83562883711101,
+   :feed/url "https://www.archlinux.org/feeds/packages/",
+   :feed/title "Arch Linux: Recent package updates",
+   :feed/summary
+   "Recently updated packages in the Arch Linux package repositories.",
+   :feed/last-num 25653}]
+ [{:db/id 83562883711103,
+   :feed/url "http://comicfeeds.chrisbenard.net/view/dilbert/default",
+   :feed/title "Dilbert Daily Strip",
+   :feed/published "2021-11-29T00:00:00-08:00",
+   :feed/last-num 25680}]
+ [{:db/id 83562883711105,
+   :feed/url "https://lenta.ru/rss",
+   :feed/title "Lenta.ru : Новости",
+   :feed/summary
+   "Новости, статьи, фотографии, видео. Семь дней в неделю, 24 часа в сутки.",
+   :feed/image "https://lenta.ru/images/small_logo.png",
+   :feed/content-to-summary-ratio 3.9573187881977714,
+   :feed/last-num 25879}]
+ [{:db/id 87960930222184,
+   :feed/url "http://feeds.feedburner.com/PythonInsider",
+   :feed/title "Python Insider",
+   :feed/published "2021-11-28T18:02:28.858-05:00",
+   :feed/last-num 25185}]
+ [{:db/id 87960930222188,
+   :feed/url "https://clojure.org/feed.xml",
+   :feed/title "Clojure News",
+   :feed/summary "Clojure News",
+   :feed/published "2021-11-29T15:35:42Z",
+   :feed/content-to-summary-ratio 0.1485830384772271,
+   :feed/last-num 25301}]
+ [{:db/id 87960930222190,
+   :feed/url "https://www.archlinux.org/feeds/news/",
+   :feed/title "Arch Linux: Recent news updates",
+   :feed/summary
+   "The latest and greatest news from the Arch Linux distribution.",
+   :feed/content-to-summary-ratio 1.0,
+   :feed/last-num 25311}]
+ [{:db/id 87960930222197,
+   :feed/url "http://rss.slashdot.org/Slashdot/slashdotMain",
+   :feed/title "Slashdot",
+   :feed/summary "News for nerds, stuff that matters",
+   :feed/image "",
+   :feed/content-to-summary-ratio 1.117574922243754,
+   :feed/last-num 25446}]
+ [{:db/id 87960930222210,
+   :feed/url "https://kiwibyrd.org/feed/",
+   :feed/title "kiwi  arXiv",
+   :feed/summary
+   "СЮЖЕТЫ & РАССЛЕДОВАНИЯ: мемориально-футуристический склад им. Киви Бёрда (1998-2018)",
+   :feed/image "https://s0.wp.com/i/buttonw-com.png",
+   :feed/content-to-summary-ratio 51.337835216522215,
+   :feed/last-num 25889}]
+ [{:db/id 92358976733291,
+   :feed/url "http://4pda.ru/feed/",
+   :feed/title "4PDA",
+   :feed/summary "RSS-лента 4PDA"}]
+ [{:db/id 92358976733296,
+   :feed/url "https://www.anandtech.com/rss/",
+   :feed/title "AnandTech",
+   :feed/summary
+   "This channel features the latest computer hardware related articles.",
+   :feed/image "http://www.anandtech.com/content/images/rss_logo.png",
+   :feed/content-to-summary-ratio 12.519024276733399,
+   :feed/last-num 25371}]
+ [{:db/id 92358976733300,
+   :feed/url "https://bikepost.ru/rss/index/",
+   :feed/title "БайкПост",
+   :feed/summary "БайкПост / RSS channel",
+   :feed/content-to-summary-ratio 22.11430276185274,
+   :feed/last-num 25431}]
+ [{:db/id 96757023244390,
+   :feed/url "http://sgolub.ru/feed/",
+   :feed/title "АВТОРСКИЙ ПРОЕКТ СЕРГЕЯ ГОЛУБИЦКОГО",
+   :feed/summary "Авторский проект Сергея Голубицкого",
+   :feed/image
+   "http://sgolub.ru/wp-content/uploads/image/4/cropped-sgolub2014_sm2-32x32.jpg",
+   :feed/content-to-summary-ratio 99.83038276433945,
+   :feed/last-num 25130}]
+ [{:db/id 96757023244394,
+   :feed/url "https://www.kommersant.ru/RSS/section-politics.xml",
+   :feed/title "\"Коммерсантъ\". Политика",
+   :feed/summary "Материалы раздела \"Политика\"",
+   :feed/image "http://www.kommersant.ru/pics/yatlogo.gif",
+   :feed/content-to-summary-ratio 5.290382976715382,
+   :feed/last-num 25246}]
+ [{:db/id 96757023244403,
+   :feed/url "https://www.kommersant.ru/RSS/Autopilot_on.xml",
+   :feed/title "Коммерсантъ Автопилот. Online и Новости",
+   :feed/summary
+   "ИД \"Коммерсантъ\" - Коммерсантъ Автопилот. Online и Новости",
+   :feed/image "https://im.kommersant.ru/pics/yatlogo.gif",
+   :feed/content-to-summary-ratio 2.961610244380103,
+   :feed/last-num 25399}]
+ [{:db/id 96757023244407,
+   :feed/url "https://www.computerra.ru/feed/",
+   :feed/title "Компьютерра",
+   :feed/summary
+   "Компьютерра — все новости про новые технологии, IT, инновации, интернет и науку.",
+   :feed/image
+   "https://www.computerra.ru/wp-content/uploads/2020/10/cropped-dummy.jpg",
+   :feed/content-to-summary-ratio 3.393322787786785,
+   :feed/last-num 25486}]
+ [{:db/id 96757023244411,
+   :feed/url "https://www.kommersant.ru/RSS/section-world.xml",
+   :feed/title "\"Коммерсантъ\". В мире",
+   :feed/summary "Материалы раздела \"В мире\"",
+   :feed/image "http://www.kommersant.ru/pics/yatlogo.gif",
+   :feed/content-to-summary-ratio 4.595765939780644,
+   :feed/last-num 25583}]
+ [{:db/id 96757023244414,
+   :feed/url "https://habr.com/ru/rss/best/daily/",
+   :feed/title "Лучшие публикации за сутки",
+   :feed/summary "Лучшие публикации за последние 24 часа",
+   :feed/published "2021-11-30T05:44:24Z",
+   :feed/image
+   "https://habrastorage.org/webt/ym/el/wk/ymelwk3zy1gawz4nkejl_-ammtc.png",
+   :feed/content-to-summary-ratio 32.196678042411804,
+   :feed/last-num 25673}]
+ [{:db/id 96757023244419,
+   :feed/url "http://feeds.feedburner.com/zerohedge/feed",
+   :feed/title "ZeroHedge News",
+   :feed/summary "",
+   :feed/content-to-summary-ratio 0.9701143622398376,
+   :feed/last-num 25914}]
+ [{:db/id 101155069755503,
+   :feed/url "http://4pda.to/feed/",
+   :feed/title "4PDA",
+   :feed/summary "RSS-лента 4PDA",
+   :feed/content-to-summary-ratio 7.16635734240214,
+   :feed/last-num 25341}]
+ [{:db/id 145135534931212,
+   :feed/url "https://www.datomic.com/feed.xml",
+   :feed/title "JBake",
+   :feed/summary "JBake Bootstrap Template",
+   :feed/published "2021-09-07T20:59:00Z",
+   :feed/last-num 25971}]]
 
 #+end_example
 
@@ -79,276 +258,238 @@
 #+end_src
 
 #+RESULTS:
+: class java.lang.NullPointerException
+
+#+begin_src clojure :results pp
+(d-b/fetch-settings "georgy@kibardin.name")
+#+end_src
+
+#+RESULTS:
 #+begin_example
-#:user{:id "georgy@kibardin.name",
-       :styles
-       (["arstechnica.com"
-         "https://shashurup.github.io/feedcircuit-styles/arstechnica.css"]
-        ["habr.com"
-         "https://shashurup.github.io/feedcircuit-styles/img-data-src.js"]),
-       :selected
-       (#:item{:id "74766790692963"}
-        #:item{:id "74766790692972"}
-        #:item{:id "87960930239335"}
-        #:item{:id "92358976734550"}
-        #:item{:id "92358976734562"}
-        #:item{:id "92358976734580"}
-        #:item{:id "101155069794021"}
-        #:item{:id "101155069794032"}
-        #:item{:id "105553116279554"}
-        #:item{:id "105553116293676"}
-        #:item{:id "105553116293718"}
-        #:item{:id "105553116294025"}
-        #:item{:id "105553116305986"}
-        #:item{:id "105553116306212"}
-        #:item{:id "105553116306258"}
-        #:item{:id "105553116306262"}
-        #:item{:id "114349209323653"}
-        #:item{:id "114349209324589"}),
-       :sources
-       ({:source/feed "79164837199996",
-         :feed/last-num 25603,
-         :source/position 25604,
-         :source/num 0,
-         :feed/title "Новости Mail.ru",
-         :feed/url "https://news.mail.ru/rss/90/",
-         :source/seen true,
-         :source/active true,
-         :source/id "136339441907608"}
-        {:source/feed "83562883711105",
-         :feed/last-num 25879,
-         :source/position 25880,
-         :source/num 1,
-         :feed/title "Lenta.ru : Новости",
-         :feed/url "https://lenta.ru/rss",
-         :source/seen true,
-         :source/active true,
-         :source/id "136339441907609"}
-        {:source/feed "96757023244419",
-         :feed/last-num 25914,
-         :source/position 25915,
-         :source/num 2,
-         :feed/title "ZeroHedge News",
-         :feed/url "http://feeds.feedburner.com/zerohedge/feed",
-         :source/seen true,
-         :source/active true,
-         :source/id "136339441907610"}
-        {:source/feed "79164837199975",
-         :feed/last-num 25160,
-         :source/position 25161,
-         :source/num 3,
-         :feed/title "Hacker News",
-         :feed/url "https://news.ycombinator.com/rss",
-         :source/seen true,
-         :source/active true,
-         :source/id "136339441907611"}
-        {:source/feed "87960930222197",
-         :feed/last-num 25446,
-         :source/position 25447,
-         :source/num 4,
-         :feed/title "Slashdot",
-         :feed/url "http://rss.slashdot.org/Slashdot/slashdotMain",
-         :source/seen true,
-         :source/active true,
-         :source/id "136339441907612"}
-        {:source/feed "74766790688889",
-         :feed/last-num 25500,
-         :source/position 25501,
-         :source/num 5,
-         :feed/title "xkcd.com",
-         :feed/url "https://xkcd.com/atom.xml",
-         :source/seen true,
-         :source/active true,
-         :source/id "136339441907613"}
-        {:source/feed "83562883711103",
-         :feed/last-num 25680,
-         :source/position 25681,
-         :source/num 6,
-         :feed/title "Dilbert Daily Strip",
-         :feed/url
-         "http://comicfeeds.chrisbenard.net/view/dilbert/default",
-         :source/seen true,
-         :source/active true,
-         :source/id "136339441907614"}
-        {:source/feed "83562883711096",
-         :feed/last-num 25496,
-         :source/position 25497,
-         :source/num 7,
-         :feed/title "Exler.ru",
-         :feed/url "https://exler.ru/films/rss.xml",
-         :source/seen true,
-         :source/active true,
-         :source/id "136339441907615"}
-        {:source/feed "87960930222210",
-         :feed/last-num 25889,
-         :source/position 25890,
-         :source/num 8,
-         :feed/title "kiwi  arXiv",
-         :feed/url "https://kiwibyrd.org/feed/",
-         :source/seen true,
-         :source/active true,
-         :source/id "136339441907616"}
-        {:source/feed "96757023244390",
-         :feed/last-num 25130,
-         :source/position 25131,
-         :source/num 9,
-         :feed/title "АВТОРСКИЙ ПРОЕКТ СЕРГЕЯ ГОЛУБИЦКОГО",
-         :feed/url "http://sgolub.ru/feed/",
-         :source/seen true,
-         :source/active true,
-         :source/id "136339441907617"}
-        {:source/feed "92358976733300",
-         :feed/last-num 25431,
-         :source/position 25432,
-         :source/num 10,
-         :feed/title "БайкПост",
-         :feed/url "https://bikepost.ru/rss/index/",
-         :source/seen true,
-         :source/active true,
-         :source/id "136339441907618"}
-        {:source/feed "74766790688873",
-         :feed/last-num 25225,
-         :source/position 25226,
-         :source/num 11,
-         :feed/title "OpenNews.opennet.ru: Общая лента новостей",
-         :feed/url "http://www.opennet.ru/opennews/opennews_all.rss",
-         :source/seen true,
-         :source/active true,
-         :source/id "136339441907619"}
-        {:source/feed "96757023244414",
-         :feed/last-num 25673,
-         :source/position 1244,
-         :source/num 12,
-         :feed/title "Лучшие публикации за сутки",
-         :feed/url "https://habr.com/ru/rss/best/daily/",
-         :source/seen false,
-         :source/active true,
-         :source/id "136339441907620"}
-        {:source/feed "101155069755503",
-         :feed/last-num 25341,
-         :source/position 199,
-         :source/num 13,
-         :feed/title "4PDA",
-         :feed/url "http://4pda.to/feed/",
-         :source/seen false,
-         :source/active true,
-         :source/id "136339441907621"}
-        {:source/feed "96757023244407",
-         :feed/last-num 25486,
-         :source/position 886,
-         :source/num 14,
-         :feed/title "Компьютерра",
-         :feed/url "https://www.computerra.ru/feed/",
-         :source/seen false,
-         :source/active true,
-         :source/id "136339441907622"}
-        {:source/feed "74766790688881",
-         :feed/last-num 25374,
-         :source/position 103,
-         :source/num 15,
-         :feed/title "\"Коммерсантъ Hi-Tech\"",
-         :feed/url "https://www.kommersant.ru/RSS/section-hitech.xml",
-         :source/seen false,
-         :source/active true,
-         :source/id "136339441907623"}
-        {:source/feed "96757023244403",
-         :feed/last-num 25399,
-         :source/position 184,
-         :source/num 16,
-         :feed/title "Коммерсантъ Автопилот. Online и Новости",
-         :feed/url "https://www.kommersant.ru/RSS/Autopilot_on.xml",
-         :source/seen false,
-         :source/active true,
-         :source/id "136339441907624"}
-        {:source/num 17,
-         :source/active true,
-         :source/filters "!Новости",
-         :source/position 921,
-         :source/id "136339441907625",
-         :feed/url "https://content.novayagazeta.ru/rss/all.xml",
-         :feed/title "Новая Газета",
-         :source/feed "79164837199994"}
-        {:source/feed "96757023244411",
-         :feed/last-num 25583,
-         :source/position 4088,
-         :source/num 18,
-         :feed/title "\"Коммерсантъ\". В мире",
-         :feed/url "https://www.kommersant.ru/RSS/section-world.xml",
-         :source/seen false,
-         :source/active false,
-         :source/id "136339441907626"}
-        {:source/feed "96757023244394",
-         :feed/last-num 25246,
-         :source/position 147,
-         :source/num 19,
-         :feed/title "\"Коммерсантъ\". Политика",
-         :feed/url
-         "https://www.kommersant.ru/RSS/section-politics.xml",
-         :source/seen false,
-         :source/active true,
-         :source/id "136339441907627"}
-        {:source/feed "83562883711090",
-         :feed/last-num 25394,
-         :source/position 32,
-         :source/num 20,
-         :feed/title "The Clean Code Blog",
-         :feed/url "http://blog.cleancoder.com/atom.xml",
-         :source/seen false,
-         :source/active true,
-         :source/id "136339441907628"}
-        {:source/feed "83562883711101",
-         :feed/last-num 25653,
-         :source/position 50,
-         :source/num 21,
-         :feed/title "Arch Linux: Recent package updates",
-         :feed/url "https://www.archlinux.org/feeds/packages/",
-         :source/seen false,
-         :source/active false,
-         :source/id "136339441907629"}
-        {:source/feed "87960930222190",
-         :feed/last-num 25311,
-         :source/position 34,
-         :source/num 22,
-         :feed/title "Arch Linux: Recent news updates",
-         :feed/url "https://www.archlinux.org/feeds/news/",
-         :source/seen false,
-         :source/active true,
-         :source/id "136339441907630"}
-        {:source/feed "87960930222188",
-         :feed/last-num 25301,
-         :source/position 26,
-         :source/num 23,
-         :feed/title "Clojure News",
-         :feed/url "https://clojure.org/feed.xml",
-         :source/seen false,
-         :source/active true,
-         :source/id "136339441907631"}
-        {:source/feed "92358976733296",
-         :feed/last-num 25371,
-         :source/position 563,
-         :source/num 24,
-         :feed/title "AnandTech",
-         :feed/url "https://www.anandtech.com/rss/",
-         :source/seen false,
-         :source/active true,
-         :source/id "136339441907632"}
-        {:source/feed "79164837199990",
-         :feed/last-num 25466,
-         :source/position 710,
-         :source/num 25,
-         :feed/title "Ars Technica",
-         :feed/url "http://feeds.arstechnica.com/arstechnica/index/",
-         :source/seen false,
-         :source/active true,
-         :source/id "136339441907633"}
-        {:source/feed "87960930222184",
-         :feed/last-num 25185,
-         :source/position 25,
-         :source/num 26,
-         :feed/title "Python Insider",
-         :feed/url "http://feeds.feedburner.com/PythonInsider",
-         :source/seen false,
-         :source/active true,
-         :source/id "136339441907634"})}
+[[#:user{:styles
+         ["arstechnica.com https://shashurup.github.io/feedcircuit-styles/arstechnica.css"
+          "habr.com https://shashurup.github.io/feedcircuit-styles/img-data-src.js"],
+         :sources
+         [{:db/id 136339441907608,
+           :source/num 0,
+           :source/active true,
+           :source/feed #:feed{:url "https://news.mail.ru/rss/90/"}}
+          {:db/id 136339441907609,
+           :source/num 1,
+           :source/active true,
+           :source/feed #:feed{:url "https://lenta.ru/rss"}}
+          {:db/id 136339441907610,
+           :source/num 2,
+           :source/active true,
+           :source/feed
+           #:feed{:url "http://feeds.feedburner.com/zerohedge/feed"}}
+          {:db/id 136339441907611,
+           :source/num 3,
+           :source/active true,
+           :source/feed
+           #:feed{:url "https://news.ycombinator.com/rss"}}
+          {:db/id 136339441907612,
+           :source/num 4,
+           :source/active true,
+           :source/feed
+           #:feed{:url
+                  "http://rss.slashdot.org/Slashdot/slashdotMain"}}
+          {:db/id 136339441907613,
+           :source/num 5,
+           :source/active true,
+           :source/feed #:feed{:url "https://xkcd.com/atom.xml"}}
+          {:db/id 136339441907614,
+           :source/num 6,
+           :source/active true,
+           :source/feed
+           #:feed{:url
+                  "http://comicfeeds.chrisbenard.net/view/dilbert/default"}}
+          {:db/id 136339441907615,
+           :source/num 7,
+           :source/active true,
+           :source/feed #:feed{:url "https://exler.ru/films/rss.xml"}}
+          {:db/id 136339441907616,
+           :source/num 8,
+           :source/active true,
+           :source/feed #:feed{:url "https://kiwibyrd.org/feed/"}}
+          {:db/id 136339441907617,
+           :source/num 9,
+           :source/active true,
+           :source/feed #:feed{:url "http://sgolub.ru/feed/"}}
+          {:db/id 136339441907618,
+           :source/num 10,
+           :source/active true,
+           :source/feed #:feed{:url "https://bikepost.ru/rss/index/"}}
+          {:db/id 136339441907619,
+           :source/num 11,
+           :source/active true,
+           :source/feed
+           #:feed{:url
+                  "http://www.opennet.ru/opennews/opennews_all.rss"}}
+          {:db/id 136339441907620,
+           :source/num 12,
+           :source/active true,
+           :source/feed
+           #:feed{:url "https://habr.com/ru/rss/best/daily/"}}
+          {:db/id 136339441907621,
+           :source/num 13,
+           :source/active true,
+           :source/feed #:feed{:url "http://4pda.to/feed/"}}
+          {:db/id 136339441907622,
+           :source/num 14,
+           :source/active true,
+           :source/feed #:feed{:url "https://www.computerra.ru/feed/"}}
+          {:db/id 136339441907623,
+           :source/num 15,
+           :source/active true,
+           :source/feed
+           #:feed{:url
+                  "https://www.kommersant.ru/RSS/section-hitech.xml"}}
+          {:db/id 136339441907624,
+           :source/num 16,
+           :source/active true,
+           :source/feed
+           #:feed{:url
+                  "https://www.kommersant.ru/RSS/Autopilot_on.xml"}}
+          {:db/id 136339441907625,
+           :source/num 17,
+           :source/active true,
+           :source/filters "!Новости",
+           :source/feed
+           #:feed{:url "https://content.novayagazeta.ru/rss/all.xml"}}
+          {:db/id 136339441907626,
+           :source/num 18,
+           :source/active false,
+           :source/feed
+           #:feed{:url
+                  "https://www.kommersant.ru/RSS/section-world.xml"}}
+          {:db/id 136339441907627,
+           :source/num 19,
+           :source/active true,
+           :source/feed
+           #:feed{:url
+                  "https://www.kommersant.ru/RSS/section-politics.xml"}}
+          {:db/id 136339441907628,
+           :source/num 20,
+           :source/active true,
+           :source/feed
+           #:feed{:url "http://blog.cleancoder.com/atom.xml"}}
+          {:db/id 136339441907629,
+           :source/num 21,
+           :source/active false,
+           :source/feed
+           #:feed{:url "https://www.archlinux.org/feeds/packages/"}}
+          {:db/id 136339441907630,
+           :source/num 22,
+           :source/active true,
+           :source/feed
+           #:feed{:url "https://www.archlinux.org/feeds/news/"}}
+          {:db/id 136339441907631,
+           :source/num 23,
+           :source/active true,
+           :source/feed #:feed{:url "https://clojure.org/feed.xml"}}
+          {:db/id 136339441907632,
+           :source/num 24,
+           :source/active true,
+           :source/feed #:feed{:url "https://www.anandtech.com/rss/"}}
+          {:db/id 136339441907633,
+           :source/num 25,
+           :source/active true,
+           :source/feed
+           #:feed{:url
+                  "http://feeds.arstechnica.com/arstechnica/index/"}}
+          {:db/id 136339441907634,
+           :source/num 26,
+           :source/active true,
+           :source/feed
+           #:feed{:url "http://feeds.feedburner.com/PythonInsider"}}]}]]
 
 #+end_example
+
+#+begin_src clojure :results pp
+(let [[updates deletes]
+(d-b/diff-sources (->> ["site1"
+                        "site3 filter"
+                        "#site2 filters"
+                        "site4 filter11" "site4 filter22"
+                        "site2 filter2"
+                        "new-site"]
+                       (map u/parse-source)
+                       d-b/numerate)
+              [{:db/id 1
+                :source/num 0
+                :source/active true
+                :source/feed {:feed/url "site1"}}
+               {:db/id 2
+                :source/num 1
+                :source/active true
+                :source/filters "filters"
+                :source/feed {:feed/url "site2"}}
+               {:db/id 3
+                :source/num 2
+                :source/active true
+                :source/feed {:feed/url "site3"}}
+               {:db/id 4
+                :source/num 3
+                :source/active true
+                :source/filters "filter1"
+                :source/feed {:feed/url "site4"}}
+               {:db/id 5
+                :source/num 4
+                :source/active true
+                :source/filters "filter2"
+                :source/feed {:feed/url "site4"}}
+               {:db/id 6
+                :source/num 5
+                :source/active true
+                :source/feed {:feed/url "site88"}}
+                ])]
+  [updates deletes]        
+  ;; (d-b/prepare-sources-tx updates deletes "georgy@kibardin.name")
+  )
+#+end_src
+
+#+RESULTS:
+#+begin_example
+[[{:source/active true, :source/feed "site1", :source/num 0, :db/id 1}
+  {:source/active true,
+   :source/feed "site3",
+   :source/filters "filter",
+   :source/num 1,
+   :db/id 3}
+  {:source/active false,
+   :source/feed "site2",
+   :source/filters "filters",
+   :source/num 2,
+   :db/id 2}
+  {:source/active true,
+   :source/feed "site4",
+   :source/filters "filter11",
+   :source/num 3,
+   :db/id 4}
+  {:source/active true,
+   :source/feed "site4",
+   :source/filters "filter22",
+   :source/num 4,
+   :db/id 5}
+  #:source{:active true,
+           :feed "site2",
+           :filters "filter2",
+           :num 5,
+           :position -16}
+  #:source{:active true, :feed "new-site", :num 6, :position -16}]
+ (6)]
+
+#+end_example
+
+#+begin_src clojure :results pp
+(->> (b/get-user-data "georgy@kibardin.name" :sources/feed-title)
+     :user/sources
+     b/get-unread-items
+     (take 16))
+#+end_src
+
+#+begin_src clojure :results pp
+(->> (b/get-items "96757023244414" 1276)
+     (take 16))
+#+end_src

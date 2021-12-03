@@ -109,7 +109,9 @@
                       :item/link
                       :item/title
                       :item/summary
-                      :item/num])
+                      :item/num
+                      :item/author
+                      :item/category])
 
 (defn get-items
   ([feed]
@@ -154,6 +156,15 @@
           :where [_ :source/feed ?f]
           [?f :feed/url ?url]]
         (d/db conn))))
+
+(defn unknown-feeds [urls]
+  (let [known (->> (d/q '[:find ?url
+                          :in $ [?url ...]
+                          :where [_ :feed/url ?url]]
+                        (d/db conn) urls)
+                   (map first)
+                   set)]
+    (remove known urls)))
 
 (defn parse-style [subj] (split subj #" " 2))
 
@@ -201,10 +212,103 @@
                 [:user/id user-id])
         (update :user/selected #(map adapt-item %))
         (update :user/styles #(map parse-style %))
-        (update :user/sources #(map adapt-source %)))))
+        (update :user/sources #(map adapt-source
+                                    (sort-by :source/num %))))))
+
+(defn remove-dups [subj]
+  (let [rems (distinct subj)
+        active (filter :source/active rems)
+        to-remove (map #(assoc % :source/active false)
+                       active)]
+    ;; among duplicates remove inactive ones
+    (remove (set to-remove) rems)))
+
+(defn numerate [subj]
+  (map-indexed #(assoc %2 :source/num %1) subj))
+
+(defn fetch-settings [user-id]
+  (ffirst
+   (d/q '[:find (pull ?u [:user/styles
+                          {[:source/_user :as :user/sources]
+                           [:db/id
+                            :source/num
+                            :source/active
+                            :source/filters
+                            {:source/feed [:feed/url]}]}])
+          :in $ ?user-id
+          :where [?u :user/id ?user-id]]
+        (d/db conn) user-id)))
+
+(defn feed-match [new old]
+  (= (:source/feed new) (:feed/url (:source/feed old))))
+
+(defn strict-match [new old]
+  (and (feed-match new old)
+       (= (:source/filters new) (:source/filters old))))
+
+(defn select-match [result source]
+  (let [known-ids (set (keep :db/id result)) 
+        candidates (remove (fn [[_ old _]]
+                             (known-ids (:db/id old))) source)]
+    (let [[new old type] (first (sort-by (fn [[_ old type]]
+                                           [type (:source/num old)]) candidates))
+          set-pos (and (:source/active new)
+                       (not (:source/active old)))]
+      (conj result (merge new
+                          (when old {:db/id (:db/id old)})
+                          (when set-pos {:source/position -15}))))))
+
+(defn figure-deleted [old-sources new]
+  (let [kept-ids (set (keep :db/id new))]
+    [new (remove kept-ids (map :db/id old-sources))]))
+
+(defn diff-sources [new-sources old-sources]
+  (->> (for [new new-sources
+             old old-sources]
+         (if (strict-match new old)
+           [new old 0]
+           (if (feed-match new old)
+             [new old 1]
+             [new nil 2])))
+       distinct
+       (group-by (comp :source/num first))
+       vals
+       (reduce select-match [])
+       (figure-deleted old-sources)))
+
+(defn single-value [subj]
+  (-> subj ffirst first second))
+
+(defn init-positions [updates]
+  (for [upd updates]
+    (if-let [pos (:source/position upd)]
+      (let [last-num (single-value
+                      (d/q '[:find (pull ?f [:feed/last-num])
+                             :in $ ?url
+                             :where [?f :feed/url ?url]]
+                           (d/db conn)
+                           (:source/feed upd)))]
+        (update upd :source/position #(+ % last-num)))
+      upd)))
+
+(defn prepare-sources-tx [updates deletes user-id]
+  (concat (for [src updates]
+            (-> src
+                (assoc :source/user [:user/id user-id])
+                (update :source/feed #(vector :feed/url %))))
+          (for [id deletes] [:db/retractEntity id])))
 
 (defn update-settings! [user-id sources styles]
-  )
+  (let [{old-styles :user/styles
+         old-sources :user/sources} (fetch-settings user-id)
+        new-sources (->> sources
+                         remove-dups
+                         numerate)]
+    (let [[updates deletes] (diff-sources new-sources old-sources)
+          txdata (prepare-sources-tx (init-positions updates)
+                                     deletes
+                                     user-id)]
+      (d/transact conn {:tx-data txdata}))))
 
 (defn update-positions! [user-id positions]
   (let [txdata (vec (for [[src pos] positions]
