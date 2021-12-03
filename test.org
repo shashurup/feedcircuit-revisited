@@ -493,3 +493,13 @@
 (->> (b/get-items "96757023244414" 1276)
      (take 16))
 #+end_src
+
+
+#+begin_src clojure :results pp
+(d-b/prepare-styles-tx ["abc" "def"] [["def"] ["ghi"]] "georgy@kibardin.name")
+#+end_src
+
+#+RESULTS:
+: ([:db/add [:user/id "georgy@kibardin.name"] :user/styles "ghi"]
+:  [:db/retract [:user/id "georgy@kibardin.name"] :user/styles "abc"])
+: 

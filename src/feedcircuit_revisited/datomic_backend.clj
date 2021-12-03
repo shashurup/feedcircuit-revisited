@@ -3,8 +3,8 @@
             [feedcircuit-revisited.schema :as schema]
             [feedcircuit-revisited.utils :as u]
             [datomic.client.api :as d]
-            [clojure.set :refer (rename-keys)]
-            [clojure.string :refer (split)]
+            [clojure.set :refer (rename-keys difference)]
+            [clojure.string :refer (split join)]
             [me.raynes.fs :as fs]))
 
 (def content-dir)
@@ -298,6 +298,15 @@
                 (update :source/feed #(vector :feed/url %))))
           (for [id deletes] [:db/retractEntity id])))
 
+(defn prepare-styles-tx [old-styles new-styles user-id]
+  (let [old-set (set old-styles)
+        new-set (set (map #(join " " %) new-styles))]
+    (concat
+     (for [s (difference new-set old-set)]
+       [:db/add [:user/id user-id] :user/styles s])
+     (for [s (difference old-set new-set)]
+       [:db/retract [:user/id user-id] :user/styles s]))))
+
 (defn update-settings! [user-id sources styles]
   (let [{old-styles :user/styles
          old-sources :user/sources} (fetch-settings user-id)
@@ -305,10 +314,14 @@
                          remove-dups
                          numerate)]
     (let [[updates deletes] (diff-sources new-sources old-sources)
-          txdata (prepare-sources-tx (init-positions updates)
-                                     deletes
-                                     user-id)]
-      (d/transact conn {:tx-data txdata}))))
+          src-tx-data (prepare-sources-tx (init-positions updates)
+                                          deletes
+                                          user-id)
+          styles-tx-data (prepare-styles-tx old-styles
+                                            styles
+                                            user-id)]
+      (d/transact conn {:tx-data (concat src-tx-data
+                                         styles-tx-data)}))))
 
 (defn update-positions! [user-id positions]
   (let [txdata (vec (for [[src pos] positions]
