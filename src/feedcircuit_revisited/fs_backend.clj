@@ -343,17 +343,19 @@
               (some #(= id %) ids)))]
     (update-user-attrs! user-id update :selected #(remove in-ids? %))))
 
+(defn parse-source [subj]
+  (let [[url filters] (cstr/split subj #" " 2)
+        active (not= (first url) \#)
+        url (if active url (subs url 1))]
+    [url filters active]))
+
 (defn get-user-data [user-id & opts]
   (let [{id :id
          feeds :feeds
          positions :positions
          selected :selected
          styles :styles} (get-user-attrs user-id)
-        parsed-feeds (map #(let [[url filters] (cstr/split % #" " 2)
-                                 active (not= (first url) \#)
-                                 url (if active url (subs url 1))]
-                             [url filters active])
-                          feeds)]
+        parsed-feeds (map parse-source feeds)]
     {:user/id id
      :user/sources (map-indexed (fn [idx [url filters active]]
                                   (let [pos (get positions url)
@@ -406,9 +408,11 @@
 (defn active-feed-urls []
   (->> (all-users)
        (map get-user-attrs)
-       (map :positions)
-       (map keys)
+       (map :feeds)
        (apply concat)
+       (map parse-source)
+       (filter #(nth % 2))
+       (map first)
        set))
 
 (defn unknown-feeds [urls]
