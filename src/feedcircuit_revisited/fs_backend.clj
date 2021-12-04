@@ -339,7 +339,7 @@
 
 (defn selected-remove! [user-id ids]
   (letfn [(in-ids? [item]
-            (let [id (get-unique-id item)]
+            (let [id (get-unique-id (ensure-item-ns item))]
               (some #(= id %) ids)))]
     (update-user-attrs! user-id update :selected #(remove in-ids? %))))
 
