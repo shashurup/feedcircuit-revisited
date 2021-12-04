@@ -10,9 +10,10 @@
 
 (defn ensure-keys-ns [ns subj]
   (into {} (for [[k v] subj]
-             [(if (namespace k)
-                k
-                (keyword ns (name k))) v])))
+             (when k
+               [(if (namespace k)
+                  k
+                  (keyword ns (name k))) v]))))
 
 (defn ensure-coll [x]
   (cond
