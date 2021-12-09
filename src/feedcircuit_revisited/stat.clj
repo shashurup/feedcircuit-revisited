@@ -15,9 +15,13 @@
 
 (defn find-content [item]
   [item
-   (->> (:item/link item)
-        content/retrieve-and-parse
-        content/find-content-element)])
+   (let [url (:item/link item)]
+     (try 
+       (->> url
+            content/retrieve-and-parse
+            content/find-content-element)
+       (catch Exception ex
+         (log/error ex "Failed to collect statistics for" url))))])
 
 (defn get-content-identifier [[_ zipper]]
   (let [ident (content/get-identifier (zip/node zipper))]
@@ -29,11 +33,14 @@
        (map get-content-identifier)
        frequencies
        (apply max-key second)
-       first))
+       ((fn [[ident cnt]]
+          (when (> cnt (/ (count data) 2))
+            ident)))))
 
 (defn calc-ratio [[item zipper]]
-  (float (/ (content/text-size-recursively (zip/node zipper))
-            (content/calculate-size (:item/summary item)))))
+  (let [summary-size (content/calculate-size (:item/summary item))]
+    (float (/ (content/text-size-recursively (zip/node zipper))
+              (max summary-size 0.1))))) ; Avoid division by zero
 
 (defn average [xs]
   (when (not-empty xs)
