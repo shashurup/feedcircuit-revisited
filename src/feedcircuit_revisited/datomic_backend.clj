@@ -27,9 +27,15 @@
 
 (def feed-attrs (conj (map :db/ident schema/feed-schema) :db/id))
 
+(defn remove-nils [subj]
+  (let [nil-keys (remove #(get subj %) (keys subj))]
+    (apply dissoc subj nil-keys)))
+
 (defn add-feed! [url attrs]
-  (let [attrs (select-keys (assoc attrs :feed/url url)
-                           feed-attrs)]
+  (let [attrs (-> attrs
+                  (assoc :feed/url url)
+                  (select-keys feed-attrs)
+                  (remove-nils))]
     (d/transact conn {:tx-data [attrs]})))
 
 (def update-feed! add-feed!)
@@ -50,10 +56,6 @@
 
 
 (def item-attrs (conj (map :db/ident schema/item-schema) :db/id))
-
-(defn remove-nils [subj]
-  (let [nil-keys (remove #(get subj %) (keys subj))]
-    (apply dissoc subj nil-keys)))
 
 (defn prepare-item-content [item]
   (let [content (:item/content item)]

@@ -108,6 +108,12 @@
                    :db/valueType :db.type/double
                    :db/cardinality :db.cardinality/one
                    :db/doc "Average content to summary ratio for feed items"}
+
+                  {:db/ident :feed/content-ident
+                   :db/valueType :db.type/tuple
+                   :db/tupleTypes [:db.type/keyword :db.type/string]
+                   :db/cardinality :db.cardinality/one
+                   :db/doc "Content HTML element identifier"}
                   ])
 
 (def user-schema [{:db/ident :user/id
