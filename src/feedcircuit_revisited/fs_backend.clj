@@ -13,25 +13,46 @@
   (u/write-file filename data)
   data)
 
+(def archive-dir "/archive")
+
 (defn get-block [dir block-num]
-  (get-data (str dir "/" block-num)))
+  (or 
+   (get-data (str dir "/" block-num))
+   (get-data (str dir archive-dir "/" block-num))))
 
 (defn get-block-dont-check [dir block-num]
-  (get-data (str dir "/" block-num) true))
+  (or
+   (get-data (str dir "/" block-num))
+   (get-data (str dir archive-dir "/" block-num) true)))
 
 (defn set-block [dir block-num data]
   (set-data (str dir "/" block-num) data))
 
 (defn block-exists? [dir block-num]
-  (fs/exists? (str dir "/" block-num)))
+  (or 
+   (fs/exists? (str dir "/" block-num))
+   (fs/exists? (str dir archive-dir "/" block-num))))
 
-(defn get-last-block-num [dir]
+(defn get-block-list [dir]
   (->> (fs/list-dir dir)
        (map fs/base-name)
        (filter #(re-matches #"[0-9]+" %))
-       (map u/as-int)
+       (map u/as-int)))
+
+(defn get-last-block-num [dir]
+  (->> (get-block-list dir)
        (cons 0)  ; in case there are no blocks yet
        (apply max)))
+
+(defn archive-old-blocks [dir]
+  (let [block-list (sort (get-block-list dir))
+        to-archive-count (- (count block-list) 16)]
+    (when (> to-archive-count 0)
+      (fs/mkdirs (str dir archive-dir)))
+    (doseq [block (take to-archive-count block-list)]
+      (fs/move
+       (str dir "/" block)
+       (str dir archive-dir "/" block)))))
 
 (def ^:dynamic block-size "Number of items in each file" 100)
 
@@ -78,6 +99,7 @@
                  (count last-block))]
     (doseq [[num block] (map-indexed vector new-blocks)]
       (set-block dir (+ last-block-num num) block))
+    (archive-old-blocks dir)
     (range start (+ start (count items)))))
 
 (defn get-attrs [dir]

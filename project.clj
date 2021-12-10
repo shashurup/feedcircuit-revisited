@@ -10,7 +10,7 @@
                  [ring "1.9.4"]
                  [clj-http "3.12.3"]
                  [clojure.java-time "0.3.3"]
-                 [me.raynes/fs "1.4.6"]
+                 [clj-commons/fs "1.6.309"]
                  [nrepl "0.8.3"]
                  [org.clojure/core.memoize "1.0.250"]
                  [hiccup "1.0.5"]

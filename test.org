@@ -27,7 +27,7 @@
 #+begin_src clojure :results pp
 (d/q '[:find (pull ?f [
                        :feed/url
-                       ;:feed/content-ident
+                       :feed/content-ident
                        ; :feed/title
                        ; :feed/last-num
                        ; *
@@ -58,13 +58,15 @@
  [#:feed{:url "https://www.archlinux.org/feeds/packages/"}]
  [#:feed{:url
          "http://comicfeeds.chrisbenard.net/view/dilbert/default"}]
- [#:feed{:url "https://lenta.ru/rss"}]
+ [#:feed{:url "https://lenta.ru/rss",
+         :content-ident [:class "topic-body__content"]}]
  [#:feed{:url "http://feeds.feedburner.com/PythonInsider"}]
  [#:feed{:url "https://clojure.org/feed.xml"}]
  [#:feed{:url "https://www.archlinux.org/feeds/news/",
          :content-ident [:class "article-content"]}]
  [#:feed{:url "http://rss.slashdot.org/Slashdot/slashdotMain"}]
- [#:feed{:url "https://kiwibyrd.org/feed/"}]
+ [#:feed{:url "https://kiwibyrd.org/feed/",
+         :content-ident [:class "entry-content"]}]
  [#:feed{:url "http://4pda.ru/feed/"}]
  [#:feed{:url "https://www.anandtech.com/rss/",
          :content-ident [:class "articleContent"]}]
@@ -80,12 +82,17 @@
          [:class "doc__body article_text_wrapper js-search-mark"]}]
  [#:feed{:url "https://www.computerra.ru/feed/",
          :content-ident [:class "article-body"]}]
- [#:feed{:url "https://www.kommersant.ru/RSS/section-world.xml"}]
+ [#:feed{:url "https://www.kommersant.ru/RSS/section-world.xml",
+         :content-ident
+         [:class "doc__body article_text_wrapper js-search-mark"]}]
  [#:feed{:url "https://habr.com/ru/rss/best/daily/"}]
- [#:feed{:url "http://feeds.feedburner.com/zerohedge/feed"}]
+ [#:feed{:url "http://feeds.feedburner.com/zerohedge/feed",
+         :content-ident
+         [:class "NodeContent_body__2clki NodeBody_container__1M6aJ"]}]
  [#:feed{:url "http://4pda.to/feed/",
          :content-ident [:class "content-box"]}]
- [#:feed{:url "https://www.datomic.com/feed.xml"}]]
+ [#:feed{:url "https://www.datomic.com/feed.xml",
+         :content-ident [:class "w-clearfix d-content"]}]]
 
 #+end_example
 
