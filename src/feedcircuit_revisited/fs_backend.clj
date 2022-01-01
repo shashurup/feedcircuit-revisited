@@ -278,9 +278,11 @@
 (defn update-feed! [url attrs]
   (send feed-index
         (fn [index]
-          (let [dir (get-in index [url :dir])]
+          (let [dir (get-in index [url :dir])
+                feed-title (:feed/title attrs)]
             (set-attrs dir (merge (get-attrs dir) attrs))
-            (update index url merge {:title (:feed/title attrs)})))))
+            (update index url merge (when feed-title
+                                      {:title feed-title}))))))
 
 (defn append-items! [url items]
   (send feed-index

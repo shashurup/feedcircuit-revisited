@@ -228,6 +228,7 @@
   (let [html (content/retrieve-and-parse url)
         content (content/detect html url nil)]
     {:item/link url
+     :item/id url
      :item/title (content/get-title html)
      :item/summary (content/summarize (vec (conj content :body)))
      :item/content content}))
