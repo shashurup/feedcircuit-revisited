@@ -3,3 +3,8 @@ body {
     font-family: serif;
     color: #2a2e23
 }
+
+blockquote {
+    border-left: 4pt solid #aba;
+    padding-left: 1em;
+}
