@@ -177,4 +177,5 @@
            (route/not-found "No such resource"))
    (-> site-defaults
        (assoc-in [:security :anti-forgery] false)
-       (assoc-in [:session :store] (cookie-store {:key (conf/param :cookie-key)})))))
+       (assoc-in [:session :store]
+                 (cookie-store {:key (.getBytes (conf/param :cookie-key))})))))
