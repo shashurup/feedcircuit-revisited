@@ -71,6 +71,7 @@
     (-> item
         prepare-item-content
         (assoc :db/id source-id
+               :item/source-id source-id
                :item/feed feed
                :item/feed+id (str feed "+" source-id)
                :item/num (or (:item/num item)
@@ -141,11 +142,13 @@
     (merge (adapt-item item)
            (when content {:item/content content}))))
 
-(defn known-ids [_ ids]
+(defn known-ids [url ids]
   (->> (d/q '[:find (pull ?i [:item/source-id])
-              :in $ [?src-id ...]
-              :where [?i :item/source-id ?src-id]]
-            (d/db conn) ids)
+              :in $ ?url [?src-id ...]
+              :where [?i :item/source-id ?src-id]
+                     [?i :item/feed ?f]
+                     [?f :feed/url ?url]]
+            (d/db conn) url ids)
        (map first)
        (map :item/source-id)
        set))

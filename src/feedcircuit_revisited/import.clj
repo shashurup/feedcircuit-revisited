@@ -29,6 +29,9 @@
       (d-back/append-items! url chunk))
     (reset! d-back/cur-item-num (d-back/find-max-num))))
 
+(defn import-all-items []
+  (doall (map import-items (keys @fs-back/feed-index))))
+
 (defn convert-item-id [subj]
   (when-let [[feed num] (fs-back/parse-item-id subj)]
     (ffirst (d/q '[:find ?i
