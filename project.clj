@@ -1,4 +1,4 @@
-(defproject feedcircuit-revisited "0.23-SNAPSHOT"
+(defproject feedcircuit-revisited "0.23"
   :description "Old friend Feedcircuit revisited"
   :url "http://example.com/FIXME"
   :min-lein-version "2.0.0"
@@ -21,7 +21,6 @@
   :plugins [[lein-ring "0.12.5"]
             [org.openjfx/javafx-maven-plugin "0.0.8"]]
   :ring {:handler feedcircuit-revisited.handler/app}
-  ;:pom-addition ([:properties [:javafx.platform "linux"]])
   :profiles
   {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                         [ring/ring-mock "0.3.2"]
