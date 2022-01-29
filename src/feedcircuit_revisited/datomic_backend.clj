@@ -341,7 +341,8 @@
     (let [tempid (:item/link id)]
       [(-> id
            prepare-item-content
-           (assoc :db/id tempid))
+           (assoc :db/id tempid)
+           clean-item)
        (selected-op :db/add user-id tempid)])
     [(selected-op :db/add user-id (u/as-int id))]))
 
