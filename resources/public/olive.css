@@ -1,11 +1,14 @@
 body {
-    background-color: #daded3;
+    /* HSLuv 100, 10, 90 */
+    background-color: #e0e4d6;
     font-family: serif;
-    color: #2a2e23
+    /* HSLuv 100, 10, 20 */
+    color: #30312d
 }
 
 blockquote {
-    border-left: 4pt solid #aba;
+    /* HSLuv 100, 30, 60 */
+    border-left: 4pt solid #8c9478;
     padding-left: 1em;
     margin-inline-start: 1em;
     margin-inline-end: 1em;
