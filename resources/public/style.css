@@ -33,7 +33,7 @@ iframe {
 }
 
 .fcr-wrapper {
-    max-width: 42;
+    max-width: 42em;
     margin: auto;
     margin-top: 3em;
     margin-bottom: 3em;
