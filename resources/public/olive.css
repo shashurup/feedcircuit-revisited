@@ -7,4 +7,6 @@ body {
 blockquote {
     border-left: 4pt solid #aba;
     padding-left: 1em;
+    margin-inline-start: 1em;
+    margin-inline-end: 1em;
 }
