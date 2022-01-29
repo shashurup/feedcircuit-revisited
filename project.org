@@ -1,20 +1,3 @@
-* Сценарии использования бакенда
-** unread items
-*** sources (with feed titles)
-*** selected (ids only)
-** item content
-*** linked feed details (for content detection)
-** selected items
-*** selected (with linked feed titles)
-*** sources (feed ids only for sorting)
-** source items
-*** one feed details
-*** selected (ids only)
-** sources list
-*** sources (with feed details)
-** feed/active-feeds
-*** как список для sync'a (должно хватить только идшников)
-*** как список для сборки статистики (хватит только идшника)
 * Задачи
 ** TODO Support RSS 2 (and atom) enclosures
 ** TODO Feeds discovery
@@ -28,5 +11,6 @@
    Часть кода ожидает мапу, часть урлы, а не идшники фидов
 ** DONE Допилить синк и коллектор статистики, чтобы использовал ид фидов, а не урлы
 ** DONE Расширить get-user-data для опциональной линковки аттрибутов фидов
-** TODO Выбрать стиль покрасивше для blockquote
+** DONE Выбрать стиль покрасивше для blockquote
+** DONE Пофиксить добавление "внешнего" урл в выбранные
 ** DONE По кнопке Done из selected не удаляются сторонние ссылки
