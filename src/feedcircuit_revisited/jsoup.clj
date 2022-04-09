@@ -1,4 +1,5 @@
 (ns feedcircuit-revisited.jsoup
+  (:require [clojure.string :as s])
   (:import [org.jsoup Jsoup]
            [org.jsoup.nodes
             Attribute Attributes Comment DataNode
@@ -6,6 +7,12 @@
 
 (defprotocol AsClojure
   (^:private as-clojure [x] "Turn a Java class into its Clojure equivalent"))
+
+(defn escape-html [subj]
+  (-> subj
+      (s/replace "&" "&amp;")
+      (s/replace "<" "&lt;")
+      (s/replace ">" "&gt;")))
 
 (extend-protocol AsClojure
   Document
@@ -31,7 +38,7 @@
 
   TextNode
   (as-clojure [text-node]
-    (.getWholeText text-node))
+    (escape-html (.getWholeText text-node)))
 
   DataNode
   (as-clojure [data-node]
