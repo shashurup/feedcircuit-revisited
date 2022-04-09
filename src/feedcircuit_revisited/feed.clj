@@ -99,10 +99,26 @@
 (defn find-details [feed-xml]
   (or (find-channel feed-xml) feed-xml))
 
+(defn compose-title [title link]
+  (let [domain (s/replace (u/get-url-host link)
+                          #"^www\." "")]
+    (if (empty? title)
+      domain
+      (if (s/includes? (s/lower-case title)
+                       domain)
+        title
+        (format "%s: %s" domain title)))))
+
+(defn update-feed-title [{title :title
+                          link :link
+                          :as attrs}]
+  (assoc attrs :title (compose-title title link)))
+
 (defn parse-feed-details [feed-xml]
   (->> (:content (find-details feed-xml))
        (filter #(not (contains? #{:item :entry} (:tag %))))
        (reduce parse-rss-item-attribute {})
+       update-feed-title
        (u/ensure-keys-ns "feed")))
 
 (defn fetch-items
