@@ -136,7 +136,6 @@
  [{:db/id 162727720989268,
    :feed/url "https://www.warandpeace.ru/ru/rss/",
    :feed/title "warandpeace.ru: Война и Мир",
-   :feed/content-ident [:id "topic_text"],
    :feed/last-num 48779}]]
 
 #+end_example
