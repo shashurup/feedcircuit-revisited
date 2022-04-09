@@ -7,11 +7,7 @@
             [feedcircuit-revisited.jsoup :as jsoup]))
 
 (defn unique? [ident html]
-  (let [type (first ident)]
-    (condp = type
-      :id true
-      :class (= (count (content/find-by-identifier ident html)) 1)
-      false)))
+  (= (count (content/find-by-identifier ident html)) 1))
 
 (defn find-content [item]
   [item

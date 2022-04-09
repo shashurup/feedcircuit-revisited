@@ -28,7 +28,7 @@
 (d/q '[:find (pull ?f [:db/id
                        :feed/url
                        :feed/title
-                       ;:feed/content-ident
+                       :feed/content-ident
                        :feed/last-num
                        ; *
                        ])
@@ -40,80 +40,104 @@
 #+begin_example
 [[{:db/id 74766790688875,
    :feed/url "https://clojure.org/feed.xml",
-   :feed/title "Clojure News",
-   :feed/last-num 58}]
+   :feed/title "clojure.org: Clojure News",
+   :feed/last-num 48526}]
  [{:db/id 74766790688879,
    :feed/url "https://bikepost.ru/rss/index/",
-   :feed/title "БайкПост",
-   :feed/last-num 48277}]
+   :feed/title "bikepost.ru: БайкПост",
+   :feed/content-ident [:class "content"],
+   :feed/last-num 48587}]
  [{:db/id 74766790688884,
    :feed/url "https://habr.com/ru/rss/best/daily/",
-   :feed/title "Лучшие публикации за сутки",
-   :feed/last-num 48282}]
+   :feed/title "habr.com: Лучшие публикации за сутки",
+   :feed/last-num 48752}]
  [{:db/id 79164837199976,
    :feed/url "http://sgolub.ru/feed/",
-   :feed/title "АВТОРСКИЙ ПРОЕКТ СЕРГЕЯ ГОЛУБИЦКОГО",
+   :feed/title "sgolub.ru: АВТОРСКИЙ ПРОЕКТ СЕРГЕЯ ГОЛУБИЦКОГО",
+   :feed/content-ident [:class "entry-content clearfix"],
    :feed/last-num 53}]
  [{:db/id 79164837199980,
    :feed/url "https://arcan-fe.com/feed/",
-   :feed/title "Arcan",
-   :feed/last-num 11}]
+   :feed/title "arcan-fe.com: Arcan",
+   :feed/content-ident [:class "entry-content"],
+   :feed/last-num 48527}]
  [{:db/id 83562883711082,
    :feed/url "http://www.opennet.ru/opennews/opennews_all.rss",
    :feed/title "OpenNews.opennet.ru: Общая лента новостей",
-   :feed/last-num 48240}]
+   :feed/content-ident [:id "r_memo"],
+   :feed/last-num 48510}]
  [{:db/id 83562883711094,
    :feed/url "https://www.datomic.com/feed.xml",
-   :feed/title "JBake",
+   :feed/title "datomic.com: JBake",
+   :feed/content-ident [:class "w-clearfix d-content"],
    :feed/last-num 56}]
  [{:db/id 83562883711096,
    :feed/url "https://www.exler.ru/blog/rss.xml",
-   :feed/title "Exler.ru",
-   :feed/last-num 48284}]
+   :feed/title "Exler.RU",
+   :feed/content-ident [:class "blog-item-content"],
+   :feed/last-num 48754}]
  [{:db/id 87960930222185,
    :feed/url "https://news.ycombinator.com/rss",
-   :feed/title "Hacker News",
-   :feed/last-num 48276}]
+   :feed/title "news.ycombinator.com: Hacker News",
+   :feed/last-num 48750}]
  [{:db/id 87960930222193,
    :feed/url "https://exler.ru/films/rss.xml",
-   :feed/title "Exler.ru",
-   :feed/last-num 270}]
+   :feed/title "Exler.RU",
+   :feed/content-ident [:class "film-item-content"],
+   :feed/last-num 48607}]
  [{:db/id 87960930222195,
    :feed/url "https://postgrespro.com/rss",
    :feed/title "Postgres Professional",
+   :feed/content-ident [:class "col-md-10"],
    :feed/last-num 29}]
  [{:db/id 92358976733294,
    :feed/url "http://blog.cleancoder.com/atom.xml",
-   :feed/title "The Clean Code Blog",
+   :feed/title "blog.cleancoder.com: The Clean Code Blog",
    :feed/last-num 37}]
  [{:db/id 92358976733301,
    :feed/url "http://comicfeeds.chrisbenard.net/view/dilbert/default",
-   :feed/title "Dilbert Daily Strip",
-   :feed/last-num 48283}]
+   :feed/title "dilbert.com: Dilbert Daily Strip",
+   :feed/last-num 48753}]
  [{:db/id 92358976733303,
    :feed/url "https://www.drive.ru/export/rss.xml",
    :feed/title "DRIVE.RU",
+   :feed/content-ident [:class "article-content"],
    :feed/last-num 1925}]
  [{:db/id 96757023244397,
    :feed/url "https://www.anandtech.com/rss/",
-   :feed/title "AnandTech",
-   :feed/last-num 48262}]
+   :feed/title "anandtech.com: AnandTech",
+   :feed/content-ident [:class "articleContent"],
+   :feed/last-num 48555}]
  [{:db/id 96757023244400,
    :feed/url "https://devblogs.microsoft.com/oldnewthing/feed",
-   :feed/title "The Old New Thing",
-   :feed/last-num 48229}]
+   :feed/title "devblogs.microsoft.com: The Old New Thing",
+   :feed/content-ident
+   [:class "entry-content col-12 sharepostcontent"],
+   :feed/last-num 48597}]
  [{:db/id 96757023244409,
    :feed/url "https://echo.msk.ru/blog/taratuta/rss.xml",
    :feed/title "\n      Михаил Таратута: Блог | Эхо Москвы\n    ",
+   :feed/content-ident [:class "typical include-relap-widget"],
    :feed/last-num 17}]
  [{:db/id 101155069755506,
    :feed/url "https://xkcd.com/atom.xml",
    :feed/title "xkcd.com",
-   :feed/last-num 48195}]
+   :feed/last-num 48611}]
  [{:db/id 101155069755514,
    :feed/url "https://www.joelonsoftware.com/feed/",
-   :feed/title "Joel on Software",
-   :feed/last-num 10}]]
+   :feed/title "joelonsoftware.com: Joel on Software",
+   :feed/content-ident [:class "entry-content"],
+   :feed/last-num 48649}]
+ [{:db/id 158329674478057,
+   :feed/url "https://expert.ru/doc-list/rss/",
+   :feed/title "expert.ru",
+   :feed/content-ident [:class "content-text"],
+   :feed/last-num 48749}]
+ [{:db/id 162727720989268,
+   :feed/url "https://www.warandpeace.ru/ru/rss/",
+   :feed/title "warandpeace.ru: Война и Мир",
+   :feed/content-ident [:id "topic_text"],
+   :feed/last-num 48779}]]
 
 #+end_example
 
