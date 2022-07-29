@@ -28,14 +28,14 @@
                         [ring/ring-mock "0.3.2"]
                         [com.cognitect/rebl "0.9.244"]]
          ; use system's jfx
-         :resource-paths ["/usr/lib/jvm/java-11-openjfx/lib/javafx.web.jar"
-                          "/usr/lib/jvm/java-11-openjfx/lib/javafx.base.jar"
-                          "/usr/lib/jvm/java-11-openjfx/lib/javafx.controls.jar"
-                          "/usr/lib/jvm/java-11-openjfx/lib/javafx.fxml.jar"
-                          "/usr/lib/jvm/java-11-openjfx/lib/javafx.graphics.jar"
-                          "/usr/lib/jvm/java-11-openjfx/lib/javafx.media.jar"
-                          "/usr/lib/jvm/java-11-openjfx/lib/javafx.swing.jar"
-                          "/usr/lib/jvm/java-11-openjfx/lib/javafx-swt.jar"]
+         :resource-paths ["/usr/lib/jvm/java-17-openjdk/lib/javafx.web.jar"
+                          "/usr/lib/jvm/java-17-openjdk/lib/javafx.base.jar"
+                          "/usr/lib/jvm/java-17-openjdk/lib/javafx.controls.jar"
+                          "/usr/lib/jvm/java-17-openjdk/lib/javafx.fxml.jar"
+                          "/usr/lib/jvm/java-17-openjdk/lib/javafx.graphics.jar"
+                          "/usr/lib/jvm/java-17-openjdk/lib/javafx.media.jar"
+                          "/usr/lib/jvm/java-17-openjdk/lib/javafx.swing.jar"
+                          "/usr/lib/jvm/java-17-openjdk/lib/javafx-swt.jar"]
          }}
   :jvm-opts ["-Dglass.gtk.uiScale=120%"] ; Scaling for REBL UI
   :main feedcircuit-revisited.main

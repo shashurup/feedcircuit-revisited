@@ -88,9 +88,11 @@
           {:status 303 :headers {"Location" "/"}}))
 
   (POST "/complete-selected" {user-id :user
-                              {selected "selected-item"} :form-params}
+                              {selected "selected-item" return-id "return-id"} :form-params}
         (backend/selected-remove! user-id (u/ensure-coll selected))
-        {:status 303 :headers {"Location" "selected"}})
+        {:status 303 :headers {"Location" (str "selected"
+                                               (when (not (empty? return-id))
+                                                 (str "#" return-id)))}})
 
   (GET "/feed" {user-id :user
                 {url :url
@@ -139,12 +141,13 @@
        (html5 (ui/build-login-options extra-style)))
 
   (GET "/plain" {user-id :user
-                 {url :url source :source} :params
+                 {url :url source :source prev :prev} :params
                  {{extra-style :value} "extra-style"} :cookies}
        (let [result (ui/build-content url
                                       (= source "selected")
                                       extra-style
-                                      user-id)]
+                                      user-id
+                                      prev)]
          (if (string? result)
            {:status 302 :headers {"Location" result}}
            (html5 result))))

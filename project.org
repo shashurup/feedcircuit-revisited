@@ -1,15 +1,11 @@
-* Задачи
-** TODO Support RSS 2 (and atom) enclosures
-** TODO Feeds discovery
-** TODO Non CSS mode??
-** TODO Запилить суммаризатор контента
-   https://habr.com/ru/post/586634/?utm_source=habrahabr&utm_medium=rss&utm_campaign=586634
-** DONE Вернуть ширину 37em
-** DONE Разобраться с тегами при выделении контента
-   Когда у нас нас исходной странице есть html теги буквально, при выделении контента они попадают в разметку и получается черти что.
-** DONE Вывести сайт фида в заголовок
-   Title у фида может быть вообще пустым или бестолковым
-** DONE id иногда нифига не уникален
-   Нужно учитывать это при сборе статистики. То есть обходиться с ним также как и с class, т.е. проверять на уникальность
-** DONE Проблема с добавлением внешних ссылок в /selected
-   Например https://www.kommersant.ru/doc/5294892
+* TODO Support RSS 2 (and atom) enclosures
+* TODO Feeds discovery
+* TODO Сделать суммаризатор новостей
+  https://habr.com/ru/post/586634/?utm_source=habrahabr&utm_medium=rss&utm_campaign=586634
+* TODO Статистика отбора по фидам
+  Очень интересен процент новостей отбираемых для чтения
+* DONE Возврат на исходную позицию в выбранном
+  После нажатия Done в конце новости удобно возвращаться на ту же позицию в выбранном,
+  чтобы не скроллить в случае когда начал читать с середины
+* TODO Сделать набор иконок сайта на все случаи жизни
+  https://habr.com/ru/post/672844/?utm_source=habrahabr&utm_medium=rss&utm_campaign=672844

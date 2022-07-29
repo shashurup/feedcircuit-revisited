@@ -45,8 +45,11 @@
                :value value}]
     [:input (merge attrs (when checked {:checked "yes"}))]))
 
-(defn news-item [url title summary footer]
-  [:div.fcr-news-item
+(defn make-id [idx]
+  (str "fcr-item-" idx))
+
+(defn news-item [idx url title summary footer]
+  [:div.fcr-news-item {:id (make-id idx)}
    [:div.fcr-news-header
     [:a.fcr-link {:href url
                   :rel "opener"} [:h1 title]]]
@@ -128,7 +131,11 @@
                            "toggleItem(this);"
                            uid
                            (checked uid))
-            (news-item (str "plain?source=" source "&url=" uid)
+            (news-item idx
+                       (str "plain?source=" source
+                            "&url=" uid
+                            (when (> idx 0)
+                              (str "&prev=" (make-id (dec idx)))))
                        title
                        (or summary content)
                        (list
@@ -233,7 +240,7 @@
      :item/summary (content/summarize (vec (conj content :body)))
      :item/content content}))
 
-(defn build-content [uid show-done extra-style user-id]
+(defn build-content [uid show-done extra-style user-id return-id]
   (let [item (or (backend/get-item uid)
                  (make-item-from uid))
         link (get-item-link item)
@@ -262,6 +269,7 @@
               (if show-done
                 [:form {:action "complete-selected" :method "POST"}
                  [:input {:type "hidden" :name "selected-item" :value uid}]
+                 [:input {:type "hidden" :name "return-id" :value return-id}]
                  (submit-button "Done")])]]]))
        (catch Exception ex
          (log/error "Failed to make content for" link)))
