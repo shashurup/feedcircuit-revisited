@@ -33,6 +33,10 @@ function toggleAppearance() {
         document.getElementById('appearance').style.display == "none");
 }
 
+function showAboutEscaping() {
+    document.getElementById('about-escaping').style.display = "initial";
+    document.getElementById('display-about-escaping').style.display = "none";
+}
 
 function setAppearanceVisibility(visible) {
     let appearanceDiv = document.getElementById('appearance');

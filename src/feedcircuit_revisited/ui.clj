@@ -353,9 +353,15 @@
        [:p "The more sofisticated setup allows you to filter a news source by its author or category. "
            "For instance"]
        [:p [:code "http://example.com/atom.xml Sport, Science, John Doe"]]
-       [:p "selects only entries in Sport and Science categories and by John Doe. Finally,"]
+       [:p "selects only entries in Sport and Science categories and by John Doe. This one"]
        [:p [:code "http://example.com/rss.xml !Politics"]]
-       [:p "selects everything except Politics category."]
+       [:p "selects everything except Politics category. And finally,"]
+       [:p [:code "http://startupnews.com/rss.xml !/Cobol/"]]
+       [:p "matches news title against the regex between slashes. One more thing, "
+        [:a#display-about-escaping {:onClick "showAboutEscaping();" :href "#"} "..."]
+        [:span#about-escaping {:style "display: none"}
+         "if you want a literal comma, an exclamation mark or a slash "
+         "you might use urlencoding so that %41cool would match !cool"]]
        [:form {:action "settings" :method "POST"}
         [:textarea#feeds {:class "fcr-setting-input" :name "feeds"}
          (s/join "\n" (map serialize-source sources))]

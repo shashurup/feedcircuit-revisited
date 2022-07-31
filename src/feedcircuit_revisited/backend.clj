@@ -34,36 +34,60 @@
     (->> (get-items-backwards feed start)
          (map #(assoc % :feed/title feed-title)))))
 
+(defn unescape [subj]
+  (cstr/replace subj
+                #"%[0-F][0-F]"
+                #(-> %
+                     (subs 1)
+                     (Integer/parseInt 16)
+                     char
+                     str)))
+
+(defn parse-filter [subj]
+  (let [include (not= \! (first subj))
+        subj (if include subj (subs subj 1))
+        subj (if (re-matches #"^/.*/$" subj)
+               (re-pattern (unescape (subs subj 1 (dec (count subj)))))
+               (cstr/lower-case (unescape subj)))]
+    [subj include]))
 
 (defn parse-filters
   "Filter expression consists of a list of
    authors and categories to include or exclude."
   [filters]
-  (let [parse-filter #(let [include (not= \! (first %))]
-                      [(if include % (apply str (rest %)))
-                       include])
-        add-default #(if (some second %) % (conj % [:all true]))]
+  (let [add-default #(if (some second %) % (conj % [:all true]))]
     (->> (if (cstr/blank? filters) [] (cstr/split filters #","))
-         (map cstr/trim)
-         (map cstr/lower-case)
-         (map parse-filter)
+         (map (comp parse-filter cstr/trim))
          vec
          add-default)))
 
 (defn get-attrs-for-filter [item]
-  (->> (concat (:item/author item) (:item/category item))
+  (->> (concat (:item/author item)
+               (:item/category item))
        (map cstr/lower-case)
+       (cons [:title (:item/title item)])
        vec))
+
+(defn regex? [subj] (instance? java.util.regex.Pattern subj))
+
+(defmulti attr-matches  #(cond (= %1 :all) :all
+                               (and (regex? %1)
+                                    (vector %2)
+                                    (= (first %2) :title)) :title
+                               :else :attr))
+
+(defmethod attr-matches :all [_ _] true)
+
+(defmethod attr-matches :title [pattern [_ title]] (re-find pattern title))
+
+(defmethod attr-matches :attr [term attr] (= term attr))
 
 (defn item-matches [item expressions]
   (let [attrs (get-attrs-for-filter item)]
-    (if (empty? attrs)
-      true
-      (first (for [[term verdict] expressions
-                   attr attrs
-                   :when (or (= term :all)
-                             (= attr term))]
-               verdict)))))
+    (first (for [[term verdict] expressions
+                 attr attrs
+                 :when (attr-matches term attr)]
+             verdict))))
 
 (defn get-unread-items [sources]
   (apply concat
