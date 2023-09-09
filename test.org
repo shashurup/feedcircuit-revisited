@@ -38,105 +38,177 @@
 
 #+RESULTS:
 #+begin_example
-[[{:db/id 74766790688875,
-   :feed/url "https://clojure.org/feed.xml",
-   :feed/title "clojure.org: Clojure News",
-   :feed/last-num 48526}]
- [{:db/id 74766790688879,
-   :feed/url "https://bikepost.ru/rss/index/",
-   :feed/title "bikepost.ru: БайкПост",
-   :feed/content-ident [:class "content"],
-   :feed/last-num 48587}]
- [{:db/id 74766790688884,
-   :feed/url "https://habr.com/ru/rss/best/daily/",
-   :feed/title "habr.com: Лучшие публикации за сутки",
-   :feed/last-num 48752}]
- [{:db/id 79164837199976,
-   :feed/url "http://sgolub.ru/feed/",
-   :feed/title "sgolub.ru: АВТОРСКИЙ ПРОЕКТ СЕРГЕЯ ГОЛУБИЦКОГО",
-   :feed/content-ident [:class "entry-content clearfix"],
-   :feed/last-num 53}]
- [{:db/id 79164837199980,
-   :feed/url "https://arcan-fe.com/feed/",
-   :feed/title "arcan-fe.com: Arcan",
-   :feed/content-ident [:class "entry-content"],
-   :feed/last-num 48527}]
- [{:db/id 83562883711082,
-   :feed/url "http://www.opennet.ru/opennews/opennews_all.rss",
-   :feed/title "OpenNews.opennet.ru: Общая лента новостей",
-   :feed/content-ident [:id "r_memo"],
-   :feed/last-num 48510}]
- [{:db/id 83562883711094,
-   :feed/url "https://www.datomic.com/feed.xml",
-   :feed/title "datomic.com: JBake",
-   :feed/content-ident [:class "w-clearfix d-content"],
-   :feed/last-num 56}]
- [{:db/id 83562883711096,
+[[{:db/id 74766790688888,
    :feed/url "https://www.exler.ru/blog/rss.xml",
-   :feed/title "Exler.RU",
+   :feed/title "Exler.ru",
    :feed/content-ident [:class "blog-item-content"],
-   :feed/last-num 48754}]
- [{:db/id 87960930222185,
-   :feed/url "https://news.ycombinator.com/rss",
-   :feed/title "news.ycombinator.com: Hacker News",
-   :feed/last-num 48750}]
- [{:db/id 87960930222193,
-   :feed/url "https://exler.ru/films/rss.xml",
-   :feed/title "Exler.RU",
-   :feed/content-ident [:class "film-item-content"],
-   :feed/last-num 48607}]
- [{:db/id 87960930222195,
-   :feed/url "https://postgrespro.com/rss",
-   :feed/title "Postgres Professional",
-   :feed/content-ident [:class "col-md-10"],
-   :feed/last-num 29}]
- [{:db/id 92358976733294,
-   :feed/url "http://blog.cleancoder.com/atom.xml",
-   :feed/title "blog.cleancoder.com: The Clean Code Blog",
-   :feed/last-num 37}]
- [{:db/id 92358976733301,
-   :feed/url "http://comicfeeds.chrisbenard.net/view/dilbert/default",
-   :feed/title "dilbert.com: Dilbert Daily Strip",
-   :feed/last-num 48753}]
- [{:db/id 92358976733303,
-   :feed/url "https://www.drive.ru/export/rss.xml",
-   :feed/title "DRIVE.RU",
-   :feed/content-ident [:class "article-content"],
-   :feed/last-num 1925}]
- [{:db/id 96757023244397,
+   :feed/last-num 55087}]
+ [{:db/id 79164837199981,
    :feed/url "https://www.anandtech.com/rss/",
    :feed/title "anandtech.com: AnandTech",
    :feed/content-ident [:class "articleContent"],
-   :feed/last-num 48555}]
- [{:db/id 96757023244400,
+   :feed/last-num 210167}]
+ [{:db/id 79164837199984,
    :feed/url "https://devblogs.microsoft.com/oldnewthing/feed",
    :feed/title "devblogs.microsoft.com: The Old New Thing",
    :feed/content-ident
    [:class "entry-content col-12 sharepostcontent"],
-   :feed/last-num 48597}]
- [{:db/id 96757023244409,
+   :feed/last-num 210097}]
+ [{:db/id 79164837199988,
+   :feed/url "https://habr.com/ru/rss/best/daily/",
+   :feed/title "habr.com: Лучшие публикации за неделю ",
+   :feed/content-ident
+   [:class
+    "article-formatted-body article-formatted-body article-formatted-body_version-2"],
+   :feed/last-num 210225}]
+ [{:db/id 79164837199990,
+   :feed/url "https://www.datomic.com/feed.xml",
+   :feed/title "datomic.com: JBake",
+   :feed/content-ident [:class "w-clearfix d-content"],
+   :feed/last-num 207556}]
+ [{:db/id 79164837199994,
+   :feed/url "https://www.joelonsoftware.com/feed/",
+   :feed/title "joelonsoftware.com: Joel on Software",
+   :feed/content-ident [:class "entry-content"],
+   :feed/last-num 137207}]
+ [{:db/id 83562883711086,
+   :feed/url "http://blog.cleancoder.com/atom.xml",
+   :feed/title "blog.cleancoder.com: The Clean Code Blog",
+   :feed/last-num 145510}]
+ [{:db/id 83562883711089,
+   :feed/url "https://exler.ru/films/rss.xml",
+   :feed/title "Exler.RU",
+   :feed/content-ident [:class "film-item-content"],
+   :feed/last-num 209651}]
+ [{:db/id 83562883711097,
    :feed/url "https://echo.msk.ru/blog/taratuta/rss.xml",
    :feed/title "\n      Михаил Таратута: Блог | Эхо Москвы\n    ",
    :feed/content-ident [:class "typical include-relap-widget"],
    :feed/last-num 17}]
- [{:db/id 101155069755506,
+ [{:db/id 87960930222184,
+   :feed/url "http://sgolub.ru/feed/",
+   :feed/title "sgolub.ru: АВТОРСКИЙ ПРОЕКТ СЕРГЕЯ ГОЛУБИЦКОГО",
+   :feed/content-ident [:class "entry-content clearfix"],
+   :feed/last-num 210021}]
+ [{:db/id 87960930222188,
+   :feed/url "https://arcan-fe.com/feed/",
+   :feed/title "arcan-fe.com: Arcan",
+   :feed/content-ident [:class "entry-content"],
+   :feed/last-num 188366}]
+ [{:db/id 87960930222194,
    :feed/url "https://xkcd.com/atom.xml",
    :feed/title "xkcd.com",
-   :feed/last-num 48611}]
- [{:db/id 101155069755514,
-   :feed/url "https://www.joelonsoftware.com/feed/",
-   :feed/title "joelonsoftware.com: Joel on Software",
-   :feed/content-ident [:class "entry-content"],
-   :feed/last-num 48649}]
- [{:db/id 158329674478057,
+   :feed/last-num 210240}]
+ [{:db/id 92358976733290,
+   :feed/url "http://www.opennet.ru/opennews/opennews_all.rss",
+   :feed/title "OpenNews.opennet.ru: Общая лента новостей",
+   :feed/content-ident [:id "r_memo"],
+   :feed/last-num 210260}]
+ [{:db/id 92358976733291,
+   :feed/url "https://clojure.org/feed.xml",
+   :feed/title "clojure.org: Clojure News",
+   :feed/last-num 210102}]
+ [{:db/id 92358976733295,
+   :feed/url "https://bikepost.ru/rss/index/",
+   :feed/title "bikepost.ru: БайкПост",
+   :feed/content-ident [:class "content"],
+   :feed/last-num 209710}]
+ [{:db/id 92358976733303,
+   :feed/url "https://www.drive.ru/export/rss.xml",
+   :feed/title "DRIVE.RU",
+   :feed/last-num 1925}]
+ [{:db/id 96757023244403,
+   :feed/url "https://postgrespro.com/rss",
+   :feed/title "postgrespro.com: Postgres Professional Europe Limited",
+   :feed/content-ident [:class "col-md-10"],
+   :feed/last-num 196764}]
+ [{:db/id 96757023244405,
+   :feed/url "http://comicfeeds.chrisbenard.net/view/dilbert/default",
+   :feed/title "dilbert.com: Dilbert Daily Strip",
+   :feed/last-num 156232}]
+ [{:db/id 101155069755497,
+   :feed/url "https://news.ycombinator.com/rss",
+   :feed/title "news.ycombinator.com: Hacker News",
+   :feed/last-num 210272}]
+ [{:db/id 162727721051716,
+   :feed/url "https://www.warandpeace.ru/ru/rss/analysis/",
+   :feed/title "title_ru: Аналитика",
+   :feed/last-num 59393}]
+ [{:db/id 171523814086777,
+   :feed/url "https://www.warandpeace.ru/ru/rss/",
+   :feed/title "warandpeace.ru: Война и Мир",
+   :feed/last-num 210256}]
+ [{:db/id 171523814107148,
+   :feed/url "https://skorobogatov.livejournal.com/data/atom",
+   :feed/title "skorobogatov.livejournal.com: Экономика и приложения",
+   :feed/last-num 210210}]
+ [{:db/id 175921860553616,
+   :feed/url "http://thesaker.is/feed/",
+   :feed/title "The Vineyard of the Saker",
+   :feed/last-num 56972}]
+ [{:db/id 175921860603787,
    :feed/url "https://expert.ru/doc-list/rss/",
    :feed/title "expert.ru",
    :feed/content-ident [:class "content-text"],
-   :feed/last-num 48749}]
- [{:db/id 162727720989268,
-   :feed/url "https://www.warandpeace.ru/ru/rss/",
-   :feed/title "warandpeace.ru: Война и Мир",
-   :feed/last-num 48779}]]
+   :feed/last-num 210275}]
+ [{:db/id 180319907096148,
+   :feed/url "https://www.warandpeace.ru/ru/rss/commentaries/",
+   :feed/title "title_ru: Комментарии",
+   :feed/content-ident [:id "topic_text"],
+   :feed/last-num 59781}]
+ [{:db/id 180319907114733,
+   :feed/url "https://colonelcassad.livejournal.com/data/atom",
+   :feed/title "colonelcassad.livejournal.com: Colonel Cassad",
+   :feed/last-num 210269}]
+ [{:db/id 184717953605529,
+   :feed/url "https://www.warandpeace.ru/ru/rss/news/",
+   :feed/title "title_ru: Новости",
+   :feed/content-ident [:id "topic_text"],
+   :feed/last-num 60294}]
+ [{:db/id 189116000116546,
+   :feed/url "http://feeds.feedburner.com/zerohedge/feed",
+   :feed/title "zerohedge.com: ZeroHedge News",
+   :feed/content-ident
+   [:class "NodeContent_body__HBEFs NodeBody_container__eeFKv"],
+   :feed/last-num 210249}]
+ [{:db/id 189116000137201,
+   :feed/url "https://yurasumy.livejournal.com/data/atom",
+   :feed/title
+   "yurasumy.livejournal.com: Если ты ненавидишь — значит тебя победили ©",
+   :feed/last-num 210020}]
+ [{:db/id 189116000253229,
+   :feed/url "https://rss.app/feeds/jvCRRneXmPDRFqEC.xml",
+   :feed/title "t.me: Хазин",
+   :feed/last-num 77562}]
+ [{:db/id 193514046649140,
+   :feed/url "https://www.bfm.ru/news.rss?rubric=4864",
+   :feed/title "Новости портала BFM.ru",
+   :feed/content-ident [:class "current-article js-mediator-article"],
+   :feed/last-num 210273}]
+ [{:db/id 193514046680810,
+   :feed/url "https://topcor.ru/rss.xml",
+   :feed/title "topcor.ru: Репортёр",
+   :feed/content-ident [:class "showfull__content text"],
+   :feed/last-num 210268}]
+ [{:db/id 197912093186499,
+   :feed/url "https://lobste.rs/rss",
+   :feed/title "lobste.rs: Lobsters",
+   :feed/last-num 99556}]
+ [{:db/id 233096465505144,
+   :feed/url "https://lunduke.substack.com/feed",
+   :feed/title
+   "lunduke.substack.com: The Lunduke Journal of Technology",
+   :feed/content-ident [:class "body markup"],
+   :feed/last-num 112957}]
+ [{:db/id 351843722016613,
+   :feed/url "https://nixos.org/blog/announcements-rss.xml",
+   :feed/title "nixos.org: NixOS News",
+   :feed/last-num 200309}]
+ [{:db/id 400222233759061,
+   :feed/url "https://moto-magazine.ru/rss.php",
+   :feed/title "moto-magazine.ru: Новости",
+   :feed/content-ident [:class "content-wide"],
+   :feed/last-num 208648}]]
 
 #+end_example
 
@@ -150,188 +222,254 @@
 #+begin_example
 #:user{:id "georgy@kibardin.name",
        :styles
-       (["habr.com"
-         "https://shashurup.github.io/feedcircuit-styles/img-data-src.js"]),
-       :selected
-       (#:item{:id "145135534944315"}
-        #:item{:id "153931627966477"}
-        #:item{:id "158329674477571"}
-        #:item{:id "158329674477585"}),
+       (["bfm.ru"
+         "https://shashurup.github.io/feedcircuit-styles/img-data-src.js"]
+        ["habr.com"
+         "https://shashurup.github.io/feedcircuit-styles/img-data-src.js"]
+        ["zerohedge.com"
+         "https://shashurup.github.io/feedcircuit-styles/zh.js"]),
+       :selected (#:item{:id "422212466415389"}),
        :sources
-       ({:source/feed "101155069755506",
-         :feed/last-num 48195,
-         :source/position 48196,
+       ({:source/feed "87960930222194",
+         :feed/last-num 210240,
+         :source/position 210241,
          :source/num 0,
          :feed/title "xkcd.com",
          :feed/url "https://xkcd.com/atom.xml",
          :source/seen true,
          :source/active true,
-         :source/id "149533581455342"}
-        {:source/feed "92358976733301",
-         :feed/last-num 48283,
-         :source/position 48284,
+         :source/id "167125767499906"}
+        {:source/feed "96757023244405",
+         :feed/last-num 156232,
+         :source/position 156233,
          :source/num 1,
-         :feed/title "Dilbert Daily Strip",
+         :feed/title "dilbert.com: Dilbert Daily Strip",
          :feed/url
          "http://comicfeeds.chrisbenard.net/view/dilbert/default",
          :source/seen true,
          :source/active true,
-         :source/id "149533581455343"}
-        {:source/feed "83562883711096",
-         :feed/last-num 48284,
-         :source/position 48285,
+         :source/id "167125767499907"}
+        {:source/feed "92358976733295",
+         :feed/last-num 209710,
+         :source/position 209711,
          :source/num 2,
-         :feed/title "Exler.ru",
-         :feed/url "https://www.exler.ru/blog/rss.xml",
-         :source/seen true,
-         :source/active true,
-         :source/id "149533581455344"}
-        {:source/feed "79164837199976",
-         :feed/last-num 53,
-         :source/position 54,
-         :source/num 3,
-         :feed/title "АВТОРСКИЙ ПРОЕКТ СЕРГЕЯ ГОЛУБИЦКОГО",
-         :feed/url "http://sgolub.ru/feed/",
-         :source/seen true,
-         :source/active true,
-         :source/id "149533581455345"}
-        {:source/feed "74766790688879",
-         :feed/last-num 48277,
-         :source/position 48278,
-         :source/num 4,
-         :feed/title "БайкПост",
+         :feed/title "bikepost.ru: БайкПост",
          :feed/url "https://bikepost.ru/rss/index/",
          :source/seen true,
          :source/active true,
-         :source/id "149533581455346"}
-        {:source/feed "74766790688875",
-         :feed/last-num 58,
-         :source/position 59,
-         :source/num 5,
-         :feed/title "Clojure News",
-         :feed/url "https://clojure.org/feed.xml",
+         :source/id "167125767499909"}
+        {:source/feed "400222233759061",
+         :feed/last-num 208648,
+         :source/position 208649,
+         :source/num 3,
+         :feed/title "moto-magazine.ru: Новости",
+         :feed/url "https://moto-magazine.ru/rss.php",
          :source/seen true,
          :source/active true,
-         :source/id "149533581455347"}
-        {:source/feed "83562883711094",
-         :feed/last-num 56,
-         :source/position 57,
-         :source/num 6,
-         :feed/title "JBake",
-         :feed/url "https://www.datomic.com/feed.xml",
-         :source/seen true,
-         :source/active true,
-         :source/id "149533581455348"}
-        {:source/feed "79164837199980",
-         :feed/last-num 11,
-         :source/position 12,
-         :source/num 7,
-         :feed/title "Arcan",
-         :feed/url "https://arcan-fe.com/feed/",
-         :source/seen true,
-         :source/active true,
-         :source/id "149533581455349"}
-        {:source/feed "87960930222185",
-         :feed/last-num 48276,
-         :source/position 48277,
-         :source/num 8,
-         :feed/title "Hacker News",
+         :source/id "382630047714659"}
+        {:source/feed "101155069755497",
+         :feed/last-num 210272,
+         :source/position 210258,
+         :source/num 4,
+         :feed/title "news.ycombinator.com: Hacker News",
          :feed/url "https://news.ycombinator.com/rss",
-         :source/seen true,
+         :source/seen false,
          :source/active true,
-         :source/id "149533581455350"}
-        {:source/feed "74766790688884",
+         :source/id "167125767499910"}
+        {:source/feed "79164837199988",
          :source/filters "!PHP",
-         :feed/last-num 48282,
-         :source/position 48283,
-         :source/num 9,
-         :feed/title "Лучшие публикации за сутки",
+         :feed/last-num 210225,
+         :source/position 210226,
+         :source/num 5,
+         :feed/title "habr.com: Лучшие публикации за неделю ",
          :feed/url "https://habr.com/ru/rss/best/daily/",
          :source/seen true,
          :source/active true,
-         :source/id "149533581455351"}
-        {:source/feed "92358976733294",
-         :feed/last-num 37,
-         :source/position 38,
-         :source/num 10,
-         :feed/title "The Clean Code Blog",
-         :feed/url "http://blog.cleancoder.com/atom.xml",
-         :source/seen true,
-         :source/active true,
-         :source/id "149533581455352"}
-        {:source/feed "101155069755514",
-         :feed/last-num 10,
-         :source/position 11,
-         :source/num 11,
-         :feed/title "Joel on Software",
-         :feed/url "https://www.joelonsoftware.com/feed/",
-         :source/seen true,
-         :source/active true,
-         :source/id "149533581455353"}
-        {:source/feed "96757023244400",
-         :feed/last-num 48229,
-         :source/position 48230,
-         :source/num 12,
-         :feed/title "The Old New Thing",
-         :feed/url "https://devblogs.microsoft.com/oldnewthing/feed",
-         :source/seen true,
-         :source/active true,
-         :source/id "149533581455354"}
-        {:source/feed "96757023244397",
-         :feed/last-num 48262,
-         :source/position 48263,
-         :source/num 13,
-         :feed/title "AnandTech",
-         :feed/url "https://www.anandtech.com/rss/",
-         :source/seen true,
-         :source/active true,
-         :source/id "149533581455355"}
-        {:source/feed "83562883711082",
-         :feed/last-num 48240,
-         :source/position 48241,
-         :source/num 14,
+         :source/id "167125767499911"}
+        {:source/feed "92358976733290",
+         :feed/last-num 210260,
+         :source/position 210261,
+         :source/num 6,
          :feed/title "OpenNews.opennet.ru: Общая лента новостей",
          :feed/url "http://www.opennet.ru/opennews/opennews_all.rss",
          :source/seen true,
          :source/active true,
-         :source/id "149533581455356"}
-        {:source/feed "92358976733303",
-         :feed/last-num 1925,
-         :source/position 1926,
-         :source/num 15,
-         :feed/title "DRIVE.RU",
-         :feed/url "https://www.drive.ru/export/rss.xml",
+         :source/id "167125767499912"}
+        {:source/feed "92358976733291",
+         :feed/last-num 210102,
+         :source/position 210103,
+         :source/num 7,
+         :feed/title "clojure.org: Clojure News",
+         :feed/url "https://clojure.org/feed.xml",
          :source/seen true,
          :source/active true,
-         :source/id "149533581455357"}
-        {:source/feed "96757023244409",
-         :feed/last-num 17,
-         :source/position 18,
-         :source/num 16,
+         :source/id "167125767499913"}
+        {:source/feed "79164837199990",
+         :feed/last-num 207556,
+         :source/position 207557,
+         :source/num 8,
+         :feed/title "datomic.com: JBake",
+         :feed/url "https://www.datomic.com/feed.xml",
+         :source/seen true,
+         :source/active true,
+         :source/id "167125767499914"}
+        {:source/feed "351843722016613",
+         :feed/last-num 200309,
+         :source/position 200310,
+         :source/num 9,
+         :feed/title "nixos.org: NixOS News",
+         :feed/url "https://nixos.org/blog/announcements-rss.xml",
+         :source/seen true,
+         :source/active true,
+         :source/id "351843722016725"}
+        {:source/feed "96757023244403",
+         :feed/last-num 196764,
+         :source/position 196765,
+         :source/num 10,
          :feed/title
-         "\n      Михаил Таратута: Блог | Эхо Москвы\n    ",
-         :feed/url "https://echo.msk.ru/blog/taratuta/rss.xml",
-         :source/seen true,
-         :source/active true,
-         :source/id "149533581455358"}
-        {:source/feed "87960930222193",
-         :feed/last-num 270,
-         :source/position 271,
-         :source/num 17,
-         :feed/title "Exler.ru",
-         :feed/url "https://exler.ru/films/rss.xml",
-         :source/seen true,
-         :source/active true,
-         :source/id "149533581455359"}
-        {:source/feed "87960930222195",
-         :feed/last-num 29,
-         :source/position 30,
-         :source/num 18,
-         :feed/title "Postgres Professional",
+         "postgrespro.com: Postgres Professional Europe Limited",
          :feed/url "https://postgrespro.com/rss",
          :source/seen true,
          :source/active true,
-         :source/id "149533581455360"})}
+         :source/id "167125767499915"}
+        {:source/feed "87960930222188",
+         :feed/last-num 188366,
+         :source/position 188367,
+         :source/num 11,
+         :feed/title "arcan-fe.com: Arcan",
+         :feed/url "https://arcan-fe.com/feed/",
+         :source/seen true,
+         :source/active true,
+         :source/id "167125767499916"}
+        {:source/feed "83562883711086",
+         :feed/last-num 145510,
+         :source/position 145511,
+         :source/num 12,
+         :feed/title "blog.cleancoder.com: The Clean Code Blog",
+         :feed/url "http://blog.cleancoder.com/atom.xml",
+         :source/seen true,
+         :source/active true,
+         :source/id "167125767499917"}
+        {:source/feed "79164837199994",
+         :feed/last-num 137207,
+         :source/position 137208,
+         :source/num 13,
+         :feed/title "joelonsoftware.com: Joel on Software",
+         :feed/url "https://www.joelonsoftware.com/feed/",
+         :source/seen true,
+         :source/active true,
+         :source/id "167125767499918"}
+        {:source/feed "79164837199984",
+         :feed/last-num 210097,
+         :source/position 210098,
+         :source/num 14,
+         :feed/title "devblogs.microsoft.com: The Old New Thing",
+         :feed/url "https://devblogs.microsoft.com/oldnewthing/feed",
+         :source/seen true,
+         :source/active true,
+         :source/id "167125767499919"}
+        {:source/feed "79164837199981",
+         :feed/last-num 210167,
+         :source/position 210168,
+         :source/num 15,
+         :feed/title "anandtech.com: AnandTech",
+         :feed/url "https://www.anandtech.com/rss/",
+         :source/seen true,
+         :source/active true,
+         :source/id "167125767499920"}
+        {:source/feed "83562883711089",
+         :feed/last-num 209651,
+         :source/position 209652,
+         :source/num 16,
+         :feed/title "Exler.RU",
+         :feed/url "https://exler.ru/films/rss.xml",
+         :source/seen true,
+         :source/active true,
+         :source/id "167125767499923"}
+        {:source/feed "87960930222184",
+         :feed/last-num 210021,
+         :source/position 210022,
+         :source/num 17,
+         :feed/title "sgolub.ru: АВТОРСКИЙ ПРОЕКТ СЕРГЕЯ ГОЛУБИЦКОГО",
+         :feed/url "http://sgolub.ru/feed/",
+         :source/seen true,
+         :source/active true,
+         :source/id "167125767499924"}
+        {:source/feed "189116000137201",
+         :feed/last-num 210020,
+         :source/position 92463,
+         :source/num 18,
+         :feed/title
+         "yurasumy.livejournal.com: Если ты ненавидишь — значит тебя победили ©",
+         :feed/url "https://yurasumy.livejournal.com/data/atom",
+         :source/seen false,
+         :source/active false,
+         :source/id "184717953626123"}
+        {:source/feed "180319907114733",
+         :feed/last-num 210269,
+         :source/position 117393,
+         :source/num 19,
+         :feed/title "colonelcassad.livejournal.com: Colonel Cassad",
+         :feed/url "https://colonelcassad.livejournal.com/data/atom",
+         :source/seen false,
+         :source/active false,
+         :source/id "167125767581447"}
+        {:source/feed "171523814107148",
+         :feed/last-num 210210,
+         :source/position 210211,
+         :source/num 20,
+         :feed/title
+         "skorobogatov.livejournal.com: Экономика и приложения",
+         :feed/url "https://skorobogatov.livejournal.com/data/atom",
+         :source/seen true,
+         :source/active true,
+         :source/id "184717953640486"}
+        {:source/feed "175921860603787",
+         :feed/last-num 210275,
+         :source/position 210221,
+         :source/num 21,
+         :feed/title "expert.ru",
+         :feed/url "https://expert.ru/doc-list/rss/",
+         :source/seen false,
+         :source/active true,
+         :source/id "171523814092784"}
+        {:source/feed "193514046649140",
+         :source/filters "/Георги[йя]\\s+Бовта?/",
+         :feed/last-num 210273,
+         :source/position 209913,
+         :source/num 22,
+         :feed/title "Новости портала BFM.ru",
+         :feed/url "https://www.bfm.ru/news.rss?rubric=4864",
+         :source/seen false,
+         :source/active true,
+         :source/id "180319907115879"}
+        {:source/feed "171523814086777",
+         :feed/last-num 210256,
+         :source/position 185327,
+         :source/num 23,
+         :feed/title "warandpeace.ru: Война и Мир",
+         :feed/url "https://www.warandpeace.ru/ru/rss/",
+         :source/seen false,
+         :source/active false,
+         :source/id "180319907109011"}
+        {:source/feed "193514046680810",
+         :feed/last-num 210268,
+         :source/position 210259,
+         :source/num 24,
+         :feed/title "topcor.ru: Репортёр",
+         :feed/url "https://topcor.ru/rss.xml",
+         :source/seen false,
+         :source/active true,
+         :source/id "347445675425087"}
+        {:source/feed "189116000116546",
+         :feed/last-num 210249,
+         :source/position 210250,
+         :source/num 25,
+         :feed/title "zerohedge.com: ZeroHedge News",
+         :feed/url "http://feeds.feedburner.com/zerohedge/feed",
+         :source/seen true,
+         :source/active true,
+         :source/id "171523814072156"})}
 
 #+end_example
 
@@ -436,1410 +574,170 @@
 #+end_example
 
 #+begin_src clojure :results pp
-(let [[updates deletes]
-(d-b/diff-sources (->> ["site1"
-                        "site3 filter"
-                        "#site2 filters"
-                        "site4 filter11" "site4 filter22"
-                        "site2 filter2"
-                        "new-site"]
-                       (map u/parse-source)
-                       d-b/numerate)
-              [{:db/id 1
-                :source/num 0
-                :source/active true
-                :source/feed {:feed/url "site1"}}
-               {:db/id 2
-                :source/num 1
-                :source/active true
-                :source/filters "filters"
-                :source/feed {:feed/url "site2"}}
-               {:db/id 3
-                :source/num 2
-                :source/active true
-                :source/feed {:feed/url "site3"}}
-               {:db/id 4
-                :source/num 3
-                :source/active true
-                :source/filters "filter1"
-                :source/feed {:feed/url "site4"}}
-               {:db/id 5
-                :source/num 4
-                :source/active true
-                :source/filters "filter2"
-                :source/feed {:feed/url "site4"}}
-               {:db/id 6
-                :source/num 5
-                :source/active true
-                :source/feed {:feed/url "site88"}}
-                ])]
-  [updates deletes]        
-  ;; (d-b/prepare-sources-tx updates deletes "georgy@kibardin.name")
-  )
-#+end_src
-
-#+RESULTS:
-#+begin_example
-[[{:source/active true, :source/feed "site1", :source/num 0, :db/id 1}
-  {:source/active true,
-   :source/feed "site3",
-   :source/filters "filter",
-   :source/num 1,
-   :db/id 3}
-  {:source/active false,
-   :source/feed "site2",
-   :source/filters "filters",
-   :source/num 2,
-   :db/id 2}
-  {:source/active true,
-   :source/feed "site4",
-   :source/filters "filter11",
-   :source/num 3,
-   :db/id 4}
-  {:source/active true,
-   :source/feed "site4",
-   :source/filters "filter22",
-   :source/num 4,
-   :db/id 5}
-  #:source{:active true,
-           :feed "site2",
-           :filters "filter2",
-           :num 5,
-           :position -16}
-  #:source{:active true, :feed "new-site", :num 6, :position -16}]
- (6)]
-
-#+end_example
-
-#+begin_src clojure :results pp
-(d/q '[:find (pull ?t [*])
-       :where [?t :db/txInstant _]]
+(d/q '[:find (pull ?e [*])
+       :where [?e :source/user _]]
      (d/db d-b/conn))
 #+end_src
 
 #+RESULTS:
 #+begin_example
-[[#:db{:id 13194139533312,
-       :txInstant #inst "1970-01-01T00:00:00.000-00:00"}]
- [#:db{:id 13194139533314,
-       :txInstant #inst "1970-01-01T00:00:00.000-00:00"}]
- [#:db{:id 13194139533315,
-       :txInstant #inst "1970-01-01T00:00:00.000-00:00"}]
- [#:db{:id 13194139533316,
-       :txInstant #inst "1970-01-01T00:00:00.000-00:00"}]
- [#:db{:id 13194139533317,
-       :txInstant #inst "1970-01-01T00:00:00.000-00:00"}]
- [#:db{:id 13194139533318,
-       :txInstant #inst "2022-01-03T11:23:39.923-00:00"}]
- [#:db{:id 13194139533319,
-       :txInstant #inst "2022-01-03T11:24:12.647-00:00"}]
- [#:db{:id 13194139533320,
-       :txInstant #inst "2022-01-03T11:24:12.726-00:00"}]
- [#:db{:id 13194139533321,
-       :txInstant #inst "2022-01-03T11:24:12.750-00:00"}]
- [#:db{:id 13194139533322,
-       :txInstant #inst "2022-01-03T11:24:12.778-00:00"}]
- [#:db{:id 13194139533323,
-       :txInstant #inst "2022-01-03T11:24:12.797-00:00"}]
- [#:db{:id 13194139533324,
-       :txInstant #inst "2022-01-03T11:24:12.815-00:00"}]
- [#:db{:id 13194139533325,
-       :txInstant #inst "2022-01-03T11:24:12.840-00:00"}]
- [#:db{:id 13194139533326,
-       :txInstant #inst "2022-01-03T11:24:12.854-00:00"}]
- [#:db{:id 13194139533327,
-       :txInstant #inst "2022-01-03T11:24:12.866-00:00"}]
- [#:db{:id 13194139533328,
-       :txInstant #inst "2022-01-03T11:24:12.882-00:00"}]
- [#:db{:id 13194139533329,
-       :txInstant #inst "2022-01-03T11:24:12.893-00:00"}]
- [#:db{:id 13194139533330,
-       :txInstant #inst "2022-01-03T11:24:12.906-00:00"}]
- [#:db{:id 13194139533331,
-       :txInstant #inst "2022-01-03T11:24:12.932-00:00"}]
- [#:db{:id 13194139533332,
-       :txInstant #inst "2022-01-03T11:24:12.947-00:00"}]
- [#:db{:id 13194139533333,
-       :txInstant #inst "2022-01-03T11:24:12.958-00:00"}]
- [#:db{:id 13194139533334,
-       :txInstant #inst "2022-01-03T11:24:12.972-00:00"}]
- [#:db{:id 13194139533335,
-       :txInstant #inst "2022-01-03T11:24:12.982-00:00"}]
- [#:db{:id 13194139533336,
-       :txInstant #inst "2022-01-03T11:24:12.998-00:00"}]
- [#:db{:id 13194139533337,
-       :txInstant #inst "2022-01-03T11:24:13.022-00:00"}]
- [#:db{:id 13194139533338,
-       :txInstant #inst "2022-01-03T11:24:21.836-00:00"}]
- [#:db{:id 13194139533339,
-       :txInstant #inst "2022-01-03T11:24:22.191-00:00"}]
- [#:db{:id 13194139533340,
-       :txInstant #inst "2022-01-03T11:24:23.090-00:00"}]
- [#:db{:id 13194139533341,
-       :txInstant #inst "2022-01-03T11:24:23.901-00:00"}]
- [#:db{:id 13194139533342,
-       :txInstant #inst "2022-01-03T11:24:24.570-00:00"}]
- [#:db{:id 13194139533343,
-       :txInstant #inst "2022-01-03T11:24:25.172-00:00"}]
- [#:db{:id 13194139533344,
-       :txInstant #inst "2022-01-03T11:24:25.752-00:00"}]
- [#:db{:id 13194139533345,
-       :txInstant #inst "2022-01-03T11:24:26.393-00:00"}]
- [#:db{:id 13194139533346,
-       :txInstant #inst "2022-01-03T11:24:26.966-00:00"}]
- [#:db{:id 13194139533347,
-       :txInstant #inst "2022-01-03T11:24:27.498-00:00"}]
- [#:db{:id 13194139533348,
-       :txInstant #inst "2022-01-03T11:24:28.053-00:00"}]
- [#:db{:id 13194139533349,
-       :txInstant #inst "2022-01-03T11:24:28.655-00:00"}]
- [#:db{:id 13194139533350,
-       :txInstant #inst "2022-01-03T11:24:29.283-00:00"}]
- [#:db{:id 13194139533351,
-       :txInstant #inst "2022-01-03T11:24:29.900-00:00"}]
- [#:db{:id 13194139533352,
-       :txInstant #inst "2022-01-03T11:24:30.512-00:00"}]
- [#:db{:id 13194139533353,
-       :txInstant #inst "2022-01-03T11:24:31.051-00:00"}]
- [#:db{:id 13194139533354,
-       :txInstant #inst "2022-01-03T11:24:31.606-00:00"}]
- [#:db{:id 13194139533355,
-       :txInstant #inst "2022-01-03T11:24:32.121-00:00"}]
- [#:db{:id 13194139533356,
-       :txInstant #inst "2022-01-03T11:24:32.700-00:00"}]
- [#:db{:id 13194139533357,
-       :txInstant #inst "2022-01-03T11:24:33.236-00:00"}]
- [#:db{:id 13194139533358,
-       :txInstant #inst "2022-01-03T11:24:33.789-00:00"}]
- [#:db{:id 13194139533359,
-       :txInstant #inst "2022-01-03T11:24:34.381-00:00"}]
- [#:db{:id 13194139533360,
-       :txInstant #inst "2022-01-03T11:24:35.011-00:00"}]
- [#:db{:id 13194139533361,
-       :txInstant #inst "2022-01-03T11:24:35.631-00:00"}]
- [#:db{:id 13194139533362,
-       :txInstant #inst "2022-01-03T11:24:36.230-00:00"}]
- [#:db{:id 13194139533363,
-       :txInstant #inst "2022-01-03T11:24:36.830-00:00"}]
- [#:db{:id 13194139533364,
-       :txInstant #inst "2022-01-03T11:24:37.443-00:00"}]
- [#:db{:id 13194139533365,
-       :txInstant #inst "2022-01-03T11:24:38.019-00:00"}]
- [#:db{:id 13194139533366,
-       :txInstant #inst "2022-01-03T11:24:38.655-00:00"}]
- [#:db{:id 13194139533367,
-       :txInstant #inst "2022-01-03T11:24:39.277-00:00"}]
- [#:db{:id 13194139533368,
-       :txInstant #inst "2022-01-03T11:24:39.913-00:00"}]
- [#:db{:id 13194139533369,
-       :txInstant #inst "2022-01-03T11:24:40.565-00:00"}]
- [#:db{:id 13194139533370,
-       :txInstant #inst "2022-01-03T11:24:41.211-00:00"}]
- [#:db{:id 13194139533371,
-       :txInstant #inst "2022-01-03T11:24:41.871-00:00"}]
- [#:db{:id 13194139533372,
-       :txInstant #inst "2022-01-03T11:24:42.489-00:00"}]
- [#:db{:id 13194139533373,
-       :txInstant #inst "2022-01-03T11:24:43.148-00:00"}]
- [#:db{:id 13194139533374,
-       :txInstant #inst "2022-01-03T11:24:43.809-00:00"}]
- [#:db{:id 13194139533375,
-       :txInstant #inst "2022-01-03T11:24:44.483-00:00"}]
- [#:db{:id 13194139533376,
-       :txInstant #inst "2022-01-03T11:24:45.158-00:00"}]
- [#:db{:id 13194139533377,
-       :txInstant #inst "2022-01-03T11:24:45.786-00:00"}]
- [#:db{:id 13194139533378,
-       :txInstant #inst "2022-01-03T11:24:46.458-00:00"}]
- [#:db{:id 13194139533379,
-       :txInstant #inst "2022-01-03T11:24:47.108-00:00"}]
- [#:db{:id 13194139533380,
-       :txInstant #inst "2022-01-03T11:24:47.794-00:00"}]
- [#:db{:id 13194139533381,
-       :txInstant #inst "2022-01-03T11:24:48.450-00:00"}]
- [#:db{:id 13194139533382,
-       :txInstant #inst "2022-01-03T11:24:49.120-00:00"}]
- [#:db{:id 13194139533383,
-       :txInstant #inst "2022-01-03T11:24:49.815-00:00"}]
- [#:db{:id 13194139533384,
-       :txInstant #inst "2022-01-03T11:24:50.520-00:00"}]
- [#:db{:id 13194139533385,
-       :txInstant #inst "2022-01-03T11:24:51.181-00:00"}]
- [#:db{:id 13194139533386,
-       :txInstant #inst "2022-01-03T11:24:51.837-00:00"}]
- [#:db{:id 13194139533387,
-       :txInstant #inst "2022-01-03T11:24:51.945-00:00"}]
- [#:db{:id 13194139533388,
-       :txInstant #inst "2022-01-03T11:24:52.371-00:00"}]
- [#:db{:id 13194139533389,
-       :txInstant #inst "2022-01-03T11:24:52.860-00:00"}]
- [#:db{:id 13194139533390,
-       :txInstant #inst "2022-01-03T11:24:53.399-00:00"}]
- [#:db{:id 13194139533391,
-       :txInstant #inst "2022-01-03T11:24:53.883-00:00"}]
- [#:db{:id 13194139533392,
-       :txInstant #inst "2022-01-03T11:24:54.250-00:00"}]
- [#:db{:id 13194139533393,
-       :txInstant #inst "2022-01-03T11:24:54.348-00:00"}]
- [#:db{:id 13194139533394,
-       :txInstant #inst "2022-01-03T11:24:54.862-00:00"}]
- [#:db{:id 13194139533395,
-       :txInstant #inst "2022-01-03T11:24:55.613-00:00"}]
- [#:db{:id 13194139533396,
-       :txInstant #inst "2022-01-03T11:24:55.774-00:00"}]
- [#:db{:id 13194139533397,
-       :txInstant #inst "2022-01-03T11:24:55.993-00:00"}]
- [#:db{:id 13194139533398,
-       :txInstant #inst "2022-01-03T11:24:56.885-00:00"}]
- [#:db{:id 13194139533399,
-       :txInstant #inst "2022-01-03T11:24:57.665-00:00"}]
- [#:db{:id 13194139533400,
-       :txInstant #inst "2022-01-03T11:24:58.559-00:00"}]
- [#:db{:id 13194139533401,
-       :txInstant #inst "2022-01-03T11:24:59.395-00:00"}]
- [#:db{:id 13194139533402,
-       :txInstant #inst "2022-01-03T11:25:00.195-00:00"}]
- [#:db{:id 13194139533403,
-       :txInstant #inst "2022-01-03T11:25:00.767-00:00"}]
- [#:db{:id 13194139533404,
-       :txInstant #inst "2022-01-03T11:25:01.182-00:00"}]
- [#:db{:id 13194139533405,
-       :txInstant #inst "2022-01-03T11:25:01.378-00:00"}]
- [#:db{:id 13194139533406,
-       :txInstant #inst "2022-01-03T11:25:01.576-00:00"}]
- [#:db{:id 13194139533407,
-       :txInstant #inst "2022-01-03T11:25:01.862-00:00"}]
- [#:db{:id 13194139533408,
-       :txInstant #inst "2022-01-03T11:25:02.857-00:00"}]
- [#:db{:id 13194139533409,
-       :txInstant #inst "2022-01-03T11:25:03.940-00:00"}]
- [#:db{:id 13194139533410,
-       :txInstant #inst "2022-01-03T11:25:04.974-00:00"}]
- [#:db{:id 13194139533411,
-       :txInstant #inst "2022-01-03T11:25:05.900-00:00"}]
- [#:db{:id 13194139533412,
-       :txInstant #inst "2022-01-03T11:25:06.898-00:00"}]
- [#:db{:id 13194139533413,
-       :txInstant #inst "2022-01-03T11:25:08.048-00:00"}]
- [#:db{:id 13194139533414,
-       :txInstant #inst "2022-01-03T11:25:09.074-00:00"}]
- [#:db{:id 13194139533415,
-       :txInstant #inst "2022-01-03T11:25:10.243-00:00"}]
- [#:db{:id 13194139533416,
-       :txInstant #inst "2022-01-03T11:25:11.308-00:00"}]
- [#:db{:id 13194139533417,
-       :txInstant #inst "2022-01-03T11:25:12.318-00:00"}]
- [#:db{:id 13194139533418,
-       :txInstant #inst "2022-01-03T11:25:13.370-00:00"}]
- [#:db{:id 13194139533419,
-       :txInstant #inst "2022-01-03T11:25:14.479-00:00"}]
- [#:db{:id 13194139533420,
-       :txInstant #inst "2022-01-03T11:25:14.963-00:00"}]
- [#:db{:id 13194139533421,
-       :txInstant #inst "2022-01-03T11:25:15.411-00:00"}]
- [#:db{:id 13194139533422,
-       :txInstant #inst "2022-01-03T11:25:15.793-00:00"}]
- [#:db{:id 13194139533423,
-       :txInstant #inst "2022-01-03T11:25:16.589-00:00"}]
- [#:db{:id 13194139533424,
-       :txInstant #inst "2022-01-03T11:25:17.276-00:00"}]
- [#:db{:id 13194139533425,
-       :txInstant #inst "2022-01-03T11:25:17.521-00:00"}]
- [#:db{:id 13194139533426,
-       :txInstant #inst "2022-01-03T11:25:17.551-00:00"}]
- [#:db{:id 13194139533427,
-       :txInstant #inst "2022-01-03T11:25:47.302-00:00"}]
- [#:db{:id 13194139533428,
-       :txInstant #inst "2022-01-03T11:26:38.395-00:00"}]
- [#:db{:id 13194139533429,
-       :txInstant #inst "2022-01-03T11:26:38.451-00:00"}]
- [#:db{:id 13194139533430,
-       :txInstant #inst "2022-01-03T11:26:40.055-00:00"}]
- [#:db{:id 13194139533431,
-       :txInstant #inst "2022-01-03T11:26:40.278-00:00"}]
- [#:db{:id 13194139533432,
-       :txInstant #inst "2022-01-03T11:26:40.782-00:00"}]
- [#:db{:id 13194139533433,
-       :txInstant #inst "2022-01-03T11:26:40.826-00:00"}]
- [#:db{:id 13194139533434,
-       :txInstant #inst "2022-01-03T11:26:41.554-00:00"}]
- [#:db{:id 13194139533435,
-       :txInstant #inst "2022-01-03T11:26:41.592-00:00"}]
- [#:db{:id 13194139533436,
-       :txInstant #inst "2022-01-03T11:26:42.317-00:00"}]
- [#:db{:id 13194139533437,
-       :txInstant #inst "2022-01-03T11:26:42.353-00:00"}]
- [#:db{:id 13194139533438,
-       :txInstant #inst "2022-01-03T11:26:43.627-00:00"}]
- [#:db{:id 13194139533439,
-       :txInstant #inst "2022-01-03T11:26:43.695-00:00"}]
- [#:db{:id 13194139533440,
-       :txInstant #inst "2022-01-03T11:26:44.195-00:00"}]
- [#:db{:id 13194139533441,
-       :txInstant #inst "2022-01-03T11:26:44.212-00:00"}]
- [#:db{:id 13194139533442,
-       :txInstant #inst "2022-01-03T11:26:45.431-00:00"}]
- [#:db{:id 13194139533443,
-       :txInstant #inst "2022-01-03T11:26:45.515-00:00"}]
- [#:db{:id 13194139533444,
-       :txInstant #inst "2022-01-03T11:26:46.297-00:00"}]
- [#:db{:id 13194139533445,
-       :txInstant #inst "2022-01-03T11:26:46.394-00:00"}]
- [#:db{:id 13194139533446,
-       :txInstant #inst "2022-01-03T11:26:47.078-00:00"}]
- [#:db{:id 13194139533447,
-       :txInstant #inst "2022-01-03T11:26:47.111-00:00"}]
- [#:db{:id 13194139533448,
-       :txInstant #inst "2022-01-03T11:26:47.724-00:00"}]
- [#:db{:id 13194139533449,
-       :txInstant #inst "2022-01-03T11:26:47.769-00:00"}]
- [#:db{:id 13194139533450,
-       :txInstant #inst "2022-01-03T11:26:48.243-00:00"}]
- [#:db{:id 13194139533451,
-       :txInstant #inst "2022-01-03T11:26:48.284-00:00"}]
- [#:db{:id 13194139533452,
-       :txInstant #inst "2022-01-03T11:26:49.066-00:00"}]
- [#:db{:id 13194139533453,
-       :txInstant #inst "2022-01-03T11:26:49.176-00:00"}]
- [#:db{:id 13194139533454,
-       :txInstant #inst "2022-01-03T11:26:49.662-00:00"}]
- [#:db{:id 13194139533455,
-       :txInstant #inst "2022-01-03T11:26:49.683-00:00"}]
- [#:db{:id 13194139533456,
-       :txInstant #inst "2022-01-03T11:26:50.371-00:00"}]
- [#:db{:id 13194139533457,
-       :txInstant #inst "2022-01-03T11:26:50.399-00:00"}]
- [#:db{:id 13194139533458,
-       :txInstant #inst "2022-01-03T11:26:51.194-00:00"}]
- [#:db{:id 13194139533459,
-       :txInstant #inst "2022-01-03T11:26:51.229-00:00"}]
- [#:db{:id 13194139533460,
-       :txInstant #inst "2022-01-03T11:26:51.727-00:00"}]
- [#:db{:id 13194139533461,
-       :txInstant #inst "2022-01-03T11:26:51.758-00:00"}]
- [#:db{:id 13194139533462,
-       :txInstant #inst "2022-01-03T11:26:51.895-00:00"}]
- [#:db{:id 13194139533463,
-       :txInstant #inst "2022-01-03T11:26:51.912-00:00"}]
- [#:db{:id 13194139533464,
-       :txInstant #inst "2022-01-03T11:26:52.541-00:00"}]
- [#:db{:id 13194139533465,
-       :txInstant #inst "2022-01-03T11:26:52.575-00:00"}]
- [#:db{:id 13194139533466,
-       :txInstant #inst "2022-01-03T11:28:05.709-00:00"}]
- [#:db{:id 13194139533467,
-       :txInstant #inst "2022-01-03T11:28:08.817-00:00"}]
- [#:db{:id 13194139533468,
-       :txInstant #inst "2022-01-03T11:28:09.553-00:00"}]
- [#:db{:id 13194139533469,
-       :txInstant #inst "2022-01-03T11:28:10.530-00:00"}]
- [#:db{:id 13194139533470,
-       :txInstant #inst "2022-01-03T11:28:35.768-00:00"}]
- [#:db{:id 13194139533471,
-       :txInstant #inst "2022-01-03T11:28:37.009-00:00"}]
- [#:db{:id 13194139533472,
-       :txInstant #inst "2022-01-03T11:28:37.764-00:00"}]
- [#:db{:id 13194139533473,
-       :txInstant #inst "2022-01-03T11:28:37.773-00:00"}]
- [#:db{:id 13194139533474,
-       :txInstant #inst "2022-01-03T11:28:49.999-00:00"}]
- [#:db{:id 13194139533475,
-       :txInstant #inst "2022-01-03T11:28:50.013-00:00"}]
- [#:db{:id 13194139533476,
-       :txInstant #inst "2022-01-03T11:29:14.683-00:00"}]
- [#:db{:id 13194139533477,
-       :txInstant #inst "2022-01-03T11:29:14.715-00:00"}]
- [#:db{:id 13194139533478,
-       :txInstant #inst "2022-01-03T11:29:16.415-00:00"}]
- [#:db{:id 13194139533479,
-       :txInstant #inst "2022-01-03T11:29:16.655-00:00"}]
- [#:db{:id 13194139533480,
-       :txInstant #inst "2022-01-03T11:29:16.868-00:00"}]
- [#:db{:id 13194139533481,
-       :txInstant #inst "2022-01-03T11:29:16.919-00:00"}]
- [#:db{:id 13194139533482,
-       :txInstant #inst "2022-01-03T11:29:17.453-00:00"}]
- [#:db{:id 13194139533483,
-       :txInstant #inst "2022-01-03T11:29:17.480-00:00"}]
- [#:db{:id 13194139533484,
-       :txInstant #inst "2022-01-03T11:29:18.124-00:00"}]
- [#:db{:id 13194139533485,
-       :txInstant #inst "2022-01-03T11:29:18.157-00:00"}]
- [#:db{:id 13194139533486,
-       :txInstant #inst "2022-01-03T11:29:19.176-00:00"}]
- [#:db{:id 13194139533487,
-       :txInstant #inst "2022-01-03T11:29:19.252-00:00"}]
- [#:db{:id 13194139533488,
-       :txInstant #inst "2022-01-03T11:29:19.653-00:00"}]
- [#:db{:id 13194139533489,
-       :txInstant #inst "2022-01-03T11:29:19.673-00:00"}]
- [#:db{:id 13194139533490,
-       :txInstant #inst "2022-01-03T11:29:20.530-00:00"}]
- [#:db{:id 13194139533491,
-       :txInstant #inst "2022-01-03T11:29:20.600-00:00"}]
- [#:db{:id 13194139533492,
-       :txInstant #inst "2022-01-03T11:29:21.127-00:00"}]
- [#:db{:id 13194139533493,
-       :txInstant #inst "2022-01-03T11:29:21.166-00:00"}]
- [#:db{:id 13194139533494,
-       :txInstant #inst "2022-01-03T11:29:22.145-00:00"}]
- [#:db{:id 13194139533495,
-       :txInstant #inst "2022-01-03T11:29:22.184-00:00"}]
- [#:db{:id 13194139533496,
-       :txInstant #inst "2022-01-03T11:29:22.756-00:00"}]
- [#:db{:id 13194139533497,
-       :txInstant #inst "2022-01-03T11:29:22.786-00:00"}]
- [#:db{:id 13194139533498,
-       :txInstant #inst "2022-01-03T11:29:23.172-00:00"}]
- [#:db{:id 13194139533499,
-       :txInstant #inst "2022-01-03T11:29:23.240-00:00"}]
- [#:db{:id 13194139533500,
-       :txInstant #inst "2022-01-03T11:29:23.681-00:00"}]
- [#:db{:id 13194139533501,
-       :txInstant #inst "2022-01-03T11:29:23.757-00:00"}]
- [#:db{:id 13194139533502,
-       :txInstant #inst "2022-01-03T11:29:23.985-00:00"}]
- [#:db{:id 13194139533503,
-       :txInstant #inst "2022-01-03T11:29:24.021-00:00"}]
- [#:db{:id 13194139533504,
-       :txInstant #inst "2022-01-03T11:29:24.594-00:00"}]
- [#:db{:id 13194139533505,
-       :txInstant #inst "2022-01-03T11:29:24.620-00:00"}]
- [#:db{:id 13194139533506,
-       :txInstant #inst "2022-01-03T11:29:25.003-00:00"}]
- [#:db{:id 13194139533507,
-       :txInstant #inst "2022-01-03T11:29:25.049-00:00"}]
- [#:db{:id 13194139533508,
-       :txInstant #inst "2022-01-03T11:29:25.532-00:00"}]
- [#:db{:id 13194139533509,
-       :txInstant #inst "2022-01-03T11:29:25.551-00:00"}]
- [#:db{:id 13194139533510,
-       :txInstant #inst "2022-01-03T11:29:25.604-00:00"}]
- [#:db{:id 13194139533511,
-       :txInstant #inst "2022-01-03T11:29:25.615-00:00"}]
- [#:db{:id 13194139533512,
-       :txInstant #inst "2022-01-03T11:29:26.453-00:00"}]
- [#:db{:id 13194139533513,
-       :txInstant #inst "2022-01-03T11:29:26.488-00:00"}]
- [#:db{:id 13194139533514,
-       :txInstant #inst "2022-01-03T11:30:04.125-00:00"}]
- [#:db{:id 13194139533515,
-       :txInstant #inst "2022-01-03T11:55:35.879-00:00"}]
- [#:db{:id 13194139533516,
-       :txInstant #inst "2022-01-03T11:55:35.923-00:00"}]
- [#:db{:id 13194139533517,
-       :txInstant #inst "2022-01-03T11:55:37.295-00:00"}]
- [#:db{:id 13194139533518,
-       :txInstant #inst "2022-01-03T11:55:37.526-00:00"}]
- [#:db{:id 13194139533519,
-       :txInstant #inst "2022-01-03T11:55:37.926-00:00"}]
- [#:db{:id 13194139533520,
-       :txInstant #inst "2022-01-03T11:55:37.984-00:00"}]
- [#:db{:id 13194139533521,
-       :txInstant #inst "2022-01-03T11:55:38.602-00:00"}]
- [#:db{:id 13194139533522,
-       :txInstant #inst "2022-01-03T11:55:38.627-00:00"}]
- [#:db{:id 13194139533523,
-       :txInstant #inst "2022-01-03T11:55:39.613-00:00"}]
- [#:db{:id 13194139533524,
-       :txInstant #inst "2022-01-03T11:55:39.636-00:00"}]
- [#:db{:id 13194139533525,
-       :txInstant #inst "2022-01-03T11:55:41.163-00:00"}]
- [#:db{:id 13194139533526,
-       :txInstant #inst "2022-01-03T11:55:41.213-00:00"}]
- [#:db{:id 13194139533527,
-       :txInstant #inst "2022-01-03T11:55:41.963-00:00"}]
- [#:db{:id 13194139533528,
-       :txInstant #inst "2022-01-03T11:55:42.006-00:00"}]
- [#:db{:id 13194139533529,
-       :txInstant #inst "2022-01-03T11:55:42.840-00:00"}]
- [#:db{:id 13194139533530,
-       :txInstant #inst "2022-01-03T11:55:42.890-00:00"}]
- [#:db{:id 13194139533531,
-       :txInstant #inst "2022-01-03T11:55:43.547-00:00"}]
- [#:db{:id 13194139533532,
-       :txInstant #inst "2022-01-03T11:55:43.594-00:00"}]
- [#:db{:id 13194139533533,
-       :txInstant #inst "2022-01-03T11:55:44.869-00:00"}]
- [#:db{:id 13194139533534,
-       :txInstant #inst "2022-01-03T11:55:44.910-00:00"}]
- [#:db{:id 13194139533535,
-       :txInstant #inst "2022-01-03T11:55:45.483-00:00"}]
- [#:db{:id 13194139533536,
-       :txInstant #inst "2022-01-03T11:55:45.521-00:00"}]
- [#:db{:id 13194139533537,
-       :txInstant #inst "2022-01-03T11:55:46.108-00:00"}]
- [#:db{:id 13194139533538,
-       :txInstant #inst "2022-01-03T11:55:46.144-00:00"}]
- [#:db{:id 13194139533539,
-       :txInstant #inst "2022-01-03T11:55:46.929-00:00"}]
- [#:db{:id 13194139533540,
-       :txInstant #inst "2022-01-03T11:55:47.033-00:00"}]
- [#:db{:id 13194139533541,
-       :txInstant #inst "2022-01-03T11:55:47.736-00:00"}]
- [#:db{:id 13194139533542,
-       :txInstant #inst "2022-01-03T11:55:47.778-00:00"}]
- [#:db{:id 13194139533543,
-       :txInstant #inst "2022-01-03T11:55:48.860-00:00"}]
- [#:db{:id 13194139533544,
-       :txInstant #inst "2022-01-03T11:55:48.893-00:00"}]
- [#:db{:id 13194139533545,
-       :txInstant #inst "2022-01-03T11:55:49.348-00:00"}]
- [#:db{:id 13194139533546,
-       :txInstant #inst "2022-01-03T11:55:49.395-00:00"}]
- [#:db{:id 13194139533547,
-       :txInstant #inst "2022-01-03T11:55:50.005-00:00"}]
- [#:db{:id 13194139533548,
-       :txInstant #inst "2022-01-03T11:55:50.048-00:00"}]
- [#:db{:id 13194139533549,
-       :txInstant #inst "2022-01-03T11:55:50.607-00:00"}]
- [#:db{:id 13194139533550,
-       :txInstant #inst "2022-01-03T11:55:50.639-00:00"}]
- [#:db{:id 13194139533551,
-       :txInstant #inst "2022-01-03T11:55:51.239-00:00"}]
- [#:db{:id 13194139533552,
-       :txInstant #inst "2022-01-03T11:55:51.276-00:00"}]
- [#:db{:id 13194139533553,
-       :txInstant #inst "2022-01-03T12:12:07.320-00:00"}]
- [#:db{:id 13194139533554,
-       :txInstant #inst "2022-01-03T12:12:07.384-00:00"}]
- [#:db{:id 13194139533555,
-       :txInstant #inst "2022-01-03T12:12:09.097-00:00"}]
- [#:db{:id 13194139533556,
-       :txInstant #inst "2022-01-03T12:12:09.439-00:00"}]
- [#:db{:id 13194139533557,
-       :txInstant #inst "2022-01-03T12:12:09.915-00:00"}]
- [#:db{:id 13194139533558,
-       :txInstant #inst "2022-01-03T12:12:09.992-00:00"}]
- [#:db{:id 13194139533559,
-       :txInstant #inst "2022-01-03T12:12:10.621-00:00"}]
- [#:db{:id 13194139533560,
-       :txInstant #inst "2022-01-03T12:12:10.663-00:00"}]
- [#:db{:id 13194139533561,
-       :txInstant #inst "2022-01-03T12:12:11.298-00:00"}]
- [#:db{:id 13194139533562,
-       :txInstant #inst "2022-01-03T12:12:11.355-00:00"}]
- [#:db{:id 13194139533563,
-       :txInstant #inst "2022-01-03T12:12:13.873-00:00"}]
- [#:db{:id 13194139533564,
-       :txInstant #inst "2022-01-03T12:12:13.921-00:00"}]
- [#:db{:id 13194139533565,
-       :txInstant #inst "2022-01-03T12:12:14.471-00:00"}]
- [#:db{:id 13194139533566,
-       :txInstant #inst "2022-01-03T12:12:14.516-00:00"}]
- [#:db{:id 13194139533567,
-       :txInstant #inst "2022-01-03T12:12:15.449-00:00"}]
- [#:db{:id 13194139533568,
-       :txInstant #inst "2022-01-03T12:12:15.500-00:00"}]
- [#:db{:id 13194139533569,
-       :txInstant #inst "2022-01-03T12:12:16.336-00:00"}]
- [#:db{:id 13194139533570,
-       :txInstant #inst "2022-01-03T12:12:16.383-00:00"}]
- [#:db{:id 13194139533571,
-       :txInstant #inst "2022-01-03T12:12:17.053-00:00"}]
- [#:db{:id 13194139533572,
-       :txInstant #inst "2022-01-03T12:12:17.115-00:00"}]
- [#:db{:id 13194139533573,
-       :txInstant #inst "2022-01-03T12:12:17.763-00:00"}]
- [#:db{:id 13194139533574,
-       :txInstant #inst "2022-01-03T12:12:17.817-00:00"}]
- [#:db{:id 13194139533575,
-       :txInstant #inst "2022-01-03T12:12:18.371-00:00"}]
- [#:db{:id 13194139533576,
-       :txInstant #inst "2022-01-03T12:12:18.394-00:00"}]
- [#:db{:id 13194139533577,
-       :txInstant #inst "2022-01-03T12:12:19.208-00:00"}]
- [#:db{:id 13194139533578,
-       :txInstant #inst "2022-01-03T12:12:19.298-00:00"}]
- [#:db{:id 13194139533579,
-       :txInstant #inst "2022-01-03T12:12:19.700-00:00"}]
- [#:db{:id 13194139533580,
-       :txInstant #inst "2022-01-03T12:12:19.736-00:00"}]
- [#:db{:id 13194139533581,
-       :txInstant #inst "2022-01-03T12:12:20.424-00:00"}]
- [#:db{:id 13194139533582,
-       :txInstant #inst "2022-01-03T12:12:20.454-00:00"}]
- [#:db{:id 13194139533583,
-       :txInstant #inst "2022-01-03T12:12:21.427-00:00"}]
- [#:db{:id 13194139533584,
-       :txInstant #inst "2022-01-03T12:12:21.466-00:00"}]
- [#:db{:id 13194139533585,
-       :txInstant #inst "2022-01-03T12:12:21.960-00:00"}]
- [#:db{:id 13194139533586,
-       :txInstant #inst "2022-01-03T12:12:21.983-00:00"}]
- [#:db{:id 13194139533587,
-       :txInstant #inst "2022-01-03T12:12:22.078-00:00"}]
- [#:db{:id 13194139533588,
-       :txInstant #inst "2022-01-03T12:12:22.099-00:00"}]
- [#:db{:id 13194139533589,
-       :txInstant #inst "2022-01-03T12:12:22.898-00:00"}]
- [#:db{:id 13194139533590,
-       :txInstant #inst "2022-01-03T12:12:22.935-00:00"}]
- [#:db{:id 13194139533591,
-       :txInstant #inst "2022-01-03T12:14:14.589-00:00"}]
- [#:db{:id 13194139533592,
-       :txInstant #inst "2022-01-03T12:14:15.120-00:00"}]
- [#:db{:id 13194139533593,
-       :txInstant #inst "2022-01-03T12:14:18.874-00:00"}]
- [#:db{:id 13194139533594,
-       :txInstant #inst "2022-01-03T12:14:20.075-00:00"}]
- [#:db{:id 13194139533595,
-       :txInstant #inst "2022-01-03T12:52:17.243-00:00"}]
- [#:db{:id 13194139533596,
-       :txInstant #inst "2022-01-03T12:52:17.322-00:00"}]
- [#:db{:id 13194139533597,
-       :txInstant #inst "2022-01-03T12:52:19.136-00:00"}]
- [#:db{:id 13194139533598,
-       :txInstant #inst "2022-01-03T12:52:19.592-00:00"}]
- [#:db{:id 13194139533599,
-       :txInstant #inst "2022-01-03T12:52:20.151-00:00"}]
- [#:db{:id 13194139533600,
-       :txInstant #inst "2022-01-03T12:52:20.277-00:00"}]
- [#:db{:id 13194139533601,
-       :txInstant #inst "2022-01-03T12:52:21.041-00:00"}]
- [#:db{:id 13194139533602,
-       :txInstant #inst "2022-01-03T12:52:21.087-00:00"}]
- [#:db{:id 13194139533603,
-       :txInstant #inst "2022-01-03T12:52:21.968-00:00"}]
- [#:db{:id 13194139533604,
-       :txInstant #inst "2022-01-03T12:52:22.004-00:00"}]
- [#:db{:id 13194139533605,
-       :txInstant #inst "2022-01-03T12:52:23.606-00:00"}]
- [#:db{:id 13194139533606,
-       :txInstant #inst "2022-01-03T12:52:23.731-00:00"}]
- [#:db{:id 13194139533607,
-       :txInstant #inst "2022-01-03T12:52:24.167-00:00"}]
- [#:db{:id 13194139533608,
-       :txInstant #inst "2022-01-03T12:52:24.228-00:00"}]
- [#:db{:id 13194139533609,
-       :txInstant #inst "2022-01-03T12:52:25.063-00:00"}]
- [#:db{:id 13194139533610,
-       :txInstant #inst "2022-01-03T12:52:25.111-00:00"}]
- [#:db{:id 13194139533611,
-       :txInstant #inst "2022-01-03T12:52:25.769-00:00"}]
- [#:db{:id 13194139533612,
-       :txInstant #inst "2022-01-03T12:52:25.804-00:00"}]
- [#:db{:id 13194139533613,
-       :txInstant #inst "2022-01-03T12:52:26.680-00:00"}]
- [#:db{:id 13194139533614,
-       :txInstant #inst "2022-01-03T12:52:26.731-00:00"}]
- [#:db{:id 13194139533615,
-       :txInstant #inst "2022-01-03T12:52:27.289-00:00"}]
- [#:db{:id 13194139533616,
-       :txInstant #inst "2022-01-03T12:52:27.334-00:00"}]
- [#:db{:id 13194139533617,
-       :txInstant #inst "2022-01-03T12:52:27.903-00:00"}]
- [#:db{:id 13194139533618,
-       :txInstant #inst "2022-01-03T12:52:27.927-00:00"}]
- [#:db{:id 13194139533619,
-       :txInstant #inst "2022-01-03T12:52:28.738-00:00"}]
- [#:db{:id 13194139533620,
-       :txInstant #inst "2022-01-03T12:52:28.820-00:00"}]
- [#:db{:id 13194139533621,
-       :txInstant #inst "2022-01-03T12:52:29.435-00:00"}]
- [#:db{:id 13194139533622,
-       :txInstant #inst "2022-01-03T12:52:29.481-00:00"}]
- [#:db{:id 13194139533623,
-       :txInstant #inst "2022-01-03T12:52:30.161-00:00"}]
- [#:db{:id 13194139533624,
-       :txInstant #inst "2022-01-03T12:52:30.191-00:00"}]
- [#:db{:id 13194139533625,
-       :txInstant #inst "2022-01-03T12:52:30.565-00:00"}]
- [#:db{:id 13194139533626,
-       :txInstant #inst "2022-01-03T12:52:30.592-00:00"}]
- [#:db{:id 13194139533627,
-       :txInstant #inst "2022-01-03T12:52:30.881-00:00"}]
- [#:db{:id 13194139533628,
-       :txInstant #inst "2022-01-03T12:52:30.912-00:00"}]
- [#:db{:id 13194139533629,
-       :txInstant #inst "2022-01-03T12:52:31.048-00:00"}]
- [#:db{:id 13194139533630,
-       :txInstant #inst "2022-01-03T12:52:31.065-00:00"}]
- [#:db{:id 13194139533631,
-       :txInstant #inst "2022-01-03T12:52:31.695-00:00"}]
- [#:db{:id 13194139533632,
-       :txInstant #inst "2022-01-03T12:52:31.732-00:00"}]
- [#:db{:id 13194139533633,
-       :txInstant #inst "2022-01-03T15:06:15.589-00:00"}]
- [#:db{:id 13194139533634,
-       :txInstant #inst "2022-01-03T15:06:15.638-00:00"}]
- [#:db{:id 13194139533635,
-       :txInstant #inst "2022-01-03T15:06:17.297-00:00"}]
- [#:db{:id 13194139533636,
-       :txInstant #inst "2022-01-03T15:06:17.561-00:00"}]
- [#:db{:id 13194139533637,
-       :txInstant #inst "2022-01-03T15:06:18.030-00:00"}]
- [#:db{:id 13194139533638,
-       :txInstant #inst "2022-01-03T15:06:18.079-00:00"}]
- [#:db{:id 13194139533639,
-       :txInstant #inst "2022-01-03T15:10:37.744-00:00"}]
- [#:db{:id 13194139533640,
-       :txInstant #inst "2022-01-03T15:10:37.776-00:00"}]
- [#:db{:id 13194139533641,
-       :txInstant #inst "2022-01-03T15:10:39.068-00:00"}]
- [#:db{:id 13194139533642,
-       :txInstant #inst "2022-01-03T15:10:39.309-00:00"}]
- [#:db{:id 13194139533643,
-       :txInstant #inst "2022-01-03T15:10:39.697-00:00"}]
- [#:db{:id 13194139533644,
-       :txInstant #inst "2022-01-03T15:10:39.750-00:00"}]
- [#:db{:id 13194139533645,
-       :txInstant #inst "2022-01-03T15:10:40.920-00:00"}]
- [#:db{:id 13194139533646,
-       :txInstant #inst "2022-01-03T15:10:40.948-00:00"}]
- [#:db{:id 13194139533647,
-       :txInstant #inst "2022-01-03T15:10:42.847-00:00"}]
- [#:db{:id 13194139533648,
-       :txInstant #inst "2022-01-03T15:10:42.898-00:00"}]
- [#:db{:id 13194139533649,
-       :txInstant #inst "2022-01-03T15:10:44.534-00:00"}]
- [#:db{:id 13194139533650,
-       :txInstant #inst "2022-01-03T15:10:44.592-00:00"}]
- [#:db{:id 13194139533651,
-       :txInstant #inst "2022-01-03T15:10:45.169-00:00"}]
- [#:db{:id 13194139533652,
-       :txInstant #inst "2022-01-03T15:10:45.200-00:00"}]
- [#:db{:id 13194139533653,
-       :txInstant #inst "2022-01-03T15:10:47.291-00:00"}]
- [#:db{:id 13194139533654,
-       :txInstant #inst "2022-01-03T15:10:47.346-00:00"}]
- [#:db{:id 13194139533655,
-       :txInstant #inst "2022-01-03T15:10:48.081-00:00"}]
- [#:db{:id 13194139533656,
-       :txInstant #inst "2022-01-03T15:10:48.128-00:00"}]
- [#:db{:id 13194139533657,
-       :txInstant #inst "2022-01-03T15:10:49.025-00:00"}]
- [#:db{:id 13194139533658,
-       :txInstant #inst "2022-01-03T15:10:49.069-00:00"}]
- [#:db{:id 13194139533659,
-       :txInstant #inst "2022-01-03T15:10:49.712-00:00"}]
- [#:db{:id 13194139533660,
-       :txInstant #inst "2022-01-03T15:10:49.758-00:00"}]
- [#:db{:id 13194139533661,
-       :txInstant #inst "2022-01-03T15:10:49.885-00:00"}]
- [#:db{:id 13194139533662,
-       :txInstant #inst "2022-01-03T15:10:49.905-00:00"}]
- [#:db{:id 13194139533663,
-       :txInstant #inst "2022-01-03T15:10:50.337-00:00"}]
- [#:db{:id 13194139533664,
-       :txInstant #inst "2022-01-03T15:10:50.472-00:00"}]
- [#:db{:id 13194139533665,
-       :txInstant #inst "2022-01-03T15:10:51.145-00:00"}]
- [#:db{:id 13194139533666,
-       :txInstant #inst "2022-01-03T15:10:51.187-00:00"}]
- [#:db{:id 13194139533667,
-       :txInstant #inst "2022-01-03T15:10:53.497-00:00"}]
- [#:db{:id 13194139533668,
-       :txInstant #inst "2022-01-03T15:10:53.545-00:00"}]
- [#:db{:id 13194139533669,
-       :txInstant #inst "2022-01-03T15:10:54.596-00:00"}]
- [#:db{:id 13194139533670,
-       :txInstant #inst "2022-01-03T15:10:54.681-00:00"}]
- [#:db{:id 13194139533671,
-       :txInstant #inst "2022-01-03T15:10:54.944-00:00"}]
- [#:db{:id 13194139533672,
-       :txInstant #inst "2022-01-03T15:10:54.975-00:00"}]
- [#:db{:id 13194139533673,
-       :txInstant #inst "2022-01-03T15:10:55.127-00:00"}]
- [#:db{:id 13194139533674,
-       :txInstant #inst "2022-01-03T15:10:55.160-00:00"}]
- [#:db{:id 13194139533675,
-       :txInstant #inst "2022-01-03T15:10:56.372-00:00"}]
- [#:db{:id 13194139533676,
-       :txInstant #inst "2022-01-03T15:10:56.412-00:00"}]
- [#:db{:id 13194139533677,
-       :txInstant #inst "2022-01-03T15:50:05.077-00:00"}]
- [#:db{:id 13194139533678,
-       :txInstant #inst "2022-01-03T15:50:05.129-00:00"}]
- [#:db{:id 13194139533679,
-       :txInstant #inst "2022-01-03T15:50:05.627-00:00"}]
- [#:db{:id 13194139533680,
-       :txInstant #inst "2022-01-03T15:50:05.646-00:00"}]
- [#:db{:id 13194139533681,
-       :txInstant #inst "2022-01-03T15:50:05.976-00:00"}]
- [#:db{:id 13194139533682,
-       :txInstant #inst "2022-01-03T15:50:06.011-00:00"}]
- [#:db{:id 13194139533683,
-       :txInstant #inst "2022-01-03T15:50:06.301-00:00"}]
- [#:db{:id 13194139533684,
-       :txInstant #inst "2022-01-03T15:50:06.334-00:00"}]
- [#:db{:id 13194139533685,
-       :txInstant #inst "2022-01-03T15:50:06.463-00:00"}]
- [#:db{:id 13194139533686,
-       :txInstant #inst "2022-01-03T15:50:06.494-00:00"}]
- [#:db{:id 13194139533687,
-       :txInstant #inst "2022-01-03T15:50:06.784-00:00"}]
- [#:db{:id 13194139533688,
-       :txInstant #inst "2022-01-03T15:50:06.855-00:00"}]
- [#:db{:id 13194139533689,
-       :txInstant #inst "2022-01-03T15:50:07.142-00:00"}]
- [#:db{:id 13194139533690,
-       :txInstant #inst "2022-01-03T15:50:07.158-00:00"}]
- [#:db{:id 13194139533691,
-       :txInstant #inst "2022-01-03T15:50:07.622-00:00"}]
- [#:db{:id 13194139533692,
-       :txInstant #inst "2022-01-03T15:50:07.642-00:00"}]
- [#:db{:id 13194139533693,
-       :txInstant #inst "2022-01-03T15:50:08.140-00:00"}]
- [#:db{:id 13194139533694,
-       :txInstant #inst "2022-01-03T15:50:08.174-00:00"}]
- [#:db{:id 13194139533695,
-       :txInstant #inst "2022-01-03T15:50:08.403-00:00"}]
- [#:db{:id 13194139533696,
-       :txInstant #inst "2022-01-03T15:50:08.473-00:00"}]
- [#:db{:id 13194139533697,
-       :txInstant #inst "2022-01-03T15:50:08.574-00:00"}]
- [#:db{:id 13194139533698,
-       :txInstant #inst "2022-01-03T15:50:08.590-00:00"}]
- [#:db{:id 13194139533699,
-       :txInstant #inst "2022-01-03T15:50:09.009-00:00"}]
- [#:db{:id 13194139533700,
-       :txInstant #inst "2022-01-03T15:50:09.032-00:00"}]
- [#:db{:id 13194139533701,
-       :txInstant #inst "2022-01-03T15:50:13.194-00:00"}]
- [#:db{:id 13194139533702,
-       :txInstant #inst "2022-01-03T15:50:13.288-00:00"}]
- [#:db{:id 13194139533703,
-       :txInstant #inst "2022-01-03T15:50:13.595-00:00"}]
- [#:db{:id 13194139533704,
-       :txInstant #inst "2022-01-03T15:50:13.650-00:00"}]
- [#:db{:id 13194139533705,
-       :txInstant #inst "2022-01-03T15:50:14.312-00:00"}]
- [#:db{:id 13194139533706,
-       :txInstant #inst "2022-01-03T15:50:14.353-00:00"}]
- [#:db{:id 13194139533707,
-       :txInstant #inst "2022-01-03T15:50:14.790-00:00"}]
- [#:db{:id 13194139533708,
-       :txInstant #inst "2022-01-03T15:50:14.829-00:00"}]
- [#:db{:id 13194139533709,
-       :txInstant #inst "2022-01-03T15:50:15.024-00:00"}]
- [#:db{:id 13194139533710,
-       :txInstant #inst "2022-01-03T15:50:15.056-00:00"}]
- [#:db{:id 13194139533711,
-       :txInstant #inst "2022-01-03T15:50:15.348-00:00"}]
- [#:db{:id 13194139533712,
-       :txInstant #inst "2022-01-03T15:50:15.436-00:00"}]
- [#:db{:id 13194139533713,
-       :txInstant #inst "2022-01-03T15:50:15.864-00:00"}]
- [#:db{:id 13194139533714,
-       :txInstant #inst "2022-01-03T15:50:15.915-00:00"}]
- [#:db{:id 13194139533715,
-       :txInstant #inst "2022-01-03T15:50:16.384-00:00"}]
- [#:db{:id 13194139533716,
-       :txInstant #inst "2022-01-03T15:50:16.438-00:00"}]
- [#:db{:id 13194139533717,
-       :txInstant #inst "2022-01-03T15:50:16.878-00:00"}]
- [#:db{:id 13194139533718,
-       :txInstant #inst "2022-01-03T15:50:16.919-00:00"}]
- [#:db{:id 13194139533719,
-       :txInstant #inst "2022-01-03T15:50:17.239-00:00"}]
- [#:db{:id 13194139533720,
-       :txInstant #inst "2022-01-03T15:50:17.289-00:00"}]
- [#:db{:id 13194139533721,
-       :txInstant #inst "2022-01-03T15:50:17.339-00:00"}]
- [#:db{:id 13194139533722,
-       :txInstant #inst "2022-01-03T15:50:17.350-00:00"}]
- [#:db{:id 13194139533723,
-       :txInstant #inst "2022-01-03T15:50:17.874-00:00"}]
- [#:db{:id 13194139533724,
-       :txInstant #inst "2022-01-03T15:50:17.911-00:00"}]
- [#:db{:id 13194139533725,
-       :txInstant #inst "2022-01-03T15:51:15.717-00:00"}]
- [#:db{:id 13194139533726,
-       :txInstant #inst "2022-01-03T15:51:15.763-00:00"}]
- [#:db{:id 13194139533727,
-       :txInstant #inst "2022-01-03T15:51:17.337-00:00"}]
- [#:db{:id 13194139533728,
-       :txInstant #inst "2022-01-03T15:51:17.603-00:00"}]
- [#:db{:id 13194139533729,
-       :txInstant #inst "2022-01-03T15:51:17.974-00:00"}]
- [#:db{:id 13194139533730,
-       :txInstant #inst "2022-01-03T15:51:18.014-00:00"}]
- [#:db{:id 13194139533731,
-       :txInstant #inst "2022-01-03T15:51:18.566-00:00"}]
- [#:db{:id 13194139533732,
-       :txInstant #inst "2022-01-03T15:51:18.608-00:00"}]
- [#:db{:id 13194139533733,
-       :txInstant #inst "2022-01-03T15:51:19.029-00:00"}]
- [#:db{:id 13194139533734,
-       :txInstant #inst "2022-01-03T15:51:19.065-00:00"}]
- [#:db{:id 13194139533735,
-       :txInstant #inst "2022-01-03T15:51:20.477-00:00"}]
- [#:db{:id 13194139533736,
-       :txInstant #inst "2022-01-03T15:51:20.531-00:00"}]
- [#:db{:id 13194139533737,
-       :txInstant #inst "2022-01-03T15:51:21.099-00:00"}]
- [#:db{:id 13194139533738,
-       :txInstant #inst "2022-01-03T15:51:21.138-00:00"}]
- [#:db{:id 13194139533739,
-       :txInstant #inst "2022-01-03T15:51:21.849-00:00"}]
- [#:db{:id 13194139533740,
-       :txInstant #inst "2022-01-03T15:51:21.900-00:00"}]
- [#:db{:id 13194139533741,
-       :txInstant #inst "2022-01-03T15:51:22.557-00:00"}]
- [#:db{:id 13194139533742,
-       :txInstant #inst "2022-01-03T15:51:22.602-00:00"}]
- [#:db{:id 13194139533743,
-       :txInstant #inst "2022-01-03T15:51:23.269-00:00"}]
- [#:db{:id 13194139533744,
-       :txInstant #inst "2022-01-03T15:51:23.316-00:00"}]
- [#:db{:id 13194139533745,
-       :txInstant #inst "2022-01-03T15:51:23.881-00:00"}]
- [#:db{:id 13194139533746,
-       :txInstant #inst "2022-01-03T15:51:23.920-00:00"}]
- [#:db{:id 13194139533747,
-       :txInstant #inst "2022-01-03T15:51:24.196-00:00"}]
- [#:db{:id 13194139533748,
-       :txInstant #inst "2022-01-03T15:51:24.238-00:00"}]
- [#:db{:id 13194139533749,
-       :txInstant #inst "2022-01-03T15:51:24.919-00:00"}]
- [#:db{:id 13194139533750,
-       :txInstant #inst "2022-01-03T15:51:25.027-00:00"}]
- [#:db{:id 13194139533751,
-       :txInstant #inst "2022-01-03T15:51:25.520-00:00"}]
- [#:db{:id 13194139533752,
-       :txInstant #inst "2022-01-03T15:51:25.567-00:00"}]
- [#:db{:id 13194139533753,
-       :txInstant #inst "2022-01-03T15:51:26.260-00:00"}]
- [#:db{:id 13194139533754,
-       :txInstant #inst "2022-01-03T15:51:26.303-00:00"}]
- [#:db{:id 13194139533755,
-       :txInstant #inst "2022-01-03T15:51:26.838-00:00"}]
- [#:db{:id 13194139533756,
-       :txInstant #inst "2022-01-03T15:51:26.863-00:00"}]
- [#:db{:id 13194139533757,
-       :txInstant #inst "2022-01-03T15:51:27.167-00:00"}]
- [#:db{:id 13194139533758,
-       :txInstant #inst "2022-01-03T15:51:27.204-00:00"}]
- [#:db{:id 13194139533759,
-       :txInstant #inst "2022-01-03T15:51:27.252-00:00"}]
- [#:db{:id 13194139533760,
-       :txInstant #inst "2022-01-03T15:51:27.277-00:00"}]
- [#:db{:id 13194139533761,
-       :txInstant #inst "2022-01-03T15:51:27.898-00:00"}]
- [#:db{:id 13194139533762,
-       :txInstant #inst "2022-01-03T15:51:27.924-00:00"}]
- [#:db{:id 13194139533763,
-       :txInstant #inst "2022-01-03T15:51:41.386-00:00"}]
- [#:db{:id 13194139533764,
-       :txInstant #inst "2022-01-03T15:51:42.055-00:00"}]
- [#:db{:id 13194139533765,
-       :txInstant #inst "2022-01-03T15:52:40.926-00:00"}]
- [#:db{:id 13194139533766,
-       :txInstant #inst "2022-01-03T15:52:40.944-00:00"}]
- [#:db{:id 13194139533767,
-       :txInstant #inst "2022-01-03T18:06:44.543-00:00"}]
- [#:db{:id 13194139533768,
-       :txInstant #inst "2022-01-03T18:06:44.582-00:00"}]
- [#:db{:id 13194139533769,
-       :txInstant #inst "2022-01-03T18:06:45.963-00:00"}]
- [#:db{:id 13194139533770,
-       :txInstant #inst "2022-01-03T18:06:46.226-00:00"}]
- [#:db{:id 13194139533771,
-       :txInstant #inst "2022-01-03T18:06:46.702-00:00"}]
- [#:db{:id 13194139533772,
-       :txInstant #inst "2022-01-03T18:06:46.748-00:00"}]
- [#:db{:id 13194139533773,
-       :txInstant #inst "2022-01-03T18:06:47.276-00:00"}]
- [#:db{:id 13194139533774,
-       :txInstant #inst "2022-01-03T18:06:47.320-00:00"}]
- [#:db{:id 13194139533775,
-       :txInstant #inst "2022-01-03T18:06:48.331-00:00"}]
- [#:db{:id 13194139533776,
-       :txInstant #inst "2022-01-03T18:06:48.359-00:00"}]
- [#:db{:id 13194139533777,
-       :txInstant #inst "2022-01-03T18:06:49.543-00:00"}]
- [#:db{:id 13194139533778,
-       :txInstant #inst "2022-01-03T18:06:49.595-00:00"}]
- [#:db{:id 13194139533779,
-       :txInstant #inst "2022-01-03T18:06:50.011-00:00"}]
- [#:db{:id 13194139533780,
-       :txInstant #inst "2022-01-03T18:06:50.045-00:00"}]
- [#:db{:id 13194139533781,
-       :txInstant #inst "2022-01-03T18:06:50.892-00:00"}]
- [#:db{:id 13194139533782,
-       :txInstant #inst "2022-01-03T18:06:50.964-00:00"}]
- [#:db{:id 13194139533783,
-       :txInstant #inst "2022-01-03T18:06:51.713-00:00"}]
- [#:db{:id 13194139533784,
-       :txInstant #inst "2022-01-03T18:06:51.765-00:00"}]
- [#:db{:id 13194139533785,
-       :txInstant #inst "2022-01-03T18:06:52.827-00:00"}]
- [#:db{:id 13194139533786,
-       :txInstant #inst "2022-01-03T18:06:52.868-00:00"}]
- [#:db{:id 13194139533787,
-       :txInstant #inst "2022-01-03T18:06:53.438-00:00"}]
- [#:db{:id 13194139533788,
-       :txInstant #inst "2022-01-03T18:06:53.473-00:00"}]
- [#:db{:id 13194139533789,
-       :txInstant #inst "2022-01-03T18:06:53.742-00:00"}]
- [#:db{:id 13194139533790,
-       :txInstant #inst "2022-01-03T18:06:53.758-00:00"}]
- [#:db{:id 13194139533791,
-       :txInstant #inst "2022-01-03T18:06:54.679-00:00"}]
- [#:db{:id 13194139533792,
-       :txInstant #inst "2022-01-03T18:06:54.790-00:00"}]
- [#:db{:id 13194139533793,
-       :txInstant #inst "2022-01-03T18:06:55.385-00:00"}]
- [#:db{:id 13194139533794,
-       :txInstant #inst "2022-01-03T18:06:55.422-00:00"}]
- [#:db{:id 13194139533795,
-       :txInstant #inst "2022-01-03T18:06:56.248-00:00"}]
- [#:db{:id 13194139533796,
-       :txInstant #inst "2022-01-03T18:06:56.279-00:00"}]
- [#:db{:id 13194139533797,
-       :txInstant #inst "2022-01-03T18:06:56.620-00:00"}]
- [#:db{:id 13194139533798,
-       :txInstant #inst "2022-01-03T18:06:56.661-00:00"}]
- [#:db{:id 13194139533799,
-       :txInstant #inst "2022-01-03T18:06:57.236-00:00"}]
- [#:db{:id 13194139533800,
-       :txInstant #inst "2022-01-03T18:06:57.275-00:00"}]
- [#:db{:id 13194139533801,
-       :txInstant #inst "2022-01-03T18:06:57.950-00:00"}]
- [#:db{:id 13194139533802,
-       :txInstant #inst "2022-01-03T18:06:57.988-00:00"}]
- [#:db{:id 13194139533803,
-       :txInstant #inst "2022-01-03T18:06:58.452-00:00"}]
- [#:db{:id 13194139533804,
-       :txInstant #inst "2022-01-03T18:06:58.485-00:00"}]
- [#:db{:id 13194139533805,
-       :txInstant #inst "2022-01-03T18:09:01.690-00:00"}]
- [#:db{:id 13194139533806,
-       :txInstant #inst "2022-01-03T18:09:01.704-00:00"}]
- [#:db{:id 13194139533807,
-       :txInstant #inst "2022-01-03T18:11:40.327-00:00"}]
- [#:db{:id 13194139533808,
-       :txInstant #inst "2022-01-03T18:11:41.268-00:00"}]
- [#:db{:id 13194139533809,
-       :txInstant #inst "2022-01-03T18:11:50.615-00:00"}]
- [#:db{:id 13194139533810,
-       :txInstant #inst "2022-01-03T18:11:51.758-00:00"}]
- [#:db{:id 13194139533811,
-       :txInstant #inst "2022-01-03T18:12:39.261-00:00"}]
- [#:db{:id 13194139533812,
-       :txInstant #inst "2022-01-03T18:12:39.275-00:00"}]
- [#:db{:id 13194139533813,
-       :txInstant #inst "2022-01-03T18:13:20.831-00:00"}]
- [#:db{:id 13194139533814,
-       :txInstant #inst "2022-01-03T18:13:21.975-00:00"}]
- [#:db{:id 13194139533815,
-       :txInstant #inst "2022-01-03T18:14:07.526-00:00"}]
- [#:db{:id 13194139533816,
-       :txInstant #inst "2022-01-03T18:17:56.102-00:00"}]
- [#:db{:id 13194139533817,
-       :txInstant #inst "2022-01-03T18:17:56.115-00:00"}]
- [#:db{:id 13194139533818,
-       :txInstant #inst "2022-01-03T19:52:30.432-00:00"}]
- [#:db{:id 13194139533819,
-       :txInstant #inst "2022-01-03T19:52:30.471-00:00"}]
- [#:db{:id 13194139533820,
-       :txInstant #inst "2022-01-03T19:52:31.565-00:00"}]
- [#:db{:id 13194139533821,
-       :txInstant #inst "2022-01-03T19:52:31.867-00:00"}]
- [#:db{:id 13194139533822,
-       :txInstant #inst "2022-01-03T19:52:32.022-00:00"}]
- [#:db{:id 13194139533823,
-       :txInstant #inst "2022-01-03T19:52:32.142-00:00"}]
- [#:db{:id 13194139533824,
-       :txInstant #inst "2022-01-03T19:52:32.383-00:00"}]
- [#:db{:id 13194139533825,
-       :txInstant #inst "2022-01-03T19:52:32.405-00:00"}]
- [#:db{:id 13194139533826,
-       :txInstant #inst "2022-01-03T19:52:32.944-00:00"}]
- [#:db{:id 13194139533827,
-       :txInstant #inst "2022-01-03T19:52:32.980-00:00"}]
- [#:db{:id 13194139533828,
-       :txInstant #inst "2022-01-03T19:52:35.126-00:00"}]
- [#:db{:id 13194139533829,
-       :txInstant #inst "2022-01-03T19:52:35.160-00:00"}]
- [#:db{:id 13194139533830,
-       :txInstant #inst "2022-01-03T19:52:35.637-00:00"}]
- [#:db{:id 13194139533831,
-       :txInstant #inst "2022-01-03T19:52:35.671-00:00"}]
- [#:db{:id 13194139533832,
-       :txInstant #inst "2022-01-03T19:52:36.532-00:00"}]
- [#:db{:id 13194139533833,
-       :txInstant #inst "2022-01-03T19:52:36.583-00:00"}]
- [#:db{:id 13194139533834,
-       :txInstant #inst "2022-01-03T19:52:37.120-00:00"}]
- [#:db{:id 13194139533835,
-       :txInstant #inst "2022-01-03T19:52:37.146-00:00"}]
- [#:db{:id 13194139533836,
-       :txInstant #inst "2022-01-03T19:52:37.636-00:00"}]
- [#:db{:id 13194139533837,
-       :txInstant #inst "2022-01-03T19:52:37.673-00:00"}]
- [#:db{:id 13194139533838,
-       :txInstant #inst "2022-01-03T19:52:38.246-00:00"}]
- [#:db{:id 13194139533839,
-       :txInstant #inst "2022-01-03T19:52:38.282-00:00"}]
- [#:db{:id 13194139533840,
-       :txInstant #inst "2022-01-03T19:52:38.765-00:00"}]
- [#:db{:id 13194139533841,
-       :txInstant #inst "2022-01-03T19:52:38.798-00:00"}]
- [#:db{:id 13194139533842,
-       :txInstant #inst "2022-01-03T19:52:39.484-00:00"}]
- [#:db{:id 13194139533843,
-       :txInstant #inst "2022-01-03T19:52:39.589-00:00"}]
- [#:db{:id 13194139533844,
-       :txInstant #inst "2022-01-03T19:52:40.296-00:00"}]
- [#:db{:id 13194139533845,
-       :txInstant #inst "2022-01-03T19:52:40.338-00:00"}]
- [#:db{:id 13194139533846,
-       :txInstant #inst "2022-01-03T19:52:41.144-00:00"}]
- [#:db{:id 13194139533847,
-       :txInstant #inst "2022-01-03T19:52:41.193-00:00"}]
- [#:db{:id 13194139533848,
-       :txInstant #inst "2022-01-03T19:52:42.480-00:00"}]
- [#:db{:id 13194139533849,
-       :txInstant #inst "2022-01-03T19:52:42.533-00:00"}]
- [#:db{:id 13194139533850,
-       :txInstant #inst "2022-01-03T19:52:43.068-00:00"}]
- [#:db{:id 13194139533851,
-       :txInstant #inst "2022-01-03T19:52:43.114-00:00"}]
- [#:db{:id 13194139533852,
-       :txInstant #inst "2022-01-03T19:52:43.720-00:00"}]
- [#:db{:id 13194139533853,
-       :txInstant #inst "2022-01-03T19:52:43.758-00:00"}]
- [#:db{:id 13194139533854,
-       :txInstant #inst "2022-01-03T19:52:44.702-00:00"}]
- [#:db{:id 13194139533855,
-       :txInstant #inst "2022-01-03T19:52:44.736-00:00"}]
- [#:db{:id 13194139533856,
-       :txInstant #inst "2022-01-03T19:53:44.230-00:00"}]
- [#:db{:id 13194139533857,
-       :txInstant #inst "2022-01-03T19:53:44.244-00:00"}]
- [#:db{:id 13194139533858,
-       :txInstant #inst "2022-01-04T04:20:23.292-00:00"}]
- [#:db{:id 13194139533859,
-       :txInstant #inst "2022-01-04T04:20:23.333-00:00"}]
- [#:db{:id 13194139533860,
-       :txInstant #inst "2022-01-04T04:20:24.510-00:00"}]
- [#:db{:id 13194139533861,
-       :txInstant #inst "2022-01-04T04:20:24.759-00:00"}]
- [#:db{:id 13194139533862,
-       :txInstant #inst "2022-01-04T04:20:25.244-00:00"}]
- [#:db{:id 13194139533863,
-       :txInstant #inst "2022-01-04T04:20:25.306-00:00"}]
- [#:db{:id 13194139533864,
-       :txInstant #inst "2022-01-04T04:20:25.900-00:00"}]
- [#:db{:id 13194139533865,
-       :txInstant #inst "2022-01-04T04:20:25.924-00:00"}]
- [#:db{:id 13194139533866,
-       :txInstant #inst "2022-01-04T04:20:26.828-00:00"}]
- [#:db{:id 13194139533867,
-       :txInstant #inst "2022-01-04T04:20:26.859-00:00"}]
- [#:db{:id 13194139533868,
-       :txInstant #inst "2022-01-04T04:20:27.896-00:00"}]
- [#:db{:id 13194139533869,
-       :txInstant #inst "2022-01-04T04:20:27.947-00:00"}]
- [#:db{:id 13194139533870,
-       :txInstant #inst "2022-01-04T04:20:28.296-00:00"}]
- [#:db{:id 13194139533871,
-       :txInstant #inst "2022-01-04T04:20:28.311-00:00"}]
- [#:db{:id 13194139533872,
-       :txInstant #inst "2022-01-04T04:20:29.029-00:00"}]
- [#:db{:id 13194139533873,
-       :txInstant #inst "2022-01-04T04:20:29.123-00:00"}]
- [#:db{:id 13194139533874,
-       :txInstant #inst "2022-01-04T04:20:29.638-00:00"}]
- [#:db{:id 13194139533875,
-       :txInstant #inst "2022-01-04T04:20:29.686-00:00"}]
- [#:db{:id 13194139533876,
-       :txInstant #inst "2022-01-04T04:20:30.758-00:00"}]
- [#:db{:id 13194139533877,
-       :txInstant #inst "2022-01-04T04:20:30.799-00:00"}]
- [#:db{:id 13194139533878,
-       :txInstant #inst "2022-01-04T04:20:31.475-00:00"}]
- [#:db{:id 13194139533879,
-       :txInstant #inst "2022-01-04T04:20:31.508-00:00"}]
- [#:db{:id 13194139533880,
-       :txInstant #inst "2022-01-04T04:20:31.820-00:00"}]
- [#:db{:id 13194139533881,
-       :txInstant #inst "2022-01-04T04:20:31.838-00:00"}]
- [#:db{:id 13194139533882,
-       :txInstant #inst "2022-01-04T04:20:32.407-00:00"}]
- [#:db{:id 13194139533883,
-       :txInstant #inst "2022-01-04T04:20:32.493-00:00"}]
- [#:db{:id 13194139533884,
-       :txInstant #inst "2022-01-04T04:20:33.110-00:00"}]
- [#:db{:id 13194139533885,
-       :txInstant #inst "2022-01-04T04:20:33.149-00:00"}]
- [#:db{:id 13194139533886,
-       :txInstant #inst "2022-01-04T04:20:33.958-00:00"}]
- [#:db{:id 13194139533887,
-       :txInstant #inst "2022-01-04T04:20:34.011-00:00"}]
- [#:db{:id 13194139533888,
-       :txInstant #inst "2022-01-04T04:20:35.246-00:00"}]
- [#:db{:id 13194139533889,
-       :txInstant #inst "2022-01-04T04:20:35.307-00:00"}]
- [#:db{:id 13194139533890,
-       :txInstant #inst "2022-01-04T04:20:35.783-00:00"}]
- [#:db{:id 13194139533891,
-       :txInstant #inst "2022-01-04T04:20:35.821-00:00"}]
- [#:db{:id 13194139533892,
-       :txInstant #inst "2022-01-04T04:20:35.946-00:00"}]
- [#:db{:id 13194139533893,
-       :txInstant #inst "2022-01-04T04:20:35.970-00:00"}]
- [#:db{:id 13194139533894,
-       :txInstant #inst "2022-01-04T04:20:36.414-00:00"}]
- [#:db{:id 13194139533895,
-       :txInstant #inst "2022-01-04T04:20:36.438-00:00"}]
- [#:db{:id 13194139533896,
-       :txInstant #inst "2022-01-04T04:23:40.428-00:00"}]
- [#:db{:id 13194139533897,
-       :txInstant #inst "2022-01-04T04:23:40.442-00:00"}]
- [#:db{:id 13194139533898,
-       :txInstant #inst "2022-01-04T04:23:46.295-00:00"}]
- [#:db{:id 13194139533899,
-       :txInstant #inst "2022-01-04T04:23:47.241-00:00"}]
- [#:db{:id 13194139533900,
-       :txInstant #inst "2022-01-04T04:24:36.128-00:00"}]
- [#:db{:id 13194139533901,
-       :txInstant #inst "2022-01-04T04:24:36.142-00:00"}]
- [#:db{:id 13194139533902,
-       :txInstant #inst "2022-01-04T04:26:10.059-00:00"}]
- [#:db{:id 13194139533903,
-       :txInstant #inst "2022-01-04T04:27:15.262-00:00"}]
- [#:db{:id 13194139533904,
-       :txInstant #inst "2022-01-04T04:35:22.980-00:00"}]
- [#:db{:id 13194139533905,
-       :txInstant #inst "2022-01-04T05:27:13.459-00:00"}]
- [#:db{:id 13194139533906,
-       :txInstant #inst "2022-01-04T05:28:23.944-00:00"}]
- [#:db{:id 13194139533907,
-       :txInstant #inst "2022-01-04T05:29:46.881-00:00"}]
- [#:db{:id 13194139533908,
-       :txInstant #inst "2022-01-04T08:12:02.279-00:00"}]
- [#:db{:id 13194139533909,
-       :txInstant #inst "2022-01-04T08:12:02.320-00:00"}]
- [#:db{:id 13194139533910,
-       :txInstant #inst "2022-01-04T08:12:03.698-00:00"}]
- [#:db{:id 13194139533911,
-       :txInstant #inst "2022-01-04T08:12:03.935-00:00"}]
- [#:db{:id 13194139533912,
-       :txInstant #inst "2022-01-04T08:12:04.430-00:00"}]
- [#:db{:id 13194139533913,
-       :txInstant #inst "2022-01-04T08:12:04.510-00:00"}]
- [#:db{:id 13194139533914,
-       :txInstant #inst "2022-01-04T08:12:04.999-00:00"}]
- [#:db{:id 13194139533915,
-       :txInstant #inst "2022-01-04T08:12:05.018-00:00"}]
- [#:db{:id 13194139533916,
-       :txInstant #inst "2022-01-04T08:12:06.116-00:00"}]
- [#:db{:id 13194139533917,
-       :txInstant #inst "2022-01-04T08:12:06.156-00:00"}]
- [#:db{:id 13194139533918,
-       :txInstant #inst "2022-01-04T08:12:06.988-00:00"}]
- [#:db{:id 13194139533919,
-       :txInstant #inst "2022-01-04T08:12:07.043-00:00"}]
- [#:db{:id 13194139533920,
-       :txInstant #inst "2022-01-04T08:12:07.660-00:00"}]
- [#:db{:id 13194139533921,
-       :txInstant #inst "2022-01-04T08:12:07.698-00:00"}]
- [#:db{:id 13194139533922,
-       :txInstant #inst "2022-01-04T08:12:09.849-00:00"}]
- [#:db{:id 13194139533923,
-       :txInstant #inst "2022-01-04T08:12:09.931-00:00"}]
- [#:db{:id 13194139533924,
-       :txInstant #inst "2022-01-04T08:12:10.563-00:00"}]
- [#:db{:id 13194139533925,
-       :txInstant #inst "2022-01-04T08:12:10.609-00:00"}]
- [#:db{:id 13194139533926,
-       :txInstant #inst "2022-01-04T08:12:11.786-00:00"}]
- [#:db{:id 13194139533927,
-       :txInstant #inst "2022-01-04T08:12:11.830-00:00"}]
- [#:db{:id 13194139533928,
-       :txInstant #inst "2022-01-04T08:12:12.501-00:00"}]
- [#:db{:id 13194139533929,
-       :txInstant #inst "2022-01-04T08:12:12.534-00:00"}]
- [#:db{:id 13194139533930,
-       :txInstant #inst "2022-01-04T08:12:13.023-00:00"}]
- [#:db{:id 13194139533931,
-       :txInstant #inst "2022-01-04T08:12:13.063-00:00"}]
- [#:db{:id 13194139533932,
-       :txInstant #inst "2022-01-04T08:12:13.737-00:00"}]
- [#:db{:id 13194139533933,
-       :txInstant #inst "2022-01-04T08:12:13.840-00:00"}]
- [#:db{:id 13194139533934,
-       :txInstant #inst "2022-01-04T08:12:14.451-00:00"}]
- [#:db{:id 13194139533935,
-       :txInstant #inst "2022-01-04T08:12:14.501-00:00"}]
- [#:db{:id 13194139533936,
-       :txInstant #inst "2022-01-04T08:12:15.263-00:00"}]
- [#:db{:id 13194139533937,
-       :txInstant #inst "2022-01-04T08:12:15.305-00:00"}]
- [#:db{:id 13194139533938,
-       :txInstant #inst "2022-01-04T08:12:15.983-00:00"}]
- [#:db{:id 13194139533939,
-       :txInstant #inst "2022-01-04T08:12:16.030-00:00"}]
- [#:db{:id 13194139533940,
-       :txInstant #inst "2022-01-04T08:12:16.607-00:00"}]
- [#:db{:id 13194139533941,
-       :txInstant #inst "2022-01-04T08:12:16.653-00:00"}]
- [#:db{:id 13194139533942,
-       :txInstant #inst "2022-01-04T08:12:16.850-00:00"}]
- [#:db{:id 13194139533943,
-       :txInstant #inst "2022-01-04T08:12:16.864-00:00"}]
- [#:db{:id 13194139533944,
-       :txInstant #inst "2022-01-04T08:12:17.539-00:00"}]
- [#:db{:id 13194139533945,
-       :txInstant #inst "2022-01-04T08:12:17.573-00:00"}]
- [#:db{:id 13194139533946,
-       :txInstant #inst "2022-01-04T08:12:48.905-00:00"}]
- [#:db{:id 13194139533947,
-       :txInstant #inst "2022-01-04T08:14:48.033-00:00"}]
- [#:db{:id 13194139533948,
-       :txInstant #inst "2022-01-04T08:14:48.601-00:00"}]
- [#:db{:id 13194139533949,
-       :txInstant #inst "2022-01-04T08:14:59.547-00:00"}]
- [#:db{:id 13194139533950,
-       :txInstant #inst "2022-01-04T08:14:59.560-00:00"}]
- [#:db{:id 13194139533951,
-       :txInstant #inst "2022-01-04T08:15:35.460-00:00"}]
- [#:db{:id 13194139533952,
-       :txInstant #inst "2022-01-04T08:15:35.475-00:00"}]
- [#:db{:id 13194139533953,
-       :txInstant #inst "2022-01-04T08:16:12.898-00:00"}]
- [#:db{:id 13194139533954,
-       :txInstant #inst "2022-01-04T08:38:53.105-00:00"}]]
-#+end_example
-
-#+begin_src clojure :results pp
-(d/tx-range d-b/conn {:start 13194139533950})
-#+end_src
-
-#+RESULTS:
-#+begin_example
-({:t 638,
-  :data
-  [#datom[13194139533950 50 #inst "2022-01-04T08:14:59.560-00:00" 13194139533950 true]
-   #datom[149533581455343 102 48284 13194139533950 true]
-   #datom[149533581455343 102 1001 13194139533950 false]
-   #datom[149533581455344 102 48285 13194139533950 true]
-   #datom[149533581455344 102 518 13194139533950 false]
-   #datom[149533581455346 102 48278 13194139533950 true]
-   #datom[149533581455346 102 48206 13194139533950 false]
-   #datom[149533581455350 102 48277 13194139533950 true]
-   #datom[149533581455350 102 48260 13194139533950 false]
-   #datom[149533581455351 102 48280 13194139533950 true]
-   #datom[149533581455351 102 48266 13194139533950 false]]}
- {:t 639,
-  :data
-  [#datom[13194139533951 50 #inst "2022-01-04T08:15:35.460-00:00" 13194139533951 true]]}
- {:t 640,
-  :data
-  [#datom[13194139533952 50 #inst "2022-01-04T08:15:35.475-00:00" 13194139533952 true]
-   #datom[149533581455351 102 48283 13194139533952 true]
-   #datom[149533581455351 102 48280 13194139533952 false]]}
- {:t 641,
-  :data
-  [#datom[13194139533953 50 #inst "2022-01-04T08:16:12.898-00:00" 13194139533953 true]
-   #datom[149533581455341 96 158329674477689 13194139533953 false]]}
- {:t 642,
-  :data
-  [#datom[13194139533954 50 #inst "2022-01-04T08:38:53.105-00:00" 13194139533954 true]
-   #datom[149533581455341 96 140737488433268 13194139533954 false]]})
+[[{:db/id 167125767499906,
+   :source/user #:db{:id 167125767499905},
+   :source/feed #:db{:id 87960930222194},
+   :source/num 0,
+   :source/active true,
+   :source/position 210241}]
+ [{:db/id 167125767499907,
+   :source/user #:db{:id 167125767499905},
+   :source/feed #:db{:id 96757023244405},
+   :source/num 1,
+   :source/active true,
+   :source/position 156233}]
+ [{:db/id 167125767499909,
+   :source/user #:db{:id 167125767499905},
+   :source/feed #:db{:id 92358976733295},
+   :source/num 2,
+   :source/active true,
+   :source/position 209711}]
+ [{:db/id 167125767499910,
+   :source/user #:db{:id 167125767499905},
+   :source/feed #:db{:id 101155069755497},
+   :source/num 4,
+   :source/active true,
+   :source/position 210258}]
+ [{:db/id 167125767499911,
+   :source/user #:db{:id 167125767499905},
+   :source/feed #:db{:id 79164837199988},
+   :source/num 5,
+   :source/active true,
+   :source/position 210226,
+   :source/filters "!PHP"}]
+ [{:db/id 167125767499912,
+   :source/user #:db{:id 167125767499905},
+   :source/feed #:db{:id 92358976733290},
+   :source/num 6,
+   :source/active true,
+   :source/position 210261}]
+ [{:db/id 167125767499913,
+   :source/user #:db{:id 167125767499905},
+   :source/feed #:db{:id 92358976733291},
+   :source/num 7,
+   :source/active true,
+   :source/position 210103}]
+ [{:db/id 167125767499914,
+   :source/user #:db{:id 167125767499905},
+   :source/feed #:db{:id 79164837199990},
+   :source/num 8,
+   :source/active true,
+   :source/position 207557}]
+ [{:db/id 167125767499915,
+   :source/user #:db{:id 167125767499905},
+   :source/feed #:db{:id 96757023244403},
+   :source/num 10,
+   :source/active true,
+   :source/position 196765}]
+ [{:db/id 167125767499916,
+   :source/user #:db{:id 167125767499905},
+   :source/feed #:db{:id 87960930222188},
+   :source/num 11,
+   :source/active true,
+   :source/position 188367}]
+ [{:db/id 167125767499917,
+   :source/user #:db{:id 167125767499905},
+   :source/feed #:db{:id 83562883711086},
+   :source/num 12,
+   :source/active true,
+   :source/position 145511}]
+ [{:db/id 167125767499918,
+   :source/user #:db{:id 167125767499905},
+   :source/feed #:db{:id 79164837199994},
+   :source/num 13,
+   :source/active true,
+   :source/position 137208}]
+ [{:db/id 167125767499919,
+   :source/user #:db{:id 167125767499905},
+   :source/feed #:db{:id 79164837199984},
+   :source/num 14,
+   :source/active true,
+   :source/position 210098}]
+ [{:db/id 167125767499920,
+   :source/user #:db{:id 167125767499905},
+   :source/feed #:db{:id 79164837199981},
+   :source/num 15,
+   :source/active true,
+   :source/position 210168}]
+ [{:db/id 167125767499923,
+   :source/user #:db{:id 167125767499905},
+   :source/feed #:db{:id 83562883711089},
+   :source/num 16,
+   :source/active true,
+   :source/position 209652}]
+ [{:db/id 167125767499924,
+   :source/user #:db{:id 167125767499905},
+   :source/feed #:db{:id 87960930222184},
+   :source/num 17,
+   :source/active true,
+   :source/position 210022}]
+ [{:db/id 167125767581447,
+   :source/user #:db{:id 167125767499905},
+   :source/feed #:db{:id 180319907114733},
+   :source/num 19,
+   :source/active false,
+   :source/position 117393}]
+ [{:db/id 171523814072156,
+   :source/user #:db{:id 167125767499905},
+   :source/feed #:db{:id 189116000116546},
+   :source/num 25,
+   :source/active true,
+   :source/position 210250}]
+ [{:db/id 171523814092784,
+   :source/user #:db{:id 167125767499905},
+   :source/feed #:db{:id 175921860603787},
+   :source/num 21,
+   :source/active true,
+   :source/position 210221}]
+ [{:db/id 180319907109011,
+   :source/user #:db{:id 167125767499905},
+   :source/feed #:db{:id 171523814086777},
+   :source/num 23,
+   :source/active false,
+   :source/position 185327}]
+ [{:db/id 180319907115879,
+   :source/user #:db{:id 167125767499905},
+   :source/feed #:db{:id 193514046649140},
+   :source/num 22,
+   :source/active true,
+   :source/position 209913,
+   :source/filters "/Георги[йя]\\s+Бовта?/"}]
+ [{:db/id 184717953626123,
+   :source/user #:db{:id 167125767499905},
+   :source/feed #:db{:id 189116000137201},
+   :source/num 18,
+   :source/active false,
+   :source/position 92463}]
+ [{:db/id 184717953640486,
+   :source/user #:db{:id 167125767499905},
+   :source/feed #:db{:id 171523814107148},
+   :source/num 20,
+   :source/active true,
+   :source/position 210211}]
+ [{:db/id 347445675425087,
+   :source/user #:db{:id 167125767499905},
+   :source/feed #:db{:id 193514046680810},
+   :source/num 24,
+   :source/active true,
+   :source/position 210259}]
+ [{:db/id 351843722016725,
+   :source/user #:db{:id 167125767499905},
+   :source/feed #:db{:id 351843722016613},
+   :source/num 9,
+   :source/active true,
+   :source/position 200310}]
+ [{:db/id 382630047714659,
+   :source/user #:db{:id 167125767499905},
+   :source/feed #:db{:id 400222233759061},
+   :source/num 3,
+   :source/active true,
+   :source/position 208649}]]
 
 #+end_example
-

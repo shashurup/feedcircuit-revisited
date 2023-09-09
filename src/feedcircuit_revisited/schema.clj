@@ -10,13 +10,6 @@
                    :db/cardinality :db.cardinality/one
                    :db/doc "News item id, usually url"}
 
-                  {:db/ident :item/feed+id
-                   :db/valueType :db.type/string
-                   ; :db/valueType :db.type/tuple
-                   ; :db/tupleAttrs [:item/feed :item/source-id]
-                   :db/cardinality :db.cardinality/one
-                   :db/unique :db.unique/identity}
-
                   {:db/ident :item/num
                    :db/valueType :db.type/long
                    :db/cardinality :db.cardinality/one
@@ -25,7 +18,8 @@
                   {:db/ident :item/feed+num
                    :db/valueType :db.type/tuple
                    :db/tupleAttrs [:item/feed :item/num]
-                   :db/cardinality :db.cardinality/one}
+                   :db/cardinality :db.cardinality/one
+                   :db/unique :db.unique/identity}
 
                   {:db/ident :item/link
                    :db/valueType :db.type/string
@@ -100,11 +94,13 @@
                    :db/doc "Feed icon"}
 
                   {:db/ident :feed/last-num
+                   :db/noHistory true
                    :db/valueType :db.type/long
                    :db/cardinality :db.cardinality/one
                    :db/doc "Last synced item number"}
 
                   {:db/ident :feed/content-to-summary-ratio
+                   :db/noHistory true
                    :db/valueType :db.type/double
                    :db/cardinality :db.cardinality/one
                    :db/doc "Average content to summary ratio for feed items"}
@@ -123,6 +119,7 @@
                    :db/doc "User's id, usually e-mail"}
 
                   {:db/ident :user/selected
+                   :db/noHistory true
                    :db/valueType :db.type/ref
                    :db/cardinality :db.cardinality/many
                    :db/doc "User's selected items"}
@@ -154,6 +151,7 @@
                      :db/doc "Used to mark a source as inactive"}
 
                     {:db/ident :source/position
+                     :db/noHistory true
                      :db/valueType :db.type/long
                      :db/cardinality :db.cardinality/one
                      :db/doc "User's position in a source"}
@@ -163,4 +161,14 @@
                      :db/cardinality :db.cardinality/one
                      :db/doc "Source filters"}])
 
-(def schema (vec (concat feed-schema item-schema user-schema source-schema)))
+(def archive-schema [{:db/ident :archive/user
+                      :db/valueType :db.type/ref
+                      :db/cardinality :db.cardinality/one
+                      :db/doc "User reference"}
+
+                     {:db/ident :archive/selected
+                      :db/valueType :db.type/ref
+                      :db/cardinality :db.cardinality/one
+                      :db/doc "Arhived item"}])
+
+(def schema (vec (concat feed-schema item-schema user-schema source-schema archive-schema)))

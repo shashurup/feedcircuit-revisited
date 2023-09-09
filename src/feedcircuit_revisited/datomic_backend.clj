@@ -73,7 +73,6 @@
         (assoc :db/id source-id
                :item/source-id source-id
                :item/feed feed
-               :item/feed+id (str feed "+" source-id)
                :item/num (or (:item/num item)
                              (swap! cur-item-num inc)))
         clean-item)))
@@ -366,10 +365,14 @@
 
 (defn selected-remove! [user-id ids]
   (d/transact conn {:tx-data
-                    (vec (for [id ids]
-                           (selected-op :db/retract
-                                        user-id
-                                        (u/as-int id))))}))
+                    (->> (for [id ids]
+                           [(selected-op :db/retract
+                                         user-id
+                                         (u/as-int id))
+                            {:archive/user [:user/id user-id]
+                             :archive/selected (u/as-int id)}])
+                         (apply concat)
+                         vec)}))
 
 (defn init-impl! []
   (def content-dir (conf/param :datomic :content-dir))
