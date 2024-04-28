@@ -236,7 +236,7 @@
         content (content/detect html url nil)]
     {:item/link url
      :item/id url
-     :item/title (content/get-title html)
+     :item/title (or (content/get-title html) url)
      :item/summary (content/summarize (vec (conj content :body)))
      :item/content content}))
 
