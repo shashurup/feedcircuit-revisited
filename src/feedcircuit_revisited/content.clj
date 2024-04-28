@@ -192,7 +192,8 @@
        (reduce (fn [[total last] [len node]]
                  (if (> total limit)
                    [total last]
-                   [(+ total len) node])))
+                   [(+ total len) node]))
+               [0 [nil :end]])
        second))
 
 (defn fit-raw-limit [limit node]
