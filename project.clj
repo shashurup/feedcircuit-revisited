@@ -1,10 +1,7 @@
-(defproject feedcircuit-revisited "0.29"
+(defproject feedcircuit-revisited "0.30-SNAPSHOT"
   :description "Old friend Feedcircuit revisited"
   :url "http://example.com/FIXME"
   :min-lein-version "2.0.0"
-  ; :repositories [["cognitect-dev-tools" {:url "https://dev-tools.cognitect.com/maven/releases/"
-  ;                                        :username :env
-  ;                                        :password :env}]]
   :dependencies [[org.clojure/clojure "1.11.3"]
                  [compojure "1.7.1"]
                  [joda-time/joda-time "2.9.3"] ; implicitly required by ring
