@@ -6,7 +6,7 @@
             [feedcircuit-revisited.feed :as feed]
             [feedcircuit-revisited.stat :as stat]
             [clojure.core.memoize :as memz]
-            [nrepl.server :as nrepl]
+            [shashurup.quf.srv :as quf]
             [ring.adapter.jetty :refer [run-jetty]]
             [clojure.tools.logging :as log]))
 
@@ -16,13 +16,13 @@
     (conf/load-from-file (first args)))
   (let [jetty-params (select-keys (conf/param) [:host :port])
         handler (handler/create)
-        repl-server (nrepl/start-server :port 7888)]
+        quf-server (quf/start-server 7888 false)]
     (backend/init!)
     (feed/init!)
     (stat/init!)
     (log/info "Running Jetty with " jetty-params)
     (run-jetty handler jetty-params)
-    (nrepl/stop-server repl-server)
+    (.stop quf-server)
     (shutdown-agents)))
 
 ; === Debugging convenience functions ===
