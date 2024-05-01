@@ -16,7 +16,7 @@
     (conf/load-from-file (first args)))
   (let [jetty-params (select-keys (conf/param) [:host :port])
         handler (handler/create)
-        quf-server (quf/start-server 7888 false)]
+        quf-server (quf/start 7888)]
     (backend/init!)
     (feed/init!)
     (stat/init!)

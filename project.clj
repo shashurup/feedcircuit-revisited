@@ -10,7 +10,7 @@
                  [clj-http "3.12.4"]
                  [clojure.java-time "1.4.2"]
                  [clj-commons/fs "1.6.311"]
-                 [shashurup/quasi-una-fantasia "0.13"]
+                 [shashurup/quasi-una-fantasia "0.14"]
                  [org.clojure/core.memoize "1.1.266"]
                  [hiccup "1.0.5"]
                  [cheshire "5.13.0"]
