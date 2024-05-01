@@ -1,6 +1,6 @@
 (defproject feedcircuit-revisited "0.31-SNAPSHOT"
   :description "Old friend Feedcircuit revisited"
-  :url "http://example.com/FIXME"
+  :url "http://feedcircuit.kibardin.name"
   :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure "1.11.3"]
                  [compojure "1.7.1"]
@@ -16,15 +16,13 @@
                  [cheshire "5.13.0"]
                  [org.jsoup/jsoup "1.17.2"]
                  [com.datomic/local "1.0.277"]
-                 ;; all the stuff below is for logging
-                 [org.clojure/tools.logging "1.3.0"]
-                 [org.slf4j/slf4j-api "2.0.13"]
-                 [org.slf4j/slf4j-simple "2.0.13"]
-                 [commons-io/commons-io "2.16.1"]]
+                 [org.clojure/tools.logging "1.3.0"]]
   :plugins [[lein-ring "0.12.6"]]
   :ring {:handler feedcircuit-revisited.handler/app}
-  :profiles
-  {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
-                        [ring/ring-mock "0.4.0"]]}}
+  :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
+                                  [ring/ring-mock "0.4.0"]]}}
   :main feedcircuit-revisited.main
-  :aot [feedcircuit-revisited.main])
+  :aot [feedcircuit-revisited.main]
+  :jvm-opts ["-Dclojure.tools.logging.factory=clojure.tools.logging.impl/jul-factory"
+             "-Djava.util.logging.SimpleFormatter.format=\"%1$tF %1$tT %4$s: %5$s%6$s%n\""]
+  )
