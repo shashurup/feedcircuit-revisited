@@ -1,4 +1,4 @@
-(defproject feedcircuit-revisited "0.31-SNAPSHOT"
+(defproject feedcircuit-revisited "0.31"
   :description "Old friend Feedcircuit revisited"
   :url "http://feedcircuit.kibardin.name"
   :min-lein-version "2.0.0"
@@ -16,7 +16,9 @@
                  [cheshire "5.13.0"]
                  [org.jsoup/jsoup "1.17.2"]
                  [com.datomic/local "1.0.277"]
-                 [org.clojure/tools.logging "1.3.0"]]
+                 [org.clojure/tools.logging "1.3.0"]
+                 [org.slf4j/slf4j-jdk14 "2.0.13"] ;; for slf4j reliant libs
+                 [commons-io/commons-io "2.16.1"]]
   :plugins [[lein-ring "0.12.6"]]
   :ring {:handler feedcircuit-revisited.handler/app}
   :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
