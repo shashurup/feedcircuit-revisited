@@ -2,10 +2,12 @@
 /lib
 /classes
 /checkouts
-/fc-data
+/fc-data/
+/datomic/
 pom.xml
 pom.xml.asc
 *.jar
 *.class
 /.lein-*
 /.nrepl-port
+config
