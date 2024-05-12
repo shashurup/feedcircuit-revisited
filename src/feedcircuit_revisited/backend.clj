@@ -1,6 +1,7 @@
 (ns feedcircuit-revisited.backend
   (:require [feedcircuit-revisited.conf :as conf]
             [clojure.string :as cstr]
+            [feedcircuit-revisited.datalevin-backend :as dtlv-back]
             [feedcircuit-revisited.datomic-backend :as d-back]
             [feedcircuit-revisited.fs-backend :as fs-back]))
 
@@ -123,7 +124,8 @@
                       styles)))
 
 (defn init! []
-  (if (conf/param :datomic)
-    (map-backend-impl 'feedcircuit-revisited.datomic-backend)
-    (map-backend-impl 'feedcircuit-revisited.fs-backend))
+  (cond
+    (conf/param :datalevin) (map-backend-impl 'feedcircuit-revisited.datalevin-backend)
+    (conf/param :datomic) (map-backend-impl 'feedcircuit-revisited.datomic-backend)
+    :else (map-backend-impl 'feedcircuit-revisited.fs-backend))
   (init-impl!))

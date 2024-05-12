@@ -1,5 +1,6 @@
 (ns feedcircuit-revisited.migration
   (:require [datomic.client.api :as d]
+            [datalevin.core :as dtlv]
             [clojure.edn :as edn]
             [clojure.java.io :as io]
             [clojure.set :refer (rename-keys)]
@@ -7,6 +8,30 @@
             [feedcircuit-revisited.fs-backend :as fs-back]
             [feedcircuit-revisited.feed :as feed]
             [feedcircuit-revisited.datomic-backend :as d-back]))
+
+(defprotocol Datalog
+  (q [this query params])
+  (qseq [this query params])
+  (transact! [this tx-data]))
+
+(deftype Datomic [conn]
+  Datalog
+  (q [this query params]
+    (apply d/q query (d/db conn) params))
+  (qseq [this query params]
+    (print query params)
+    (apply d/qseq query (d/db conn) params))
+  (transact! [this tx-data]
+    (d/transact conn {:tx-data tx-data})))
+
+(deftype Datalevin [conn]
+  Datalog
+  (q [this query params]
+    (apply dtlv/q query (dtlv/db conn) params))
+  (qseq [this query params]
+    (apply dtlv/q query (dtlv/db conn) params))
+  (transact! [this tx-data]
+    (dtlv/transact! conn tx-data)))
 
 (defn import-feeds []
   (let [feeds (map fs-back/get-feed-attrs
@@ -74,18 +99,17 @@
     (d/transact d-back/conn {:tx-data txdata})))
 
 (defn dump-entity
-  ([attr] (dump-entity attr '[*] identity))
-  ([attr pattern] (dump-entity attr pattern identity))
-  ([attr pattern f]
+  ([c attr] (dump-entity c attr '[*] identity))
+  ([c attr pattern] (dump-entity c attr pattern identity))
+  ([c attr pattern f]
    (map (comp f
               #(dissoc % :db/id :item/feed+id :item/feed+num)
               first)
-        (d/qseq '[:find (pull ?e pattern)
-                  :in $ ?attr pattern
-                  :where (?e ?attr _)]
-                (d/db d-back/conn)
-                attr
-                pattern))))
+        (qseq c
+              '[:find (pull ?e pattern)
+                :in $ ?attr pattern
+                :where (?e ?attr _)]
+              [attr pattern]))))
 
 (defn make-item-ref [{eid :db/id}]
   (let [{link :item/link
@@ -95,23 +119,27 @@
                                 eid)]
     (if url [url num] link)))
 
-(defn dump []
+(defn dump [c]
   (concat 
-   (dump-entity :feed/url)
-   (dump-entity :item/link
+   (dump-entity c :feed/url)
+   (dump-entity c
+                :item/link
                 '[* {:item/feed [:feed/url]}]
                 #(if (:item/feed %)
                    (update % :item/feed (comp vec first))
                    %))
-   (dump-entity :user/id
+   (dump-entity c
+                :user/id
                 '[*]
                 #(update % :user/selected (fn [old] (vec (map make-item-ref old)))))
-   (dump-entity :source/user
+   (dump-entity c
+                :source/user
                 '[* {:source/user [:user/id]} {:source/feed [:feed/url]}]
                 (comp
                  #(update % :source/user (comp vec first))
                  #(update % :source/feed (comp vec first))))
-   (dump-entity :archive/user
+   (dump-entity c
+                :archive/user
                 '[* {:archive/user [:user/id]}]
                 (comp
                  #(update % :archive/user (comp vec first))
@@ -122,42 +150,51 @@
     (binding [*out* w]
       (doall (map prn dump)))))
 
-(defn read-dump [fname f]
-  (with-open [r (io/reader fname)]
-    (let [pbr (java.io.PushbackReader. r)]
-      (f (take-while not-empty (repeatedly #(edn/read {:eof nil} pbr)))))))
+(defn dump-datomic [conn fname]
+  (save-dump (dump (Datomic. conn)) fname))
 
 (defn entity [subj]
   (namespace (first (keys subj))))
 
-(defn lookup-item [subj]
+(defn lookup-item [subj c]
   (if (string? subj)
-    (ffirst (d/q '[:find ?i
-                   :in $ ?link
-                   :where [?i :item/link ?link]]
-                 (d/db d-back/conn)
-                 subj))
+    (ffirst (q c
+               '[:find ?i
+                 :in $ ?link
+                 :where [?i :item/link ?link]]
+               [subj]))
     (let [[url num] subj]
-      (ffirst (d/q '[:find ?i
-                     :in $ ?url ?num
-                     :where [?i :item/num ?num]
-                     [?f :feed/url ?url]
-                     [?i :item/feed ?f]]
-                   (d/db d-back/conn)
-                   url
-                   num)))))
+      (ffirst (q c
+                 '[:find ?i
+                   :in $ ?url ?num
+                   :where [?i :item/num ?num]
+                   [?f :feed/url ?url]
+                   [?i :item/feed ?f]]
+                 [url num])))))
 
-(defn resolve-item-id [item]
-  (cond
-    (:archive/selected item) (update item :archive/selected lookup-item)
-    (:user/selected item) (update item
-                                  :user/selected
-                                  #(vec (map lookup-item %)))
-    :else item))
+(defn resolve-item-id [item c]
+  (let [lookup #(lookup-item % c)]
+    (cond
+      (:archive/selected item) (update item :archive/selected lookup)
+      (:user/selected item) (update item
+                                    :user/selected
+                                    #(mapv lookup %))
+      :else item)))
 
-(defn push-to-db [data]
+(defn push-to-db [data c]
   (doseq [batch (partition-all 1000 data)]
     (doseq [txdata (partition-by entity batch)]
-      (let [txdata (map resolve-item-id txdata)]
+      (let [txdata (map #(resolve-item-id % c) txdata)]
         (prn (first txdata))
-        (d/transact d-back/conn {:tx-data txdata})))))
+        (transact! c txdata)))))
+
+(defn load-dump [fname c]
+  (with-open [r (io/reader fname)]
+    (let [pbr (java.io.PushbackReader. r)]
+      (push-to-db (take-while not-empty (repeatedly #(edn/read {:eof nil} pbr))) c))))
+
+(defn load-dump-to-datomic [fname conn]
+  (load-dump fname (Datomic. conn)))
+
+(defn load-dump-to-datalevin [fname conn]
+  (load-dump fname (Datalevin. conn)))
