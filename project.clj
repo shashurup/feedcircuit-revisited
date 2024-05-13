@@ -1,4 +1,4 @@
-(defproject feedcircuit-revisited "0.32-SNAPSHOT"
+(defproject feedcircuit-revisited "0.32"
   :description "Old friend Feedcircuit revisited"
   :url "http://feedcircuit.kibardin.name"
   :min-lein-version "2.0.0"
