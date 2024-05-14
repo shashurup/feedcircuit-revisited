@@ -222,14 +222,16 @@
 
 (defn retrieve-content [url feed]
   (let [html (content/retrieve-and-parse url)
-        content-ident (backend/get-feed-attr-by-id feed :feed/content-ident)]
+        content-ident (when feed
+                        (backend/get-feed-attr-by-id feed :feed/content-ident))]
     (content/detect html url content-ident)))
 
 (defn ensure-content [item]
   (if (:item/content item)
     item
-    (if-let [{url :item/link feed :item/feed} item]
-      (assoc item :item/content (retrieve-content url feed)))))
+    (let [{url :item/link feed :item/feed} item]
+      (when url
+        (assoc item :item/content (retrieve-content url feed))))))
 
 (defn make-item-from [url]
   (let [html (content/retrieve-and-parse url)
@@ -272,7 +274,7 @@
                  [:input {:type "hidden" :name "return-id" :value return-id}]
                  (submit-button "Done")])]]]))
        (catch Exception ex
-         (log/error "Failed to make content for" link)))
+         (log/error ex "Failed to make content for" link)))
      link)))
 
 (defn mark-read [user-id to-positions]
