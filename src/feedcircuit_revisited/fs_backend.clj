@@ -373,6 +373,8 @@
         url (if active url (subs url 1))]
     [url filters active]))
 
+(defn parse-style [subj] (cstr/split subj #" " 2))
+
 (defn get-user-data [user-id & opts]
   (let [{id :id
          feeds :feeds
@@ -404,18 +406,20 @@
                       (->> selected
                            (map fix-id-and-ns)
                            (map #(select-keys % [:item/id]))))
-     :user/styles styles}))
+     :user/styles (map parse-style styles)}))
 
 (defn initial-position [url]
   (or (:num (last (take 16 (get-items-backwards url)))) 0))
 
+(defn source->str [source]
+  (str (when-not (:source/active source) "#")
+       (:source/feed source)
+       (when (:source/filters source) " ")
+       (:source/filters source)))
+
 (defn update-settings! [user-id sources styles]
   (let [positions (:positions (get-user-attrs user-id))
-        feeds (map #(str (when-not (:source/active %) "#")
-                         (:source/feed %)
-                         (when (:source/filters %) " ")
-                         (:source/filters %))
-                   sources)
+        feeds (map source->str sources)
         missing-positions (->> sources
                                (filter :source/active)
                                (map :source/feed)
@@ -423,7 +427,7 @@
                                (map #(vector % (initial-position %)))
                                (into {}))]
     (update-user-attrs! user-id assoc :feeds (vec feeds)
-                                      :styles styles
+                                      :styles (mapv #(cstr/join " " %) styles)
                                       :positions (merge positions missing-positions))))
 
 (defn update-positions! [user-id positions]

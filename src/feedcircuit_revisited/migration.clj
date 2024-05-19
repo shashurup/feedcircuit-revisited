@@ -3,11 +3,13 @@
             [datalevin.core :as dtlv]
             [clojure.edn :as edn]
             [clojure.java.io :as io]
+            [clojure.pprint :refer [pprint]]
             [clojure.set :refer (rename-keys)]
             [feedcircuit-revisited.schema :as schema]
             [feedcircuit-revisited.fs-backend :as fs-back]
             [feedcircuit-revisited.feed :as feed]
-            [feedcircuit-revisited.datomic-backend :as d-back]))
+            [feedcircuit-revisited.datomic-backend :as d-back]
+            [feedcircuit-revisited.ui :as ui]))
 
 (defprotocol Datalog
   (q [this query params])
@@ -188,13 +190,99 @@
         (prn (first txdata))
         (transact! c txdata)))))
 
-(defn load-dump [fname c]
+(defn load-dump [fname c f]
   (with-open [r (io/reader fname)]
     (let [pbr (java.io.PushbackReader. r)]
-      (push-to-db (take-while not-empty (repeatedly #(edn/read {:eof nil} pbr))) c))))
+      (f (take-while not-empty (repeatedly #(edn/read {:eof nil} pbr))) c))))
 
 (defn load-dump-to-datomic [fname conn]
-  (load-dump fname (Datomic. conn)))
+  (load-dump fname (Datomic. conn) push-to-db))
 
 (defn load-dump-to-datalevin [fname conn]
-  (load-dump fname (Datalevin. conn)))
+  (load-dump fname (Datalevin. conn) push-to-db))
+
+(defn obj-type [obj]
+  (cond (:feed/url obj) :feed
+        (:item/feed obj) :item
+        (:user/id obj) :user
+        (:source/user obj) :source
+        (:archive/user obj) :archive
+        :else :unknown))
+
+(defn figure-position [ctx feed src]
+  (let [pos (:source/position src 0)
+        last-num (get-in ctx [:feeds feed :feed/last-num] 0)]
+    (if (> pos last-num)
+      (fs-back/get-item-count feed)
+      (get-in ctx [:ctx feed pos] 0))))
+
+(defn add-dump-obj [ctx obj]
+  (condp = (obj-type obj)
+    :feed (assoc-in ctx [:feeds (:feed/url obj)] obj)
+    :item (let [feed (second (:item/feed obj))
+                num (:item/num obj)]
+            (-> ctx
+                (update-in [:ctx feed]
+                           #(assoc % num (count %)))
+                (update-in [:items feed]
+                           #(conj (or %1 []) %2)
+                           (-> obj
+                               (dissoc :item/feed :item/num)
+                               (rename-keys {:item/source-id :item/id})))))
+    :user (assoc-in ctx [:users (:user/id obj)]
+                    (rename-keys obj {:user/id :id
+                                      :user/styles :styles
+                                      :user/selected :selected}))
+    :source (let [src (update obj :source/feed second)
+                  feed (:source/feed src)
+                  user (second (:source/user src))]
+              (-> ctx
+                  (update-in [:source-lines user]
+                             #(conj (or %1 []) (fs-back/source->str src)))
+                  (assoc-in [:source-pos user feed]
+                            (figure-position ctx feed src))))
+    ctx))
+
+(defn convert-selected-to-fs [user ctx]
+  (update user :selected
+          (fn [selected]
+            (map (fn [subj]
+                   (if (vector? subj)
+                     (let [[feed num] subj]
+                       (let [num (get-in ctx [feed num] 0)]
+                         (fs-back/get-item (str num "," feed))))
+                     {:item/link (str subj)
+                      :item/id (str subj)
+                      :item/title "External item (partially imported)"}))
+                 selected))))
+
+(defn store-to-fs! [{feeds :feeds
+                     items :items
+                     users :users
+                     source-lines :source-lines
+                     source-pos :source-pos
+                     ctx :ctx}]
+  (doseq [[url feed] feeds]
+    (fs-back/add-feed! url (dissoc feed :feed/last-num)))
+  (doseq [[feed _items] items]
+    (fs-back/append-items! feed _items))
+  (doseq [[id user] users]
+    (fs-back/update-user-attrs! id merge (convert-selected-to-fs user ctx)))
+  (doseq [[id lines] source-lines]
+    (fs-back/update-user-attrs! id update :feeds #(into (or %1 []) lines)))
+  (doseq [[id positions] source-pos]
+    (fs-back/update-positions! id positions)))
+
+(defn push-to-fs [data _]
+  (reduce (fn [ctx block]
+            (let [composed (reduce add-dump-obj
+                                   {:ctx ctx}
+                                   block)]
+              (store-to-fs! composed)
+              (merge-with merge ctx (:ctx composed))))
+          {}
+          (partition-all 4096 data))
+  nil)
+
+(defn load-dump-to-fs [fname]
+  (load-dump fname nil push-to-fs))

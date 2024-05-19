@@ -2,8 +2,7 @@
 /lib
 /classes
 /checkouts
-/fc-data/
-/datomic/
+/data/
 pom.xml
 pom.xml.asc
 *.jar
