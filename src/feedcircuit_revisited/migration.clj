@@ -227,8 +227,7 @@
                 (update-in [:items feed]
                            #(conj (or %1 []) %2)
                            (-> obj
-                               (dissoc :item/feed :item/num)
-                               (rename-keys {:item/source-id :item/id})))))
+                               (dissoc :item/feed :item/num)))))
     :user (assoc-in ctx [:users (:user/id obj)]
                     (rename-keys obj {:user/id :id
                                       :user/styles :styles

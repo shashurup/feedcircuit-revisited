@@ -117,7 +117,7 @@
   (get-in @feed-index [url :dir]))
 
 (defn get-feed-attrs [url]
-  (assoc (u/ensure-keys-ns "feed" (get-attrs (get-dir url)))
+  (assoc (get-attrs (get-dir url))
          :feed/url url
          :feed/id  url))
 
@@ -132,18 +132,10 @@
     (:item/link item)))
 
 (defn add-uid [item]
-  (-> item
-      (assoc :item/source-id (:item/id item))
-      (assoc :item/id (get-unique-id item))))
-
-(defn ensure-item-ns [item]
-  (u/ensure-keys-ns "item" item))
-
-(defn fix-id-and-ns [item]
-  (add-uid (ensure-item-ns item)))
+  (assoc item :item/id (get-unique-id item)))
 
 (defn add-uid-and-feed-title [item]
-  (let [item (fix-id-and-ns item)
+  (let [item (add-uid item)
         feed-title (get-in @feed-index [(:item/feed item) :title])]
     (assoc item :feed/title feed-title)))
 
@@ -151,7 +143,7 @@
   (->> (fs/list-dir (str data-dir "/feeds"))
        (map fs/normalized)
        (filter fs/directory?)
-       (map #(let [attrs (u/ensure-keys-ns "feed" (get-attrs %))]
+       (map #(let [attrs (get-attrs %)]
                [(:feed/url attrs)
                 {:dir (str %)
                  :title (:feed/title attrs)}]))
@@ -161,8 +153,7 @@
   (when-not (get-in index [url :item-count])
     (let [items (read-items (get-in index [url :dir]) 0)]
       (update index url merge {:item-count (count items)
-                               :known-ids (set (map #(:item/id (ensure-item-ns %))
-                                                    items))}))))
+                               :known-ids (set (map :item/source-id items))}))))
 
 (defn get-in-feed [url key]
   (if-let [result (get-in @feed-index [url key])]
@@ -177,7 +168,7 @@
 
 (defn add-feed-num-uid [item url num]
   (let [item (assoc item :item/feed url :item/num num)]
-    (fix-id-and-ns item)))
+    (add-uid item)))
 
 (defn get-items 
   "Returns lazy numbered sequence of items
@@ -290,14 +281,14 @@
           (load-feed! index url)
           (let [cnt (get-in index [url :item-count])
                 known-ids (get-in index [url :known-ids])
-                new-items (remove #(known-ids (:item/id %)) items)
+                new-items (remove #(known-ids (:item/source-id %)) items)
                 dir (get-in index [url :dir])
                 new-item-count (count new-items)]
             (write-items! dir new-items)
             (update index url merge {:item-count (+ cnt new-item-count)
                                      :last-sync-count new-item-count
                                      :known-ids (cset/union known-ids
-                                                            (set (map #(:item/id %) new-items)))}))))
+                                                            (set (map :item/source-id new-items)))}))))
   (await feed-index)
   (get-in @feed-index [url :last-sync-count]))
 
@@ -363,7 +354,7 @@
 
 (defn selected-remove! [user-id ids]
   (letfn [(in-ids? [item]
-            (let [id (get-unique-id (ensure-item-ns item))]
+            (let [id (get-unique-id item)]
               (some #(= id %) ids)))]
     (update-user-attrs! user-id update :selected #(remove in-ids? %))))
 
@@ -404,7 +395,7 @@
      :user/selected (if (some #{:selected/details} opts)
                       (map add-uid-and-feed-title selected)
                       (->> selected
-                           (map fix-id-and-ns)
+                           (map add-uid)
                            (map #(select-keys % [:item/id]))))
      :user/styles (map parse-style styles)}))
 

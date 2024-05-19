@@ -67,26 +67,24 @@
   (remove-nils (select-keys item item-attrs)))
 
 (defn prepare-item [item feed]
-  (let [source-id (:item/id item)]
-    (-> item
-        prepare-item-content
-        (assoc :db/id source-id
-               :item/source-id source-id
-               :item/feed feed
-               :item/num (or (:item/num item)
-                             (swap! cur-item-num inc)))
-        clean-item)))
+  (-> item
+      prepare-item-content
+      (assoc :db/id (:item/source-id item)
+             :item/feed feed
+             :item/num (or (:item/num item)
+                           (swap! cur-item-num inc)))
+      clean-item))
 
 (defn append-items! [url items]
   (let [feed (get-feed-attr url :db/id)
         items (->> items
-                   (u/distinct-by :item/id)
+                   (u/distinct-by :item/source-id)
                    (map #(prepare-item % feed))
                    vec)
         txdata (when-let [ln (:item/num (last items))]
                  (conj items [:db/add feed :feed/last-num ln]))]
     (let [tempids (:tempids (d/transact conn {:tx-data txdata}))]
-      (doseq [{tempid :item/id
+      (doseq [{tempid :item/source-id
                content :item/content} (filter :item/has-content items)
               :let [fname (get tempids tempid)]]
         (u/write-file (str content-dir "/" fname) content)))

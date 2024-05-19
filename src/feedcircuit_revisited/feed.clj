@@ -76,10 +76,12 @@
       item)))
 
 (defn ensure-item-id [item]
-  (assoc item :id (or (:id item)
-                      (:link item)
-                      (:title item)
-                      (hash (:summary item)))))
+  (-> item
+      (assoc :id (or (:id item)
+                     (:link item)
+                     (:title item)
+                     (hash (:summary item))))
+      (cset/rename-keys {:id :source-id})))
 
 (defn parse-rss-item [item]
   (->> (:content item)
@@ -160,9 +162,9 @@
     (:item/content item) (update :item/content content/make-refs-absolute base-url)))
 
 (defn prepare-items [url self-containing items]
-  (let [known-ids (backend/known-ids url (map :item/id items))]
+  (let [known-ids (backend/known-ids url (map :item/source-id items))]
     (->> items
-         (remove #(known-ids (:item/id %)))
+         (remove #(known-ids (:item/source-id %)))
          (map #(fix-refs % url))
          (map #(fix-summary-and-content % self-containing))
          (sort-by :item/published))))
