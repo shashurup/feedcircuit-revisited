@@ -117,14 +117,18 @@
                 :where (?e ?attr _)]
               [attr pattern]))))
 
-(defn make-item-ref [c {eid :db/id}]
-  (let [{link :item/link
-         {url :feed/url} :item/feed
-         num :item/num} (pull c '[:item/link {:item/feed [:feed/url]} :item/num] eid)]
-    (if url [url num] link)))
+(defn make-item-or-ref [c {eid :db/id}]
+  (let [item (pull c '[:item/link
+                       {:item/feed [:feed/url]}
+                       :item/num
+                       :item/title
+                       :item/summary] eid)
+        {{url :feed/url} :item/feed
+         num :item/num} item]
+    (if url [url num] item)))
 
 (defn dump [c]
-  (let [make-item-ref #(make-item-ref c %)]
+  (let [make-item-or-ref #(make-item-or-ref c %)]
     (concat 
      (dump-entity c :feed/url)
      (dump-entity c
@@ -136,7 +140,7 @@
      (dump-entity c
                   :user/id
                   '[*]
-                  #(update % :user/selected (fn [old] (mapv make-item-ref old))))
+                  #(update % :user/selected (fn [old] (mapv make-item-or-ref old))))
      (dump-entity c
                   :source/user
                   '[* {:source/user [:user/id]} {:source/feed [:feed/url]}]
@@ -148,7 +152,7 @@
                   '[* {:archive/user [:user/id]}]
                   (comp
                    #(update % :archive/user (comp vec first))
-                   #(update % :archive/selected make-item-ref))))))
+                   #(update % :archive/selected make-item-or-ref))))))
 
 (defn save-dump [dump fname]
   (with-open [w (io/writer fname)]
@@ -219,6 +223,13 @@
       (fs-back/get-item-count feed)
       (get-in ctx [:ctx feed pos] 0))))
 
+(defn resolve-fs-item [ctx subj]
+  (if (vector? subj)
+    (let [[feed num] subj]
+      (let [num (get-in ctx [feed num] 0)]
+        (fs-back/get-item (str num "," feed))))
+    subj))
+
 (defn add-dump-obj [ctx obj]
   (condp = (obj-type obj)
     :feed (assoc-in ctx [:feeds (:feed/url obj)] obj)
@@ -243,26 +254,23 @@
                              #(conj (or %1 []) (fs-back/source->str src)))
                   (assoc-in [:source-pos user feed]
                             (figure-position ctx feed src))))
+    :archive (let [item (:archive/selected obj)
+                   user (second (:archive/user obj))]
+               (update-in ctx [:archive user]
+                          #(conj (or %1 []) %2)
+                          (resolve-fs-item ctx item)))
     ctx))
 
 (defn convert-selected-to-fs [user ctx]
   (update user :selected
-          (fn [selected]
-            (map (fn [subj]
-                   (if (vector? subj)
-                     (let [[feed num] subj]
-                       (let [num (get-in ctx [feed num] 0)]
-                         (fs-back/get-item (str num "," feed))))
-                     {:item/link (str subj)
-                      :item/id (str subj)
-                      :item/title "External item (partially imported)"}))
-                 selected))))
+          (fn [selected] (map #(resolve-fs-item ctx %) selected))))
 
 (defn store-to-fs! [{feeds :feeds
                      items :items
                      users :users
                      source-lines :source-lines
                      source-pos :source-pos
+                     archive :archive
                      ctx :ctx}]
   (doseq [[url feed] feeds]
     (fs-back/add-feed! url (dissoc feed :feed/last-num)))
@@ -273,7 +281,9 @@
   (doseq [[id lines] source-lines]
     (fs-back/update-user-attrs! id update :feeds #(into (or %1 []) lines)))
   (doseq [[id positions] source-pos]
-    (fs-back/update-positions! id positions)))
+    (fs-back/update-positions! id positions))
+  (doseq [[user items] archive]
+    (fs-back/write-items! (fs-back/user-dir user) items)))
 
 (defn push-to-fs [data _]
   (reduce (fn [ctx block]
