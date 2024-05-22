@@ -307,7 +307,7 @@
 
 (defonce attrs-updater (agent nil))
 
-(defn write-user-attrs [attrs]
+(defn write-user-attrs! [attrs]
   (let [dir (user-dir (:id attrs))]
     (fs/mkdirs dir)
     (set-attrs dir
@@ -315,8 +315,18 @@
                    (dissoc :id)
                    (update :unread vec)))))
 
-(defn attr-update-watcher [_ _ _ attrs]
-  (send attrs-updater (fn [_] (write-user-attrs attrs))))
+(defn archive-deleted-items! [before after]
+  (let [dir (user-dir (:id after))
+        selected (set (map get-unique-id (:selected after)))]
+    (when-let [deleted (->> before
+                            :selected
+                            (remove #(selected (get-unique-id %))))]
+      (write-items! dir deleted))))
+
+(defn attr-update-watcher [_ _ before after]
+  (send attrs-updater (fn [_]
+                        (write-user-attrs! after)
+                        (archive-deleted-items! before after))))
 
 (defn read-user-attrs [user-id]
   (-> (get-attrs (user-dir user-id))

@@ -14,6 +14,7 @@
 (defprotocol Datalog
   (q [this query params])
   (qseq [this query params])
+  (pull [this pattern id])
   (transact! [this tx-data]))
 
 (deftype Datomic [conn]
@@ -21,8 +22,9 @@
   (q [this query params]
     (apply d/q query (d/db conn) params))
   (qseq [this query params]
-    (print query params)
     (apply d/qseq query (d/db conn) params))
+  (pull [this pattern id]
+    (d/pull (d/db conn) pattern id))
   (transact! [this tx-data]
     (d/transact conn {:tx-data tx-data})))
 
@@ -32,6 +34,8 @@
     (apply dtlv/q query (dtlv/db conn) params))
   (qseq [this query params]
     (apply dtlv/q query (dtlv/db conn) params))
+  (pull [this pattern id]
+    (dtlv/pull (dtlv/db conn) pattern id))
   (transact! [this tx-data]
     (dtlv/transact! conn tx-data)))
 
@@ -113,39 +117,38 @@
                 :where (?e ?attr _)]
               [attr pattern]))))
 
-(defn make-item-ref [{eid :db/id}]
+(defn make-item-ref [c {eid :db/id}]
   (let [{link :item/link
          {url :feed/url} :item/feed
-         num :item/num} (d/pull (d/db d-back/conn)
-                                '[:item/link {:item/feed [:feed/url]} :item/num]
-                                eid)]
+         num :item/num} (pull c '[:item/link {:item/feed [:feed/url]} :item/num] eid)]
     (if url [url num] link)))
 
 (defn dump [c]
-  (concat 
-   (dump-entity c :feed/url)
-   (dump-entity c
-                :item/link
-                '[* {:item/feed [:feed/url]}]
-                #(if (:item/feed %)
-                   (update % :item/feed (comp vec first))
-                   %))
-   (dump-entity c
-                :user/id
-                '[*]
-                #(update % :user/selected (fn [old] (vec (map make-item-ref old)))))
-   (dump-entity c
-                :source/user
-                '[* {:source/user [:user/id]} {:source/feed [:feed/url]}]
-                (comp
-                 #(update % :source/user (comp vec first))
-                 #(update % :source/feed (comp vec first))))
-   (dump-entity c
-                :archive/user
-                '[* {:archive/user [:user/id]}]
-                (comp
-                 #(update % :archive/user (comp vec first))
-                 #(update % :archive/selected make-item-ref)))))
+  (let [make-item-ref #(make-item-ref c %)]
+    (concat 
+     (dump-entity c :feed/url)
+     (dump-entity c
+                  :item/link
+                  '[* {:item/feed [:feed/url]}]
+                  #(if (:item/feed %)
+                     (update % :item/feed (comp vec first))
+                     %))
+     (dump-entity c
+                  :user/id
+                  '[*]
+                  #(update % :user/selected (fn [old] (mapv make-item-ref old))))
+     (dump-entity c
+                  :source/user
+                  '[* {:source/user [:user/id]} {:source/feed [:feed/url]}]
+                  (comp
+                   #(update % :source/user (comp vec first))
+                   #(update % :source/feed (comp vec first))))
+     (dump-entity c
+                  :archive/user
+                  '[* {:archive/user [:user/id]}]
+                  (comp
+                   #(update % :archive/user (comp vec first))
+                   #(update % :archive/selected make-item-ref))))))
 
 (defn save-dump [dump fname]
   (with-open [w (io/writer fname)]
