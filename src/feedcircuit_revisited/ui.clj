@@ -365,7 +365,7 @@
          "if you want a literal comma, an exclamation mark or a slash "
          "you might use urlencoding so that %41cool would match !cool"]]
        [:form {:action "settings" :method "POST"}
-        [:textarea#feeds {:class "fcr-setting-input" :name "feeds"}
+        [:textarea#feeds {:class "fcr-setting-input" :name "feeds" :spellcheck "false"}
          (s/join "\n" (map serialize-source sources))]
         [:a.fcr-link {:onClick "toggleAppearance();" :href "#"}
          [:h1#appearance-header "Appearance settings"]]
