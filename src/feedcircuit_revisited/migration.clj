@@ -231,7 +231,8 @@
 
 (defn add-dump-obj [ctx obj]
   (condp = (obj-type obj)
-    :feed (assoc-in ctx [:feeds (:feed/url obj)] obj)
+    :feed (assoc-in ctx [:feeds (:feed/url obj)]
+                    (dissoc obj :feed/last-num))
     :item (let [feed (second (:item/feed obj))
                 num (:item/num obj)]
             (-> ctx
@@ -258,10 +259,8 @@
     ctx))
 
 (defn figure-position [ctx feed pos]
-  (let [last-num (get-in ctx [:feeds feed :feed/last-num] 0)]
-    (if (> pos last-num)
-      (fs-back/get-item-count feed)
-      (get-in ctx [:ctx feed pos] 0))))
+  (or (get-in ctx [feed pos])
+      (inc (get-in ctx [feed (dec pos)]))))
 
 (defn resolve-fs-item [ctx subj]
   (if (vector? subj)
@@ -282,7 +281,7 @@
                      archive :archive
                      ctx :ctx}]
   (doseq [[url feed] feeds]
-    (fs-back/add-feed! url (dissoc feed :feed/last-num)))
+    (fs-back/add-feed! url feed))
   (doseq [[feed _items] items]
     (fs-back/append-items! feed _items))
   (doseq [[id user] users]
