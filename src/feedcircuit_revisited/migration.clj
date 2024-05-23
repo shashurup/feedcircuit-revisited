@@ -15,6 +15,7 @@
   (q [this query params])
   (qseq [this query params])
   (pull [this pattern id])
+  (index-pull [this pattern start])
   (transact! [this tx-data]))
 
 (deftype Datomic [conn]
@@ -25,6 +26,11 @@
     (apply d/qseq query (d/db conn) params))
   (pull [this pattern id]
     (d/pull (d/db conn) pattern id))
+  (index-pull [this pattern start]
+    (d/index-pull (d/db conn)
+                  {:index :avet
+                   :selector pattern
+                   :start start}))
   (transact! [this tx-data]
     (d/transact conn {:tx-data tx-data})))
 
@@ -36,6 +42,7 @@
     (apply dtlv/q query (dtlv/db conn) params))
   (pull [this pattern id]
     (dtlv/pull (dtlv/db conn) pattern id))
+  (index-pull [this pattern start])
   (transact! [this tx-data]
     (dtlv/transact! conn tx-data)))
 
@@ -117,6 +124,12 @@
                 :where (?e ?attr _)]
               [attr pattern]))))
 
+(defn dump-entity-ordered
+  ([c pattern start] (dump-entity-ordered c pattern start identity))
+  ([c pattern start f]
+   (map (comp f #(dissoc % :db/id :item/feed+id :item/feed+num))
+        (index-pull c pattern start))))
+
 (defn make-item-or-ref [c {eid :db/id}]
   (let [item (pull c '[:item/link
                        {:item/feed [:feed/url]}
@@ -131,12 +144,12 @@
   (let [make-item-or-ref #(make-item-or-ref c %)]
     (concat 
      (dump-entity c :feed/url)
-     (dump-entity c
-                  :item/link
-                  '[* {:item/feed [:feed/url]}]
-                  #(if (:item/feed %)
-                     (update % :item/feed (comp vec first))
-                     %))
+     (dump-entity-ordered c
+                          '[* {:item/feed [:feed/url]}]
+                          [:item/num 0]
+                          #(if (:item/feed %)
+                             (update % :item/feed (comp vec first))
+                             %))
      (dump-entity c
                   :user/id
                   '[*]
@@ -147,17 +160,17 @@
                   (comp
                    #(update % :source/user (comp vec first))
                    #(update % :source/feed (comp vec first))))
-     (dump-entity c
-                  :archive/user
-                  '[* {:archive/user [:user/id]}]
-                  (comp
-                   #(update % :archive/user (comp vec first))
-                   #(update % :archive/selected make-item-or-ref))))))
+     (dump-entity-ordered c
+                          '[* {:archive/user [:user/id]}]
+                          [:archive/selected]
+                          (comp
+                           #(update % :archive/user (comp vec first))
+                           #(update % :archive/selected make-item-or-ref))))))
 
 (defn save-dump [dump fname]
   (with-open [w (io/writer fname)]
     (binding [*out* w]
-      (doall (map prn dump)))))
+      (dorun (map prn dump)))))
 
 (defn dump-datomic [conn fname]
   (save-dump (dump (Datomic. conn)) fname))
@@ -216,20 +229,6 @@
         (:archive/user obj) :archive
         :else :unknown))
 
-(defn figure-position [ctx feed src]
-  (let [pos (:source/position src 0)
-        last-num (get-in ctx [:feeds feed :feed/last-num] 0)]
-    (if (> pos last-num)
-      (fs-back/get-item-count feed)
-      (get-in ctx [:ctx feed pos] 0))))
-
-(defn resolve-fs-item [ctx subj]
-  (if (vector? subj)
-    (let [[feed num] subj]
-      (let [num (get-in ctx [feed num] 0)]
-        (fs-back/get-item (str num "," feed))))
-    subj))
-
 (defn add-dump-obj [ctx obj]
   (condp = (obj-type obj)
     :feed (assoc-in ctx [:feeds (:feed/url obj)] obj)
@@ -252,14 +251,24 @@
               (-> ctx
                   (update-in [:source-lines user]
                              #(conj (or %1 []) (fs-back/source->str src)))
-                  (assoc-in [:source-pos user feed]
-                            (figure-position ctx feed src))))
+                  (assoc-in [:source-pos user feed] (:source/position src))))
     :archive (let [item (:archive/selected obj)
                    user (second (:archive/user obj))]
-               (update-in ctx [:archive user]
-                          #(conj (or %1 []) %2)
-                          (resolve-fs-item ctx item)))
+               (update-in ctx [:archive user] #(conj (or %1 []) %2) item))
     ctx))
+
+(defn figure-position [ctx feed pos]
+  (let [last-num (get-in ctx [:feeds feed :feed/last-num] 0)]
+    (if (> pos last-num)
+      (fs-back/get-item-count feed)
+      (get-in ctx [:ctx feed pos] 0))))
+
+(defn resolve-fs-item [ctx subj]
+  (if (vector? subj)
+    (let [[feed num] subj]
+      (let [num (get-in ctx [feed num] 0)]
+        (fs-back/get-item (str num "," feed))))
+    subj))
 
 (defn convert-selected-to-fs [user ctx]
   (update user :selected
@@ -281,9 +290,12 @@
   (doseq [[id lines] source-lines]
     (fs-back/update-user-attrs! id update :feeds #(into (or %1 []) lines)))
   (doseq [[id positions] source-pos]
-    (fs-back/update-positions! id positions))
+    (let [positions (into {} (for [[feed pos] positions]
+                               [feed (figure-position ctx feed pos)]))]
+      (fs-back/update-positions! id positions)))
   (doseq [[user items] archive]
-    (fs-back/write-items! (fs-back/user-dir user) items)))
+    (let [items (map #(resolve-fs-item ctx %) items)]
+      (fs-back/write-items! (fs-back/user-dir user) items))))
 
 (defn push-to-fs [data _]
   (reduce (fn [ctx block]
