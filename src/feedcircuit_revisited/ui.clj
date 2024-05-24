@@ -152,7 +152,9 @@
 
 (defn build-feed [user-id feed from item-count extra-style]
   (let [item-count (or item-count page-size)
-        items (take item-count (backend/get-feed-items feed from))
+        items (take item-count (if (= feed "archive")
+                                 (backend/get-archive-items user-id from)
+                                 (backend/get-feed-items feed from)))
         next-from (dec (or (:item/num (last items)) 0))
         title (backend/get-feed-attr-by-id feed :feed/title)
         checked (set (map :item/id (:user/selected (backend/get-user-data user-id))))]
@@ -311,9 +313,12 @@
    [:body
     (navbar user-id :sources)
     [:div.fcr-wrapper.fcr-ui
-     (let [sources (->> (backend/get-user-data user-id :sources/feed-details)
-                        :user/sources
-                        (filter :source/active))]
+     (let [feeds (->> (backend/get-user-data user-id :sources/feed-details)
+                      :user/sources
+                      (filter :source/active))
+           sources (conj feeds {:source/feed "archive"
+                                :feed/title "Archive"
+                                :feed/summary "News you ever selected"})]
        (for [source sources]
          [:div.fcr-news-item 
           [:a.fcr-link {:href (str "feed?url=" (:source/feed source))}
@@ -324,8 +329,9 @@
           (if-let [summary (not-empty (:feed/summary source))]
             [:p summary])
           [:p.fcr-item-footer
-           [:a.fcr-link {:href (:feed/url source)} (:feed/url source)]
-           (if-let [last-sync (:feed/last-sync source)]
+           (when (:feed/url source)
+             [:a.fcr-link {:href (:feed/url source)} (:feed/url source)])
+           (when-let [last-sync (:feed/last-sync source)]
              [:span ", updated&nbsp;at&nbsp;"
               [:script (format "document.write(new Date(\"%s\").toLocaleString());" last-sync)]
               [:noscript last-sync]])]]))]]])
