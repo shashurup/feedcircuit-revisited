@@ -12,7 +12,6 @@
             [feedcircuit-revisited.conf :as conf]
             [feedcircuit-revisited.rfc822 :as rfc822]
             [feedcircuit-revisited.utils :as u]
-            [clojure.core.memoize :as memz]
             [clojure.string :as s]
             [clojure.tools.logging :as log]))
 
