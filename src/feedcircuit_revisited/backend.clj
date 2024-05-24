@@ -1,8 +1,8 @@
 (ns feedcircuit-revisited.backend
   (:require [feedcircuit-revisited.conf :as conf]
             [clojure.string :as cstr]
-            [feedcircuit-revisited.datalevin-backend :as dtlv-back]
-            [feedcircuit-revisited.datomic-backend :as d-back]
+            ;; [feedcircuit-revisited.datalevin-backend :as dtlv-back]
+            ;; [feedcircuit-revisited.datomic-backend :as d-back]
             [feedcircuit-revisited.fs-backend :as fs-back]))
 
 ; === backend switching machinery ===
@@ -13,8 +13,8 @@
 (def backend-interface ['get-feed-attr 'get-feed-attr-by-id
                         'add-feed! 'update-feed! 'append-items!
                         'active-feed-urls 'unknown-feeds
-                        'get-items 'get-items-backwards 'get-item 'known-ids
-                        'add-content! 'item-id? 'get-user-data
+                        'get-items 'get-items-backwards 'get-item 'get-archive-items
+                        'known-ids 'add-content! 'item-id? 'get-user-data
                         'selected-add! 'selected-remove!
                         'update-settings! 'update-positions!
                         'init-impl!])
@@ -124,8 +124,9 @@
                       styles)))
 
 (defn init! []
-  (cond
-    (conf/param :datalevin) (map-backend-impl 'feedcircuit-revisited.datalevin-backend)
-    (conf/param :datomic) (map-backend-impl 'feedcircuit-revisited.datomic-backend)
-    :else (map-backend-impl 'feedcircuit-revisited.fs-backend))
+  ;; (cond
+  ;;   (conf/param :datalevin) (map-backend-impl 'feedcircuit-revisited.datalevin-backend)
+  ;;   (conf/param :datomic) (map-backend-impl 'feedcircuit-revisited.datomic-backend)
+  ;;   :else (map-backend-impl 'feedcircuit-revisited.fs-backend))
+  (map-backend-impl 'feedcircuit-revisited.fs-backend)
   (init-impl!))

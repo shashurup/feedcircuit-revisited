@@ -5,7 +5,6 @@
             [feedcircuit-revisited.handler :as handler]
             [feedcircuit-revisited.feed :as feed]
             [feedcircuit-revisited.stat :as stat]
-            [clojure.core.memoize :as memz]
             [shashurup.quf.srv :as quf]
             [ring.adapter.jetty :refer [run-jetty]]
             [clojure.tools.logging :as log]))

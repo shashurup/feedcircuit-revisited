@@ -56,6 +56,12 @@
 
 (def ^:dynamic block-size "Number of items in each file" 100)
 
+(defn get-item-count [dir]
+  (let [last-block-num (get-last-block-num dir)
+        last-block (get-block dir last-block-num)]
+    (+ (* last-block-num block-size)
+       (count last-block))))
+
 (defn read-items
   "Returns lazy sequence of items in the directory dir
    beginning from the start"
@@ -163,7 +169,7 @@
       (await feed-index)
       (get-in-feed url key))))
 
-(defn get-item-count [url]
+(defn get-feed-item-count [url]
   (get-in-feed url :item-count))
 
 (defn add-feed-num-uid [item url num]
@@ -183,10 +189,10 @@
    in the directory dir beginning from the start
    and moving backwards"
   ([url]
-   (get-items-backwards url (dec (get-item-count url))))
+   (get-items-backwards url nil))
   ([url start]
    (let [dir (get-dir url)
-         start (or start (dec (get-item-count url)))]
+         start (or start (dec (get-feed-item-count url)))]
      (map-indexed #(add-feed-num-uid %2 url (- start %1))
                   (read-items-backwards dir start)))))
 
@@ -433,6 +439,20 @@
 
 (defn update-positions! [user-id positions]
   (update-user-attrs! user-id update :positions merge positions))
+
+(defn get-archive-items
+  "Returns lazy numbered sequence of items
+   in the user directory beginning from the start
+   and moving backwards"
+  ([user-id]
+   (get-archive-items user-id nil))
+  ([user-id start]
+   (let [dir (user-dir user-id)
+         start (or start (dec (get-item-count dir)))]
+     (map-indexed #(assoc %2
+                          :item/num (- start %1)
+                          :item/id (get-unique-id %2))
+                  (read-items-backwards dir start)))))
 
 (defn active-feed-urls []
   (->> (all-users)
