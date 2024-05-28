@@ -1,8 +1,6 @@
 (ns feedcircuit-revisited.backend
   (:require [feedcircuit-revisited.conf :as conf]
             [clojure.string :as cstr]
-            ;; [feedcircuit-revisited.datalevin-backend :as dtlv-back]
-            ;; [feedcircuit-revisited.datomic-backend :as d-back]
             [feedcircuit-revisited.fs-backend :as fs-back]))
 
 ; === backend switching machinery ===
