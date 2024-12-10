@@ -266,7 +266,7 @@
           (when-not (index url)
             (let [dir (dir-path url)]
               (fs/mkdirs dir)
-              (set-attrs dir (assoc attrs :url url))
+              (set-attrs dir (assoc attrs :feed/url url))
               (assoc index url {:dir dir
                                 :item-count 0
                                 :known-ids #{}})))))
