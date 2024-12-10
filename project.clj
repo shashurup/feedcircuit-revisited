@@ -1,4 +1,4 @@
-(defproject feedcircuit-revisited "37-snapshot"
+(defproject feedcircuit-revisited "37"
   :description "Old friend Feedcircuit revisited"
   :url "http://feedcircuit.kibardin.name"
   :min-lein-version "2.0.0"
@@ -10,7 +10,7 @@
                  [clj-http "3.12.4"]
                  [clojure.java-time "1.4.2"]
                  [clj-commons/fs "1.6.311"]
-                 [shashurup/quasi-una-fantasia "0.15"]
+                 [shashurup/quasi-una-fantasia "0.16"]
                  [hiccup "1.0.5"]
                  [cheshire "5.13.0"]
                  [org.jsoup/jsoup "1.17.2"]
