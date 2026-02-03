@@ -1,0 +1,107 @@
+#    -*- mode: org -*-
+
+
+Archived entries from file /home/georgy/devel/feedcircuit-revisited/project.org
+
+
+* DONE :uid -> :id
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2022-04-09 Сб 10:21
+  :ARCHIVE_FILE: ~/devel/feedcircuit-revisited/project.org
+  :ARCHIVE_OLPATH: Задачи
+  :ARCHIVE_CATEGORY: project
+  :ARCHIVE_TODO: DONE
+  :END:
+
+* DONE выделить модуль utils
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2022-04-09 Сб 10:21
+  :ARCHIVE_FILE: ~/devel/feedcircuit-revisited/project.org
+  :ARCHIVE_OLPATH: Задачи
+  :ARCHIVE_CATEGORY: project
+  :ARCHIVE_TODO: DONE
+  :END:
+
+* DONE Хранить данные с неймспейсами
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2022-04-09 Сб 10:21
+  :ARCHIVE_FILE: ~/devel/feedcircuit-revisited/project.org
+  :ARCHIVE_OLPATH: Задачи
+  :ARCHIVE_CATEGORY: project
+  :ARCHIVE_TODO: DONE
+  :END:
+
+* DONE all-feeds, active-feeds, stat collector
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2022-04-09 Сб 10:21
+  :ARCHIVE_FILE: ~/devel/feedcircuit-revisited/project.org
+  :ARCHIVE_OLPATH: Задачи
+  :ARCHIVE_CATEGORY: project
+  :ARCHIVE_TODO: DONE
+  :END:
+  Часть кода ожидает мапу, часть урлы, а не идшники фидов
+
+* DONE Допилить синк и коллектор статистики, чтобы использовал ид фидов, а не урлы
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2022-04-09 Сб 10:21
+  :ARCHIVE_FILE: ~/devel/feedcircuit-revisited/project.org
+  :ARCHIVE_OLPATH: Задачи
+  :ARCHIVE_CATEGORY: project
+  :ARCHIVE_TODO: DONE
+  :END:
+
+* DONE Расширить get-user-data для опциональной линковки аттрибутов фидов
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2022-04-09 Сб 10:21
+  :ARCHIVE_FILE: ~/devel/feedcircuit-revisited/project.org
+  :ARCHIVE_OLPATH: Задачи
+  :ARCHIVE_CATEGORY: project
+  :ARCHIVE_TODO: DONE
+  :END:
+
+* DONE Выбрать стиль покрасивше для blockquote
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2022-04-09 Сб 10:21
+  :ARCHIVE_FILE: ~/devel/feedcircuit-revisited/project.org
+  :ARCHIVE_OLPATH: Задачи
+  :ARCHIVE_CATEGORY: project
+  :ARCHIVE_TODO: DONE
+  :END:
+
+* DONE Пофиксить добавление "внешнего" урл в выбранные
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2022-04-09 Сб 10:21
+  :ARCHIVE_FILE: ~/devel/feedcircuit-revisited/project.org
+  :ARCHIVE_OLPATH: Задачи
+  :ARCHIVE_CATEGORY: project
+  :ARCHIVE_TODO: DONE
+  :END:
+
+* DONE По кнопке Done из selected не удаляются сторонние ссылки
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2022-04-09 Сб 10:21
+  :ARCHIVE_FILE: ~/devel/feedcircuit-revisited/project.org
+  :ARCHIVE_OLPATH: Задачи
+  :ARCHIVE_CATEGORY: project
+  :ARCHIVE_TODO: DONE
+  :END:
+
+* DONE Возврат на исходную позицию в выбранном
+:PROPERTIES:
+:ARCHIVE_TIME: 2026-02-03 Вт 19:05
+:ARCHIVE_FILE: ~/d/feedcircuit-revisited/project.org
+:ARCHIVE_CATEGORY: project
+:ARCHIVE_TODO: DONE
+:END:
+  После нажатия Done в конце новости удобно возвращаться на ту же позицию в выбранном,
+  чтобы не скроллить в случае когда начал читать с середины
+
+* DONE Фильтрация новостей по содержимому заголовка
+:PROPERTIES:
+:ARCHIVE_TIME: 2026-02-03 Вт 19:05
+:ARCHIVE_FILE: ~/d/feedcircuit-revisited/project.org
+:ARCHIVE_CATEGORY: project
+:ARCHIVE_TODO: DONE
+:END:
+  предлагается интерпретировать /regex/ как фильтр по заголовку
+  заодно использовать quoted printable для эскейпинга , и /
