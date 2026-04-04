@@ -21,6 +21,7 @@
                :pubDate :published
                :updated :published
                :description :summary
+               :content:encoded :content
                :logo :image
                :dc:creator :author})
 
