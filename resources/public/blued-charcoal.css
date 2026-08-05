@@ -1,9 +1,16 @@
 body {
     background-color: #334;
-    font-family: serif;
     color: #ccc;
 }
 
 label.item-check svg {
     fill: #f09;
+}
+
+@media (min-width: 42em) {
+
+    .fcr-news-body, .fcr-article {
+        font-family: serif;
+    }
+
 }

@@ -1,7 +1,6 @@
 body {
     /* HSLuv 100, 10, 90 */
     background-color: #e0e4d6;
-    font-family: serif;
     /* HSLuv 100, 10, 20 */
     color: #30312d
 }
@@ -12,4 +11,13 @@ blockquote {
     padding-left: 1em;
     margin-inline-start: 1em;
     margin-inline-end: 1em;
+}
+
+
+@media (min-width: 42em) {
+
+    .fcr-news-body, .fcr-article {
+        font-family: serif;
+    }
+
 }
